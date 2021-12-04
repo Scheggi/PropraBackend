@@ -1,0 +1,5 @@
+Flask
+Flask-Cors
+splite3
+Flask-Sqlalchemy
+Flask-Jwt-Extended

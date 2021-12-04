@@ -1,0 +1,36 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_DB=race
+    volumes:
+      - pg_data:/home/lib/postgresql/data
+    networks:
+      - backend_internal
+  webapp:
+    build: .
+    expose:
+      - 5000
+    networks:
+      - web
+      - backend_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.propra_backend.rule=Host(`api.race24.cloud`)"
+      - "traefik.http.routers.propra_backend.entrypoints=websecure"
+      - "traefik.http.routers.propra_backend.tls.certresolver=myresolver"
+      - "traefik.docker.network=web"
+
+networks:
+  web:
+    external: true
+  backend_internal:
+
+volumes:
+  pg_data:

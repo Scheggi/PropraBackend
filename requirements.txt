@@ -1,5 +1,8 @@
 Flask
 Flask-Cors
-splite3
 Flask-Sqlalchemy
-Flask-Jwt-Extended
+Flask-Jwt-Extended==3.25.1
+Flask-API
+numpy
+psycopg2-binary
+

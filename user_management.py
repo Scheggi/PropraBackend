@@ -52,8 +52,9 @@ def user_create():
 def refresh():
     # Create the new access token
     current_user = get_jwt_identity()
+    user=User.query.get(current_user)
     access_token = create_access_token(identity=current_user,
-                                       user_claims={"usergroups": current_user.group})
+                                       user_claims={"usergroups": user.group})
 
     # Set the access JWT and CSRF double submit protection cookies
     # in this response

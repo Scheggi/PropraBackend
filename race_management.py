@@ -73,7 +73,7 @@ def order_create():
 def weather_create():
     json_data = request.json
     new_data = Weather(
-        id=json_data["id"],
+        raceID=json_data["raceID"],
         temp_ground=json_data["temp_ground"],
         temp_air=json_data["temp_air"],
         weather_des=json_data["weather_des"],

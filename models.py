@@ -116,7 +116,7 @@ class Formel(db.Model):
 
     @classmethod
     def get_all(cls):
-        return [{"n":n,"formel":x.formel} for n, x in enumerate(cls.query)]#.filter_by(raceID=raceID).all()
+        return [{"n":"Nr.{n} ".format(n),"formel":x.formel} for n, x in enumerate(cls.query)]#.filter_by(raceID=raceID).all()
 
     def save_to_db(self):
         db.session.add(self)
@@ -129,6 +129,8 @@ class WheelsStart(db.Model):
     set = db.Column(db.Integer, nullable=False)
     cat = db.Column(db.String(120), nullable=False)
     subcat = db.Column(db.String(120), nullable=False)
+    identifier = db.Column(db.Sting(120), nullable=False)
+    numberOfSets = db.Column(db.String(120), nullable=False)
 
     @classmethod
     def find_by_id_cat(cls, raceID, cat):
@@ -136,7 +138,7 @@ class WheelsStart(db.Model):
 
     @classmethod
     def find_set_by_id(cls, raceID, set):
-        cls.query.filter_by(raceID=raceID, set=set).first()
+        return cls.query.filter_by(raceID=raceID, set=set).first()
 
     def save_to_db(self):
         db.session.add(self)
@@ -158,7 +160,7 @@ class WheelsOrder(db.Model):
 
 
     @classmethod
-    def find_by_id_cat(cls, raceID):
+    def find_by_id(cls, raceID):
         return cls.query.filter_by(raceID=raceID).all()
 
     def save_to_db(self):
@@ -185,6 +187,11 @@ class Race_Details(db.Model):
     @classmethod
     def find_by_date(cls, date):
         return [x for x in cls.query.filter_by(date=date).all()]
+
+    @classmethod
+    def find_id_by_date(cls, date):
+        item = cls.query.filter_by(date=date).first()
+        return item.id
 
     def save_to_db(self):
         db.session.add(self)

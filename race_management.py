@@ -104,7 +104,7 @@ def formel_create():
 @jwt_required
 def formel_get():
     resp = {'status': 'success',
-            'message': Formel.get_all()
+            'data': Formel.get_all()
             }
     return jsonify(resp, 200)
 

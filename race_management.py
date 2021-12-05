@@ -23,12 +23,6 @@ def race_create():
 @app.route('/user/wheels/create', methods=['POST'])
 def wheels_create():
     json_data = request.json
-    if Race_Details.find_by_id(json_data["id"]) is None:
-        resp = {
-            'status': 'failure',
-            'message': 'Race does not exists '
-        }
-        return jsonify(resp, 409)
     new_wheel = Wheels(
         id=json_data["id"],
         setnumber=json_data["setnumber"],
@@ -51,6 +45,27 @@ def wheels_create():
     resp = {'status': 'success',
             'message': 'wheel set created',
             'raceid': Race_Details.id}
+    return jsonify(resp, 200)
+
+
+@app.route('/user/order/create', methods=['POST'])
+def order_create():
+    json_data = request.json
+    new_wheel = Wheels(
+        raceID=json_data["raceid"],
+        tyretype=json_data["tyretype"],
+        tyremix= json_data["tyremix"],
+        term= json_data["term"],
+        variant=json_data["variant"],
+        number = json_data["number"],
+        orderdate= json_data["orderdate"],
+        ordertime=json_data["ordertime"],
+        pickuptime=json_data["pickuptime"]
+    )
+    new_wheel.save_to_db()
+    resp = {'status': 'success',
+            'message': 'wheel set created'
+            }
     return jsonify(resp, 200)
 
 

@@ -1,6 +1,5 @@
 from app import db
 
-
 class TokenBlacklist(db.Model):
     __tablename__ = 'blacklist'
     id = db.Column(db.Integer, primary_key=True)
@@ -145,7 +144,7 @@ class WheelsStart(db.Model):
 
 
 class WheelsOrder(db.Model):
-    __tablename__ = 'wheels_start'
+    __tablename__ = 'wheels_order'
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer)
     tyretype = db.Column(db.String(120), nullable=False)
@@ -157,17 +156,10 @@ class WheelsOrder(db.Model):
     ordertime = db.Column(db.String(120), nullable=False)
     pickuptime = db.Column(db.String(120), nullable=False)
 
-    set = db.Column(db.Integer, nullable=False)
-    cat = db.Column(db.String(120), nullable=False)
-    subcat = db.Column(db.String(120), nullable=False)
 
     @classmethod
-    def find_by_id_cat(cls, raceID, cat):
-        return cls.query.filter_by(raceID=raceID, cat=cat).all()
-
-    @classmethod
-    def find_set_by_id(cls, raceID, set):
-        cls.query.filter_by(raceID=raceID, set=set).first()
+    def find_by_id_cat(cls, raceID):
+        return cls.query.filter_by(raceID=raceID).all()
 
     def save_to_db(self):
         db.session.add(self)

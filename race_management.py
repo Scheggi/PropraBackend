@@ -4,6 +4,7 @@ from hmac import compare_digest as compare_hash
 from app import app, request, create_refresh_token, create_access_token, jsonify, jwt_refresh_token_required, \
     get_jwt_identity, jwt, get_raw_jwt, jwt_required
 from models import *
+from datetime import datetime
 
 
 @app.route('/race/create', methods=['POST'])
@@ -77,7 +78,7 @@ def weather_create():
         temp_ground=json_data["temp_ground"],
         temp_air=json_data["temp_air"],
         weather_des=json_data["weather_des"],
-        datetime=json_data["datetime"]
+        datetime=datetime.utcnow()
     )
     new_data.save_to_db()
     resp = {'status': 'success',

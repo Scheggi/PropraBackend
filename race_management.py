@@ -1,4 +1,5 @@
 import crypt
+from loguru import logger
 from hmac import compare_digest as compare_hash
 from app import app, request, create_refresh_token, create_access_token, jsonify, jwt_refresh_token_required, \
     get_jwt_identity, jwt, get_raw_jwt, jwt_required
@@ -113,6 +114,7 @@ def formel_get():
 @jwt_required
 def get_weather_data():
     json_data = request.json
+    logger.debug(Weather.find_by_id(json_data["raceID"])
     resp = {'status': 'success',
             'data':  Weather.find_by_id(json_data["raceID"])
             }

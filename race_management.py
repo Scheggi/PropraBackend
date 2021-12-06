@@ -87,6 +87,24 @@ def weather_create():
     return jsonify(resp, 200)
 
 
+@app.route("/wheels_start/create",methods=['POST'])
+def wheels_start_create():
+    json_data = request.json
+    new_data = WheelsStart(
+        raceID = json_data["raceID"],
+        set = json_data["set"],
+        cat = json_data["cat"],
+        subcat =json_data["subcat"],
+        identifier = json_data["identifier"],
+        numberOfSets =json_data["numberOfSets"]
+    )
+    new_data.save_to_db()
+    resp = {'status': 'success',
+            'message': 'wheel start created'
+            }
+    return jsonify(resp, 200)
+
+
 @app.route('/formel/create', methods=['POST'])
 def formel_create():
     json_data = request.json
@@ -110,6 +128,16 @@ def formel_get():
     return jsonify(resp, 200)
 
 
+@app.route('/wheels_start/get', methods=['POST'])
+@jwt_required
+def get_wheels_start():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data':  WheelsStart.find_by_raceID(json_data["raceID"])
+            }
+    return jsonify(resp, 200)
+
+
 @app.route('/user/weather/getlast10', methods=['POST'])
 @jwt_required
 def get_weather_data():
@@ -129,3 +157,12 @@ def get_race_data():
     return jsonify(resp, 200)
 
 
+#user/raceDetails/get
+@app.route('/user/raceDetails/get', methods=['POST'])
+@jwt_required
+def get_race_data():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data':  Race_Details.find_by_id(json_data["raceID"])
+            }
+    return jsonify(resp, 200)

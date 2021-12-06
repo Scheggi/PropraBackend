@@ -136,8 +136,8 @@ class WheelsStart(db.Model):
     numberOfSets = db.Column(db.String(120), nullable=False)
 
     @classmethod
-    def find_by_id_cat(cls, raceID, cat):
-        return cls.query.filter_by(raceID=raceID, cat=cat).all()
+    def find_by_raceID(cls, raceID):
+        return [x for x in cls.query.filter_by(raceID=raceID).all()]
 
     @classmethod
     def find_set_by_id(cls, raceID, set):
@@ -181,7 +181,7 @@ class Race_Details(db.Model):
 
     @classmethod
     def find_by_id(cls, id):
-        return cls.query.filter_by(id=id).first()
+        return [{"place":x.place, "date":x.date, "type": x.type} for x in cls.query.filter_by(id=id).first()]
 
     @classmethod
     def get_all_races(cls):

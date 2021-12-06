@@ -78,7 +78,7 @@ def weather_create():
         temp_ground=json_data["temp_ground"],
         temp_air=json_data["temp_air"],
         weather_des=json_data["weather_des"],
-        datetime=datetime.utcnow()
+        datetime=datetime.now()
     )
     new_data.save_to_db()
     resp = {'status': 'success',

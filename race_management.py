@@ -113,7 +113,6 @@ def formel_get():
 @jwt_required
 def get_weather_data():
     json_data = request.json
-    logger.debug(Weather.find_by_id(json_data["raceID"])
     resp = {'status': 'success',
             'data':  Weather.find_by_id(json_data["raceID"])
             }

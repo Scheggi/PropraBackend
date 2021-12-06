@@ -131,7 +131,7 @@ class WheelsStart(db.Model):
     set = db.Column(db.Integer, nullable=False)
     cat = db.Column(db.String(120), nullable=False)
     subcat = db.Column(db.String(120), nullable=False)
-    identifier = db.Column(db.Sting(120), nullable=False)
+    identifier = db.Column(db.String(120), nullable=False)
     numberOfSets = db.Column(db.String(120), nullable=False)
 
     @classmethod

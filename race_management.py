@@ -160,7 +160,7 @@ def get_race_data():
 #user/raceDetails/get
 @app.route('/user/raceDetails/get', methods=['POST'])
 @jwt_required
-def get_race_data():
+def get_raceDetails_data():
     json_data = request.json
     resp = {'status': 'success',
             'data':  Race_Details.find_by_id(json_data["raceID"])

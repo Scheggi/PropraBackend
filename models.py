@@ -49,6 +49,7 @@ class Weather(db.Model):
     weather_des = db.Column(db.String(120), nullable=False)
     datetime = db.Column(db.DateTime, nullable=False)
 
+
     @classmethod
     def find_by_date(cls, datetime):
         return [x for x in cls.query.filter_by(datetime=datetime).all()]

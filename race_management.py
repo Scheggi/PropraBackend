@@ -16,8 +16,10 @@ def race_create():
         date=json_data["date"]
     )
     new_Race.save_to_db()
+    new_id = new_Race.id
     resp = {'status': 'success',
             'message': 'Race created',
+            'id': "{}".format(new_id),
             }
     return jsonify(resp, 200)
 
@@ -65,8 +67,11 @@ def order_create():
         pickuptime=json_data["pickuptime"]
     )
     new_wheel.save_to_db()
+    new_id = new_wheel.id
+
     resp = {'status': 'success',
-            'message': 'wheel set created'
+            'message': 'wheel set created',
+            'id': "{}".format(new_id)
             }
     return jsonify(resp, 200)
 
@@ -81,8 +86,10 @@ def weather_create():
         datetime=datetime.now()
     )
     new_data.save_to_db()
+    new_id = new_data.id
     resp = {'status': 'success',
-            'message': 'Data created'
+            'message': 'Data created',
+            'id': "{}".format(new_id),
             }
     return jsonify(resp, 200)
 

@@ -133,7 +133,7 @@ def formel_get():
 def get_wheels_start():
     json_data = request.json
     resp = {'status': 'success',
-            'data':  WheelsStart.find_by_raceID(json_data["raceID"])
+            'data':  WheelsStartAstrid.find_by_raceID(json_data["raceID"])
             }
     return jsonify(resp, 200)
 

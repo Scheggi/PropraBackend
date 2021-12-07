@@ -87,10 +87,10 @@ def weather_create():
     return jsonify(resp, 200)
 
 
-@app.route("/wheels_start/create",methods=['POST'])
-def wheels_start_create():
+@app.route("/wheels_start_astrid/create",methods=['POST'])
+def wheels_start_astrid_create():
     json_data = request.json
-    new_data = WheelsStart(
+    new_data = WheelsStartAstrid(
         raceID = json_data["raceID"],
         set = json_data["set"],
         cat = json_data["cat"],

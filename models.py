@@ -1,6 +1,5 @@
 from app import db
 from loguru import logger
-from sqlalchemy import Table, Column, Integer, ForeignKey
 
 class TokenBlacklist(db.Model):
     __tablename__ = 'blacklist'
@@ -126,8 +125,8 @@ class Formel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-class WheelsStart(db.Model):
-    __tablename__ = 'wheels_start'
+class WheelsStartAstrid(db.Model):
+    __tablename__ = 'wheels_start_astrid'
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer)
     set = db.Column(db.Integer, nullable=False)

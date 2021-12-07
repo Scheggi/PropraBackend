@@ -102,7 +102,7 @@ def wheels_start_astrid_create():
     new_id = new_data.id
     resp = {'status': 'success',
             'message': 'wheel start created',
-            'id': new_id,
+            'id': "{}".format(new_id),
             }
     return jsonify(resp, 200)
 

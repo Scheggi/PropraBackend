@@ -70,7 +70,7 @@ class Weather(db.Model):
 
 
 class Wheels_old(db.Model):
-    __tablename__ = 'wheels'
+    __tablename__ = 'wheels_old'
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer)
     setnumber = db.Column(db.Integer, nullable=False)

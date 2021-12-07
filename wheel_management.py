@@ -87,7 +87,7 @@ def wheel_contigent_createSingleWheel():
     return jsonify(resp, 200)
 
 ##############################get##########################
-"""
+
 #user/raceDetails/get
 @app.route('/wheel_cont/getWheel', methods=['POST'])
 @jwt_required
@@ -127,7 +127,7 @@ def get_wheels_id():
             }
     return jsonify(resp, 200)
 
-"""
+
 
 
 

@@ -30,6 +30,8 @@ CORS(app)
 
 from race_management import *
 from user_management import *
+from wheel_management import *
+
 
 @app.before_first_request
 def create_tables():

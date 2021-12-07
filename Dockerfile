@@ -9,6 +9,7 @@ COPY app.py .
 COPY models.py .
 COPY user_management.py .
 COPY race_management.py .
+COPY wheel_management.py .
 
 
 CMD [ "python", "./app.py" ]

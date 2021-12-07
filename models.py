@@ -1,5 +1,6 @@
 from app import db
 from loguru import logger
+from sqlalchemy import Table, Column, Integer, ForeignKey
 
 class TokenBlacklist(db.Model):
     __tablename__ = 'blacklist'
@@ -68,7 +69,7 @@ class Weather(db.Model):
         db.session.commit()
 
 
-class Wheels(db.Model):
+class Wheels_old(db.Model):
     __tablename__ = 'wheels'
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer)
@@ -199,3 +200,84 @@ class Race_Details(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+###################Reifenmanagement
+class Wheel(db.Model):
+    tablename = "wheel"
+    id = db.Column(db.Integer, primary_key=True)
+    air_press = db.Column(db.Float, nullable=False)
+    id_scan = db.Column(db.String(120), nullable=False)
+    edit = db.Column(db.String(120), nullable=False)
+
+    @classmethod
+    def get_by_id(cls,id):
+        return  cls.query.filter_by(id=id).first()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+class Wheels(db.Model):
+    __tablename__ = "wheels"
+    id = db.Column(db.Integer, primary_key=True)
+    FL = db.Column(db.Integer, db.ForeignKey("wheel.id"))
+    FR = db.Column(db.Integer, db.ForeignKey("wheel.id"))
+    BL = db.Column(db.Integer, db.ForeignKey("wheel.id"))
+    BR = db.Column(db.Integer, db.ForeignKey("wheel.id"))
+    temp = db.Column(db.Float)
+
+    @classmethod
+    def get_by_id(cls, id):
+        return [{"id":x.id ,"temp":x.temp, "FL": x.FL, "FR": x.FR,
+                 "BL": x.BL,"BR": x.BR} for x in  cls.query.filter_by(id=id).first()]
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+class WheelContigent(db.Model):
+    __tablename__ = 'wheels_contigent'
+    id = db.Column(db.Integer, primary_key=True)
+    raceID = db.Column(db.Integer)
+    set = db.Column(db.Integer, nullable=False)
+    cat = db.Column(db.String(120), nullable=False)
+    subcat = db.Column(db.String(120), nullable=False)
+    status = db.Column(db.String(120), nullable=False) # 0 or 1
+    wheels = db.Column(db.Integer, db.ForeignKey("wheels.id"))
+
+    #identifier = db.Column(db.String(120), nullable=False)
+    #numberOfSets = db.Column(db.String(120), nullable=False)
+
+    @classmethod
+    def find_by_raceID_set(cls, raceID,set):
+        return [x.id for x in cls.query.filter_by(raceID=raceID,set=set).all()]
+
+    @classmethod
+    def find_by_raceID(cls, raceID):
+        return [x for x in cls.query.filter_by(raceID=raceID).all()]
+
+    @classmethod
+    def find_status_raceID(cls, raceID):
+        return [{"free":[x for x in cls.query.filter_by(raceID=raceID).all() if x.status ==1],
+                 "used":[x for x in cls.query.filter_by(raceID=raceID).all() if x.status ==0]}]
+    @classmethod
+    def get_number_set(cls,raceID):
+        cats_value = list(set([x.cat for x in cls.query.filter_by(raceID=raceID).all()]))
+        dict_cats = {}
+        for entry in cats_value:
+            dict_cats.update({entry: {}})
+            for item in list(set([x.subcat for x in cls.query.filter_by(raceID=raceID, cat=entry).all()])):
+                sets =[ {"status":x.status, "wheels":x.wheels, "id":x.id } for x in cls.query.filter_by(raceID=raceID, cat=entry,subcat=item).all()]
+                dict_cats[entry].update({item: [sets,len(sets)]})
+        return [dict_cats]
+
+    @classmethod
+    def get_wheels_id(cls,id):
+        return cls.join(Wheels).join(Wheel).filter(WheelContigent.id ==id).all()
+        #return Wheels.join(Wheel).filter(Wheels.id==id).all()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+

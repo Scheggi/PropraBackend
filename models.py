@@ -181,7 +181,7 @@ class Race_Details(db.Model):
 
     @classmethod
     def find_by_id(cls, id):
-        return [{"place":x.place, "date":x.date, "type": x.type} for x in cls.query.filter_by(id=id).first()]
+        return [{"place":x.place, "date":x.date, "type": x.type} for x in cls.query.filter_by(id=id).all()]
 
     @classmethod
     def get_all_races(cls):

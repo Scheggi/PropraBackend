@@ -119,7 +119,7 @@ class Formel(db.Model):
 
     @classmethod
     def get_all(cls):
-        return [{"n":"Nr.{n} ".format(n),"formel":x.formel} for n, x in enumerate(cls.query)]#.filter_by(raceID=raceID).all()
+        return [{"n":"Nr.{} ".format(n),"formel":x.formel} for n, x in enumerate(cls.query)]#.filter_by(raceID=raceID).all()
 
     def save_to_db(self):
         db.session.add(self)

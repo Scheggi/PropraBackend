@@ -134,7 +134,7 @@ def get_wheels_start():
     json_data = request.json
     logger.debug(json_data)
     resp = {'status': 'success',
-            'data':  WheelsStartAstrid.find_by_raceID(json_data["raceID"])
+            'data':  WheelsStartAstrid.find_by_raceID((json_data["raceID"]))
             }
     return jsonify(resp, 200)
 

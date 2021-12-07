@@ -99,8 +99,10 @@ def wheels_start_astrid_create():
         numberOfSets =json_data["numberOfSets"]
     )
     new_data.save_to_db()
+    new_id = new_data.id
     resp = {'status': 'success',
-            'message': 'wheel start created'
+            'message': 'wheel start created',
+            'id': id,
             }
     return jsonify(resp, 200)
 

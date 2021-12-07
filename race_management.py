@@ -132,6 +132,7 @@ def formel_get():
 @jwt_required
 def get_wheels_start():
     json_data = request.json
+    logger.debug(json_data)
     resp = {'status': 'success',
             'data':  WheelsStartAstrid.find_by_raceID(json_data["raceID"])
             }

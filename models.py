@@ -137,7 +137,7 @@ class WheelsStartAstrid(db.Model):
 
     @classmethod
     def find_by_raceID(cls, raceID):
-        return [x for x in cls.query.filter_by(raceID=raceID).all()]
+        return [{"id":x.id, "set":x.set  } for x in cls.query.filter_by(raceID=raceID).all()]
 
     @classmethod
     def find_set_by_id(cls, raceID, set):

@@ -19,7 +19,7 @@ def race_create():
     new_id = new_Race.id
     resp = {'status': 'success',
             'message': 'Race created',
-            'id': "{}".format(new_id),
+            'id': int("{}".format(new_id)),
             }
     return jsonify(resp, 200)
 

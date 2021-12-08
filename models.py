@@ -281,9 +281,20 @@ class WheelSet(db.Model):
                                  'order_end': x.order_end})
         return list_objects
 
+    @classmethod
+    def find_by_raceID_cat_subcat_status(cls, raceID, cat, subcat,status):
+        list_objects = []
+        for x in cls.query.filter_by(raceID=raceID, cat=cat, subcat=subcat, status=status).all():
+            list_objects.append({'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
+                                 'status': x.status, 'wheels': x.wheels})
+        return list_objects
+
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+
 
 
 class WheelContigent2(db.Model):

@@ -56,7 +56,7 @@ def wheel_contigent_createWheels():
         )
     else:
         newWheels = Wheels(
-            temp= json_data["temp"],
+            temp= 0,
             id =json_data["id_wheels"],
         )
     newWheels.save_to_db()
@@ -81,7 +81,7 @@ def wheel_contigent_createSingleWheel():
         newWheel = Wheel(
             air_press= json_data["air_press"],
             id_scan=json_data["air_press"],
-            id = json_data["id_wheel"]
+            id = json_data["id"]
         )
     newWheel.save_to_db()
     new_wheel_id = newWheel.id

@@ -10,35 +10,35 @@ from datetime import datetime
 @app.route('/wheel_cont/createSet', methods=['POST'])
 def wheel_contigent_create():
     json_data = request.json
-    if json_data["id"]!="":
+    if json_data['id']!='':
         new_Contigent = WheelSet(
-            id = json_data["id"],
-            raceID=json_data["raceID"],
-            setNr=json_data["setNr"],
-            cat = json_data["cat"],
-            subcat = json_data["subcat"],
-            status = json_data["status"],
-            variant = json_data["variant"],
-            wheels = json_data["wheels"] ,
-            temp = json_data["temp"],
-            order_start =json_data["order_start"],
-            order_duration = json_data["order_duration"],
-            order_end = json_data["order_end"],
+            id = json_data['id'],
+            raceID=json_data['raceID'],
+            setNr=json_data['setNr'],
+            cat = json_data['cat'],
+            subcat = json_data['subcat'],
+            status = json_data['status'],
+            variant = json_data['variant'],
+            wheels = json_data['wheels'] ,
+            temp = json_data['temp'],
+            order_start =json_data['order_start'],
+            order_duration = json_data['order_duration'],
+            order_end = json_data['order_end'],
         )
     else:
         new_Contigent = WheelSet(
-            raceID=json_data["raceID"],
-            setNr=json_data["setNr"],
-            cat=json_data["cat"],
-            subcat=json_data["subcat"],
-            status="offen",
-            wheels=json_data["wheels"],
+            raceID=json_data['raceID'],
+            setNr=json_data['setNr'],
+            cat=json_data['cat'],
+            subcat=json_data['subcat'],
+            status='offen',
+            wheels=json_data['wheels'],
         )
         new_Contigent.save_to_db()
 
         resp = {'status': 'success',
                 'message': 'Contigent created',
-                "id": int("{}".format(new_Contigent.id))
+                'id': int('{}'.format(new_Contigent.id))
                 }
         return jsonify(resp, 200)
 
@@ -46,24 +46,24 @@ def wheel_contigent_create():
 @app.route('/wheel_cont/createWheels', methods=['POST'])
 def wheel_contigent_createWheels():
     json_data = request.json
-    if json_data["id"] =="":
+    if json_data['id'] =='':
         newWheels = Wheels(
             temp=0,
-            FL=json_data["id_FL"],
-            FR=json_data["id_FR"],
-            BR=json_data["id_BR"],
-            BL=json_data["id_BL"],
+            FL=json_data['id_FL'],
+            FR=json_data['id_FR'],
+            BR=json_data['id_BR'],
+            BL=json_data['id_BL'],
         )
     else:
         newWheels = Wheels(
-            temp= json_data["temp"],
-            id =json_data["id"],
+            temp= json_data['temp'],
+            id =json_data['id'],
         )
     newWheels.save_to_db()
     new_wheels_id = newWheels.id
     resp = {'status': 'success',
             'message': 'Wheels created',
-            "id": int("{}".format(new_wheels_id)),
+            'id': int('{}'.format(new_wheels_id)),
             }
     return jsonify(resp, 200)
 
@@ -72,22 +72,22 @@ def wheel_contigent_createWheels():
 @app.route('/wheel_cont/createWheel', methods=['POST'])
 def wheel_contigent_createSingleWheel():
     json_data = request.json
-    if json_data["id"]== "":
+    if json_data['id']== '':
         newWheel = Wheel(
             air_press=0,
-            id_scan="",
+            id_scan='',
         )
     else:
         newWheel = Wheel(
-            air_press= json_data["air_press"],
-            id_scan=json_data["air_press"],
-            id = json_data["id"]
+            air_press= json_data['air_press'],
+            id_scan=json_data['air_press'],
+            id = json_data['id']
         )
     newWheel.save_to_db()
     new_wheel_id = newWheel.id
     resp = {'status': 'success',
             'message': 'Wheel created',
-            'id': int("{}".format(new_wheel_id)),
+            'id': int('{}'.format(new_wheel_id)),
             }
     return jsonify(resp, 200)
 
@@ -99,7 +99,7 @@ def wheel_contigent_createSingleWheel():
 def get_wheel_by_id():
     json_data = request.json
     resp = {'status': 'success',
-            'data': Wheel.get_by_id(json_data["id"])
+            'data': Wheel.get_by_id(json_data['id'])
             }
     return jsonify(resp, 200)
 
@@ -109,7 +109,7 @@ def get_wheel_by_id():
 def get_wheels_id():
     json_data = request.json
     resp = {'status': 'success',
-            'data': Wheels.get_by_id(json_data["id"])
+            'data': Wheels.get_by_id(json_data['id'])
             }
     return jsonify(resp, 200)
 
@@ -119,7 +119,7 @@ def get_wheels_id():
 def get_wheelsSet1():
     json_data = request.json
     resp = {'status': 'success',
-            'data': WheelSet.find_by_raceID_cat_setNr(json_data["raceID"],json_data["cat"],json_data["setNR"])
+            'data': WheelSet.find_by_raceID_cat_setNr(json_data['raceID'],json_data['cat'],json_data['setNR'])
             }
     return jsonify(resp, 200)
 
@@ -129,7 +129,7 @@ def get_wheelsSet1():
 def get_wheelsSet2():
     json_data = request.json
     resp = {'status': 'success',
-            'data': WheelSet.find_by_id(json_data["id"])
+            'data': WheelSet.find_by_id(json_data['id'])
             }
     return jsonify(resp, 200)
 
@@ -138,7 +138,7 @@ def get_wheelsSet2():
 def get_wheelsSet3():
     json_data = request.json
     resp = {'status': 'success',
-            'data': WheelSet.find_status_raceID(json_data["raceID"])
+            'data': WheelSet.find_status_raceID(json_data['raceID'])
             }
     return jsonify(resp, 200)
 
@@ -147,7 +147,7 @@ def get_wheelsSet3():
 def get_wheelsSet4():
     json_data = request.json
     resp = {'status': 'success',
-            'data': WheelSet.find_by_raceID_cat_subcat(json_data["raceID"],json_data["cat"],json_data["subcat"])
+            'data': WheelSet.find_by_raceID_cat_subcat(json_data['raceID'],json_data['cat'],json_data['subcat'])
             }
     return jsonify(resp, 200)
 

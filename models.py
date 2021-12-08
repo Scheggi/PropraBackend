@@ -201,17 +201,17 @@ class Race_Details(db.Model):
         db.session.add(self)
         db.session.commit()
 
-###################Reifenmanagement
+###################Reifenmanagement################################################
 class Wheel(db.Model):
     tablename = "wheel"
     id = db.Column(db.Integer, primary_key=True)
-    air_press = db.Column(db.Float, nullable=False)
-    id_scan = db.Column(db.String(120), nullable=False)
-    edit = db.Column(db.String(120), nullable=False)
+    air_press = db.Column(db.Float)
+    id_scan = db.Column(db.String(120))
 
     @classmethod
     def get_by_id(cls,id):
-        return  cls.query.filter_by(id=id).first()
+        object = cls.query.filter_by(id=id).first()
+        return [{"id":object.id, "air_press":object.air_press, "id_scan":object.id_scan}]
 
     def save_to_db(self):
         db.session.add(self)
@@ -224,29 +224,72 @@ class Wheels(db.Model):
     FR = db.Column(db.Integer, db.ForeignKey("wheel.id"))
     BL = db.Column(db.Integer, db.ForeignKey("wheel.id"))
     BR = db.Column(db.Integer, db.ForeignKey("wheel.id"))
-    temp = db.Column(db.Float)
 
     @classmethod
     def get_by_id(cls, id):
-        return [{"id":x.id ,"temp":x.temp, "FL": x.FL, "FR": x.FR,
-                 "BL": x.BL,"BR": x.BR} for x in  cls.query.filter_by(id=id).first()]
+        x =  cls.query.filter_by(id=id).first()
+        return [{"id":x.id , "FL": x.FL, "FR": x.FR,"BL": x.BL,"BR": x.BR}]
 
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
 
-class WheelContigent(db.Model):
+
+class WheelSet(db.Model):
+    __tablename__ = 'wheels_set_single'
+    id = db.Column(db.Integer, primary_key=True)
+    raceID = db.Column(db.Integer)
+    setNr = db.Column(db.Integer, nullable=False)
+    cat = db.Column(db.String(120), nullable=False)
+    subcat = db.Column(db.String(120), nullable=False)
+    status = db.Column(db.String(120) ) # 0 or 1
+    variant = db.Column(db.String)
+    wheels = db.Column(db.Integer, db.ForeignKey("wheels.id"))
+    temp = db.Column(db.Float)
+    order_start = db.Column(db.DateTime)
+    order_duration = db.Column(db.Integer)
+    order_end = db.Column(db.String)
+
+    @classmethod
+    def find_by_raceID_cat_setNr(cls, raceID, cat,setNr):
+        object =cls.query.filter_by(raceID=raceID, cat=cat,setNr=setNr).first()
+        return [{"id":object.id, "status":object.status}]
+
+    @classmethod
+    def find_by_id(cls, id):
+        x = cls.query.filter_by(id = id).first()
+        return [{"id":x.id, "raceID":x.raceID, "setNR":x.setNr, "cat":x.cat, "subcat":x.subcat,
+                 "status":x.status, "wheels":x.wheels, "temp":x.temp,"variant":x.variant,
+                 "order_start":x.order_start, "order_duration":x.order_duration,
+                 "order_end":x.order_end}]
+
+    @classmethod
+    def find_status_raceID(cls, raceID):
+        return [{"free": [x.id for x in cls.query.filter_by(raceID=raceID).all() if x.status == "free"],
+                 "used": [x.id for x in cls.query.filter_by(raceID=raceID).all() if x.status == "used"]}]
+
+    @classmethod
+    def find_by_raceID_cat_subcat(cls,raceID, cat,subcat):
+        return [{"id":x.id, "raceID":x.raceID, "setNR":x.setNr, "cat":x.cat, "subcat":x.subcat,
+                 "status":x.status, "wheels":x.wheels, "temp":x.temp,"variant":x.variant,
+                 "order_start":x.order_start, "order_duration":x.order_duration,
+                 "order_end":x.order_end} for x in cls.query.filter_by(raceID = raceID,cat=cat,subcat=subcat).all()]
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+class WheelContigent2(db.Model):
     __tablename__ = 'wheels_contigent'
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer)
     set = db.Column(db.Integer, nullable=False)
     cat = db.Column(db.String(120), nullable=False)
     subcat = db.Column(db.String(120), nullable=False)
-    status = db.Column(db.String(120), nullable=False) # 0 or 1
-    wheels = db.Column(db.Integer, db.ForeignKey("wheels.id"))
-
-    #identifier = db.Column(db.String(120), nullable=False)
-    #numberOfSets = db.Column(db.String(120), nullable=False)
+    #status = db.Column(db.String(120), nullable=False) # 0 or 1
+    #wheels = db.Column(db.Integer, db.ForeignKey("wheels.id"))
+    identifier = db.Column(db.String(120), nullable=False)
+    numberOfSets = db.Column(db.String(120), nullable=False)
 
     @classmethod
     def find_by_raceID_set(cls, raceID,set):

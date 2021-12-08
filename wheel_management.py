@@ -7,36 +7,42 @@ from models import *
 from datetime import datetime
 
 ######################### create###################################
-@app.route('/wheel_cont/create', methods=['POST'])
+@app.route('/wheel_cont/createSet', methods=['POST'])
 def wheel_contigent_create():
     json_data = request.json
-    if "id" in json_data.keys():
-        new_Contigent = WheelContigent(
-            id=json_data["id"],
-            set=json_data["setnumber"],
-            cat=json_data["cat"],
-            subcat=json_data["subcat"],
+    if json_data["id"]!="":
+        new_Contigent = WheelSet(
+            id = json_data["id"],
             raceID=json_data["raceID"],
-            status=json_data["status"],
-            wheels=json_data["id_wheels"]
+            setNr=json_data["setNr"],
+            cat = json_data["cat"],
+            subcat = json_data["subcat"],
+            status = json_data["status"],
+            variant = json_data["variant"],
+            wheels = json_data["wheels"] ,
+            temp = json_data["temp"],
+            order_start =json_data["order_start"],
+            order_duration = json_data["order_duration"],
+            order_end = json_data["order_end"],
         )
     else:
         new_Contigent = WheelContigent(
-            set=json_data["setnumber"],
+            raceID=json_data["raceID"],
+            setNr=json_data["setNr"],
             cat=json_data["cat"],
             subcat=json_data["subcat"],
-            raceID=json_data["raceID"],
-            status="frei",
-            wheels=json_data["id_wheels"]
+            status="offen",
+            wheels=json_data["wheels"],
         )
         new_Contigent.save_to_db()
 
         resp = {'status': 'success',
                 'message': 'Contigent created',
+                "id": int("{}".format(new_Contigent.id))
                 }
         return jsonify(resp, 200)
 
-
+# create wheels and return id in response
 @app.route('/wheel_cont/createWheels', methods=['POST'])
 def wheel_contigent_createWheels():
     json_data = request.json
@@ -57,23 +63,22 @@ def wheel_contigent_createWheels():
     new_wheels_id = newWheels.id
     resp = {'status': 'success',
             'message': 'Wheels created',
-            "id": new_wheels_id,
+            "id": int("{}".format(new_wheels_id)),
             }
     return jsonify(resp, 200)
 
 
+# create single wheel and return id in response
 @app.route('/wheel_cont/createWheel', methods=['POST'])
 def wheel_contigent_createSingleWheel():
     json_data = request.json
     if json_data["id"]!= "":
         newWheel = Wheel(
-            edit="",
             air_press=0,
             id_scan="",
         )
     else:
         newWheel = Wheel(
-            edit= json_data["edit"],
             air_press= json_data["air_press"],
             id_scan=json_data["air_press"],
             id = json_data["id_wheel"]
@@ -82,7 +87,7 @@ def wheel_contigent_createSingleWheel():
     new_wheel_id = newWheel.id
     resp = {'status': 'success',
             'message': 'Wheel created',
-            'id': new_wheel_id,
+            'id': int("{}".format(new_wheel_id)),
             }
     return jsonify(resp, 200)
 
@@ -91,7 +96,7 @@ def wheel_contigent_createSingleWheel():
 #user/raceDetails/get
 @app.route('/wheel_cont/getWheel', methods=['POST'])
 @jwt_required
-def get_wheel_id():
+def get_wheel_by_id():
     json_data = request.json
     resp = {'status': 'success',
             'data': Wheel.get_by_id(json_data["id"])
@@ -109,23 +114,45 @@ def get_wheels_id():
     return jsonify(resp, 200)
 
 
-@app.route('/wheel_cont/getContigent', methods=['POST'])
+@app.route('/wheel_cont/Set/raceID_cat_setNr', methods=['POST'])
 @jwt_required
-def get_wheels_id():
+def get_wheelsSet1():
     json_data = request.json
     resp = {'status': 'success',
-            'data': WheelContigent.get_wheels_id(json_data["id"])
+            'data': WheelSet.find_by_raceID_cat_setNr(json_data["raceID"],json_data["cat"],json_data["setNR"])
             }
     return jsonify(resp, 200)
 
-@app.route('/wheel_cont/getContigentID', methods=['POST'])
+
+@app.route('/wheel_cont/Set/id', methods=['POST'])
 @jwt_required
-def get_wheels_id():
+def get_wheelsSet2():
     json_data = request.json
     resp = {'status': 'success',
-            'data': WheelContigent.find_by_raceID_set(json_data["raceID"],json_data["set"])
+            'data': WheelSet.find_by_id(json_data["id"])
             }
     return jsonify(resp, 200)
+
+@app.route('/wheel_cont/Set/status_raceID', methods=['POST'])
+@jwt_required
+def get_wheelsSet3():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data': WheelSet.find_status_raceID(json_data["raceID"])
+            }
+    return jsonify(resp, 200)
+
+@app.route('/wheel_cont/Set/raceID_cat_subcat', methods=['POST'])
+@jwt_required
+def get_wheelsSet4():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data': WheelSet.find_by_raceID_cat_subcat(json_data["raceID"],json_data["cat"],json_data["subcat"])
+            }
+    return jsonify(resp, 200)
+
+
+
 
 
 

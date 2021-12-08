@@ -26,7 +26,7 @@ def wheel_contigent_create():
             order_end = json_data["order_end"],
         )
     else:
-        new_Contigent = WheelContigent(
+        new_Contigent = WheelSet(
             raceID=json_data["raceID"],
             setNr=json_data["setNr"],
             cat=json_data["cat"],
@@ -46,7 +46,7 @@ def wheel_contigent_create():
 @app.route('/wheel_cont/createWheels', methods=['POST'])
 def wheel_contigent_createWheels():
     json_data = request.json
-    if json_data["id"] !="":
+    if json_data["id"] =="":
         newWheels = Wheels(
             temp=0,
             FL=json_data["id_FL"],
@@ -56,8 +56,8 @@ def wheel_contigent_createWheels():
         )
     else:
         newWheels = Wheels(
-            temp= 0,
-            id =json_data["id_wheels"],
+            temp= json_data["temp"],
+            id =json_data["id"],
         )
     newWheels.save_to_db()
     new_wheels_id = newWheels.id
@@ -72,7 +72,7 @@ def wheel_contigent_createWheels():
 @app.route('/wheel_cont/createWheel', methods=['POST'])
 def wheel_contigent_createSingleWheel():
     json_data = request.json
-    if json_data["id"]!= "":
+    if json_data["id"]== "":
         newWheel = Wheel(
             air_press=0,
             id_scan="",

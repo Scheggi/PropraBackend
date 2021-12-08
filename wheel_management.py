@@ -48,7 +48,6 @@ def wheel_contigent_createWheels():
     json_data = request.json
     if json_data['id'] =='':
         newWheels = Wheels(
-            temp=0,
             FL=json_data['id_FL'],
             FR=json_data['id_FR'],
             BR=json_data['id_BR'],
@@ -56,7 +55,6 @@ def wheel_contigent_createWheels():
         )
     else:
         newWheels = Wheels(
-            temp= json_data['temp'],
             id =json_data['id'],
         )
     newWheels.save_to_db()

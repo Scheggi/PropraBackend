@@ -44,7 +44,7 @@ def wheel_contigent_create():
 
 # change variant,date,status,duration
 @app.route('/wheel_cont/changeSet', methods=['POST'])
-def wheel_contigent_create():
+def wheel_contigent_change():
     json_data = request.json
     object = WheelSet.get(int(json_data['id']))
     object.variant = json_data['variant']
@@ -100,7 +100,7 @@ def wheel_contigent_createSingleWheel():
 
 # create single wheel and return id in response
 @app.route('/wheel_cont/createWheel', methods=['POST'])
-def wheel_contigent_createSingleWheel2():
+def wheel_contigent_air_press():
     json_data = request.json
     if json_data['id']== '':
         newWheel = Wheel(
@@ -125,7 +125,7 @@ def wheel_contigent_createSingleWheel2():
 
 # Air_Press single wheel and return id in response
 @app.route('/wheel_cont/change_air_pressWheel', methods=['POST'])
-def wheel_contigent_createSingleWheel2():
+def wheel_contigent_Wheel_air():
     json_data = request.json
     object = Wheel.get(int(json_data['id']))
     object.air_press = json_data["air_press"]
@@ -138,7 +138,7 @@ def wheel_contigent_createSingleWheel2():
 
 #id_scan single wheel and return id in response
 @app.route('/wheel/set_id_tag', methods=['POST'])
-def wheel_contigent_createSingleWheel2():
+def wheel_contigent_id_scan():
     json_data = request.json
     object = Wheel.get(int(json_data['wheel_id']))
     object.id_scan = json_data["wheel_id_tag"]

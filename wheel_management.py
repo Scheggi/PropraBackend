@@ -163,7 +163,7 @@ def get_wheels2():
 
 @app.route('/wheel_cont/getWheels_withWheel', methods=['POST']) # check
 @jwt_required
-def get_wheels3():
+def get_wheels30():
     json_data = request.json
     object = Wheels.query.get(json_data['id'])
     object_FL = Wheel.query.get(int(object.FL))

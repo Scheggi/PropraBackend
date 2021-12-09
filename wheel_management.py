@@ -213,7 +213,7 @@ def get_wheels37():
     greatList = []
     list_setId = WheelSet.find_status_raceID(json_data['raceID'])
     for id in list_setId:
-        objectSet = WheelSet.query.get(id)
+        objectSet = WheelSet.get(id)
         object = Wheels.query.get(objectSet.wheels)
         object_FL = Wheel.query.get(object.FL)
         object_FR = Wheel.query.get(object.FR)

@@ -34,6 +34,7 @@ def wheel_contigent_change():
     object = WheelSet.query.get(int(json_data['id']))
     object.variant = json_data['variant']
     object.status = 'order'
+    object.temp = 99.99
     object.description = json_data['description']
     object.order_duration = json_data['order_duration']
     object.order_end = datetime.now()+timedelta(minutes=int(json_data['order_duration']))
@@ -84,6 +85,8 @@ def wheel_contigent_createSingleWheel():
     return jsonify(resp, 200)
 
 
+
+
 # create single wheel and return id in response
 @app.route('/wheel_cont/createWheel', methods=['POST'])
 def wheel_contigent_air_press():
@@ -96,7 +99,7 @@ def wheel_contigent_air_press():
     else:
         newWheel = Wheel(
             air_press= json_data['air_press'],
-            id_scan=json_data['air_press'],
+            id_scan=json_data['id_scan'],
             id = json_data['id']
         )
     newWheel.save_to_db()
@@ -173,6 +176,31 @@ def get_wheels3():
                      'FR': [int(object.FR), '{}'.format(object_FR.id_scan), '{}'.format(object_FR.air_press)],
                      'BL': [int(object.BL), '{}'.format(object_BL.id_scan), '{}'.format(object_BL.air_press)],
                      'BR': [int(object.BR), '{}'.format(object_BR.id_scan), '{}'.format(object_BR.air_press)]}
+            }
+    return jsonify(resp, 200)
+
+
+# get important ids and information
+#
+@app.route('/wheel_cont/getIdsWheelSet', methods=['POST']) # check
+@jwt_required
+def get_wheels3():
+    json_data = request.json
+    objectSet = WheelSet.query.get(json_data['id'])
+    object = objectSet.wheels
+    object_FL = Wheel.query.get(int(object.FL))
+    object_FR = Wheel.query.get(int(object.FR))
+    object_BL = Wheel.query.get(int(object.BL))
+    object_BR = Wheel.query.get(int(object.BR))
+
+    resp = {'status': 'success',
+            'data': {'setid':objectSet.id,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
+                     'temp':objectSet.temp,
+                     'fl_id':object_FL.id, 'fr_id':object_FR.id,'br_id':object_BR.id,'bl_id': object_BL.id,
+                     'fl_pressure': object_FL.air_press,'fr_pressure': object_FR.air_press,
+                     'bl_pressure': object_BL.air_press,'br_pressure': object_BR.air_press,
+                     'fl_wheel_id': object_FL.id_scan,'fr_wheel_id': object_FR.id_scan,
+                     'bl_wheel_id': object_BL.id_scan,'br_wheel_id': object_BR.id_scan}
             }
     return jsonify(resp, 200)
 

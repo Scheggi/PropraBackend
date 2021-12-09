@@ -129,7 +129,7 @@ def wheel_contigent_Wheel_air():
 @app.route('/wheel/set_id_tag', methods=['POST'])
 def wheel_contigent_id_scan():
     json_data = request.json
-    object = Wheel.query.get(int(json_data['wheel_id']))
+    object = Wheel.query.get(json_data['wheel_id'])
     object.id_scan = json_data["wheel_id_tag"]
     object.save_to_db()
     resp = {'status': 'success',

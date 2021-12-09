@@ -187,7 +187,7 @@ def get_wheels30():
 def get_wheels3():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
-    object = objectSet.wheels
+    object = Wheels.query.get(objectSet.wheels)
     object_FL = Wheel.query.get(object.FL)
     object_FR = Wheel.query.get(object.FR)
     object_BL = Wheel.query.get(object.BL)

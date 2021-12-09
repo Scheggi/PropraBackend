@@ -85,7 +85,7 @@ def wheel_contigent_createSingleWheel():
 
 # create single wheel and return id in response
 @app.route('/wheel_cont/createWheel', methods=['POST'])
-def wheel_contigent_createSingleWheel():
+def wheel_contigent_createSingleWheel2():
     json_data = request.json
     if json_data['id']== '':
         newWheel = Wheel(

@@ -4,7 +4,7 @@ from hmac import compare_digest as compare_hash
 from app import app, request, create_refresh_token, create_access_token, jsonify, jwt_refresh_token_required, \
     get_jwt_identity, jwt, get_raw_jwt, jwt_required
 from models import *
-from datetime import datetime
+from datetime import datetime,timedelta
 
 ######################### create###################################
 @app.route('/wheel_cont/createSet', methods=['POST'])
@@ -21,7 +21,7 @@ def wheel_contigent_create():
             variant = json_data['variant'],
             wheels = json_data['wheels'] ,
             temp = json_data['temp'],
-            order_start =json_data['order_start'],
+            order_start =datetime.now(),
             order_duration = json_data['order_duration'],
             order_end = json_data['order_end'],
         )
@@ -42,8 +42,23 @@ def wheel_contigent_create():
                 }
         return jsonify(resp, 200)
 
+# change variant,date,status,duration
+@app.route('/wheel_cont/changeSet', methods=['POST'])
+def wheel_contigent_create():
+    json_data = request.json
+    object = WheelSet.get(int(json_data['id']))
+    object.variant = json_data['variant']
+    object.status = 'order'
+    object.order_duration = json_data['order_duration']
+    object.order_end = datetime.now()+timedelta(minutes=int(json_data['order_duration']))
+    object.order_start =datetime.now()
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'Contigent created',
+            }
+    return jsonify(resp, 200)
 
-# cat
+
 
 # create wheels and return id in response
 @app.route('/wheel_cont/createWheels', methods=['POST'])
@@ -106,6 +121,34 @@ def wheel_contigent_createSingleWheel2():
             }
     return jsonify(resp, 200)
 
+
+
+# Air_Press single wheel and return id in response
+@app.route('/wheel_cont/change_air_pressWheel', methods=['POST'])
+def wheel_contigent_createSingleWheel2():
+    json_data = request.json
+    object = Wheel.get(int(json_data['id']))
+    object.air_press = json_data["air_press"]
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'air_press created',
+            }
+    return jsonify(resp, 200)
+
+
+#id_scan single wheel and return id in response
+@app.route('/wheel/set_id_tag', methods=['POST'])
+def wheel_contigent_createSingleWheel2():
+    json_data = request.json
+    object = Wheel.get(int(json_data['wheel_id']))
+    object.id_scan = json_data["wheel_id_tag"]
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'id_scan created',
+            }
+    return jsonify(resp, 200)
+
+
 ##############################get##########################
 
 #user/raceDetails/get
@@ -140,10 +183,10 @@ def get_wheels3():
     object_BR = Wheel.get(int(object.BR))
 
     resp = {'status': 'success',
-            'data': {"id_wheel":int(object.id),'FL':[int(object.FL),"{}".format(object_FL.id_scan),'{}'.format(object_FL.air_press)],
-                     'FR': [int(object.FR), "{}".format(object_FR.id_scan), '{}'.format(object_FR.air_press)],
-                     'BL': [int(object.BL), "{}".format(object_BL.id_scan), '{}'.format(object_BL.air_press)],
-                     'BR': [int(object.BR), "{}".format(object_BR.id_scan), '{}'.format(object_BR.air_press)]}
+            'data': {'id_wheel':int(object.id),'FL':[int(object.FL),'{}'.format(object_FL.id_scan),'{}'.format(object_FL.air_press)],
+                     'FR': [int(object.FR), '{}'.format(object_FR.id_scan), '{}'.format(object_FR.air_press)],
+                     'BL': [int(object.BL), '{}'.format(object_BL.id_scan), '{}'.format(object_BL.air_press)],
+                     'BR': [int(object.BR), '{}'.format(object_BR.id_scan), '{}'.format(object_BR.air_press)]}
             }
     return jsonify(resp, 200)
 
@@ -223,6 +266,8 @@ def get_wheelsSet11():
             'data': WheelSet.get_wheel_order_dict(json_data['raceID'])
             }
     return jsonify(resp, 200)
+
+
 
 
 

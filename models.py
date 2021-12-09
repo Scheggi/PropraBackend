@@ -272,6 +272,10 @@ class WheelSet(db.Model):
         return cls.query.filter_by(id=id).first()
 
     @classmethod
+    def getAllRaceID(cls,raceID):
+        return [x for x in cls.query.filter_by(raceID=raceID).all()]
+
+    @classmethod
     def find_by_raceID_cat_setNr(cls, raceID, cat, setNr):
         object = cls.query.filter_by(raceID=raceID, cat=cat, setNr=setNr).first()
         return [{'id': object.id, 'status': object.status}]

@@ -282,47 +282,62 @@ class WheelSet(db.Model):
         return list_objects
 
     @classmethod
-    def find_by_raceID_cat_subcat_status(cls, raceID, cat, subcat,status):
+    def find_by_raceID_cat_subcat_status(cls, raceID, cat, subcat, status):
         list_objects = []
         for x in cls.query.filter_by(raceID=raceID, cat=cat, subcat=subcat, status=status).all():
             list_objects.append({'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
                                  'status': x.status, 'wheels': x.wheels})
         return list_objects
-    
+
     @classmethod
-    def get_dropdownlist(cls,raceID):
-        list_free = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.cat,x.subcat), 'id': x.id}
-                     for x in cls.query.filter_by(raceID=raceID, status='free').all()]
+    def get_dropdownlist(cls, raceID):
+        list_free = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr, x.cat, x.subcat), 'id': x.id}
+                     for x in cls.query.filter_by(raceID=raceID).all()]
         list_used = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr, x.cat, x.subcat), 'id': x.id}
                      for x in cls.query.filter_by(raceID=raceID, status='used').all()]
         list_order = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr, x.cat, x.subcat), 'id': x.id}
-                     for x in cls.query.filter_by(raceID=raceID, status='order').all()]
-        return [list_free,list_order,list_used]
+                      for x in cls.query.filter_by(raceID=raceID, status='order').all()]
+        return [list_free, list_order, list_used]
 
     @classmethod
-    def get_wheel_order_dict(cls,raceID):
+    def get_wheel_order_dict(cls, raceID):
+        cat1 = [x.id for x in cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Cold').all()]
+        cat2 = [x.id for x in cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Medium').all()]
+        cat3 = [x.id for x in cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Hot').all()]
+        cat4 = [x.id for x in
+                cls.query.filter_by(raceID=raceID, status='free', cat='Inters', subcat='Intermediate').all()]
+        cat5 = [x.id for x in cls.query.filter_by(raceID=raceID, status='free', cat='Rain', subcat='DryWet').all()]
+        cat6 = [x.id for x in cls.query.filter_by(raceID=raceID, status='free', cat='Rain', subcat='HeavyWet').all()]
+        return [[len(cat1), cat1], [len(cat2), cat2], [len(cat3), cat3], [len(cat4), cat4], [len(cat5), cat5],
+                [len(cat6), cat6]]
+
+    @classmethod
+    def get_wheel_order_dict_old(cls, raceID):
         cat1 = [{'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                                 'status': x.status, 'wheels': x.wheels} for x in cls.query.filter_by(raceID=raceID,status='free',cat='Slicks',subcat='Cold').all()]
+                 'status': x.status, 'wheels': x.wheels} for x in
+                cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Cold').all()]
         cat2 = [{'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                                 'status': x.status, 'wheels': x.wheels} for x in  cls.query.filter_by(raceID=raceID,status='free',cat='Slicks',subcat='Medium').all()]
+                 'status': x.status, 'wheels': x.wheels} for x in
+                cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Medium').all()]
         cat3 = [{'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                                 'status': x.status, 'wheels': x.wheels} for x in  cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Hot').all()]
+                 'status': x.status, 'wheels': x.wheels} for x in
+                cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Hot').all()]
         cat4 = [{'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                                 'status': x.status, 'wheels': x.wheels} for x in  cls.query.filter_by(raceID=raceID, status='free', cat='Inters', subcat='Intermediate').all()]
+                 'status': x.status, 'wheels': x.wheels} for x in
+                cls.query.filter_by(raceID=raceID, status='free', cat='Inters', subcat='Intermediate').all()]
         cat5 = [{'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                                 'status': x.status, 'wheels': x.wheels} for x in  cls.query.filter_by(raceID=raceID, status='free', cat='Rain', subcat='DryWet').all()]
+                 'status': x.status, 'wheels': x.wheels} for x in
+                cls.query.filter_by(raceID=raceID, status='free', cat='Rain', subcat='DryWet').all()]
         cat6 = [{'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                                 'status': x.status, 'wheels': x.wheels} for x in  cls.query.filter_by(raceID=raceID, status='free', cat='Rain', subcat='HeavyWet').all()]
-        return [{"SlicksCold":[len(cat1),cat1],"SlicksMedium":[len(cat2),cat2],"SlicksHot":[len(cat3),cat3],
-                 "IntersIntermediate":[len(cat4),cat4],"RainDryWet":[len(cat5),cat5],"RainHeavyWet":[len(cat6),cat6]}]
-
-
+                 'status': x.status, 'wheels': x.wheels} for x in
+                cls.query.filter_by(raceID=raceID, status='free', cat='Rain', subcat='HeavyWet').all()]
+        return [{"SlicksCold": [len(cat1), cat1], "SlicksMedium": [len(cat2), cat2], "SlicksHot": [len(cat3), cat3],
+                 "IntersIntermediate": [len(cat4), cat4], "RainDryWet": [len(cat5), cat5],
+                 "RainHeavyWet": [len(cat6), cat6]}]
 
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
-
-
 
 
 class WheelContigent2(db.Model):

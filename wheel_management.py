@@ -111,7 +111,7 @@ def wheel_contigent_createSingleWheel():
 #user/raceDetails/get
 @app.route('/wheel_cont/getWheel', methods=['POST']) # check
 @jwt_required
-def get_wheel_by_id():
+def get_wheel1():
     json_data = request.json
     resp = {'status': 'success',
             'data': Wheel.get_by_id(json_data['id'])
@@ -121,7 +121,7 @@ def get_wheel_by_id():
 
 @app.route('/wheel_cont/getWheels', methods=['POST']) # check
 @jwt_required
-def get_wheels_id():
+def get_wheels2():
     json_data = request.json
     resp = {'status': 'success',
             'data': Wheels.get_by_id(json_data['id'])
@@ -131,7 +131,7 @@ def get_wheels_id():
 
 @app.route('/wheel_cont/getWheels_withWheel', methods=['POST']) # check
 @jwt_required
-def get_wheels_id():
+def get_wheels3():
     json_data = request.json
     object = Wheels.get(json_data['id'])
     object_FL = Wheel.get(int(object.FL))
@@ -150,7 +150,7 @@ def get_wheels_id():
 
 @app.route('/wheel_cont/Set/raceID_cat_subcat_status', methods=['POST']) #check
 @jwt_required
-def get_wheelsSet1():
+def get_wheelsSet4():
     json_data = request.json
     resp = {'status': 'success',
             'data': WheelSet.find_by_raceID_cat_subcat_status(json_data['raceID'],json_data['cat'],json_data['subcat'],json_data['status'])
@@ -160,7 +160,7 @@ def get_wheelsSet1():
 
 @app.route('/wheel_cont/Set/raceID_cat_setNr', methods=['POST']) #done
 @jwt_required
-def get_wheelsSet1():
+def get_wheelsSet5():
     json_data = request.json
     resp = {'status': 'success',
             'data': WheelSet.find_by_raceID_cat_setNr(json_data['raceID'],json_data['cat'],json_data['setNR'])
@@ -170,7 +170,7 @@ def get_wheelsSet1():
 
 @app.route('/wheel_cont/Set/id', methods=['POST']) #done
 @jwt_required
-def get_wheelsSet2():
+def get_wheelsSet6():
     json_data = request.json
     resp = {'status': 'success',
             'data': WheelSet.find_by_id(json_data['id'])
@@ -179,7 +179,7 @@ def get_wheelsSet2():
 
 @app.route('/wheel_cont/Set/status_raceID', methods=['POST'])
 @jwt_required
-def get_wheelsSet3():
+def get_wheelsSet7():
     json_data = request.json
     resp = {'status': 'success',
             'data': WheelSet.find_status_raceID(json_data['raceID'])
@@ -188,7 +188,7 @@ def get_wheelsSet3():
 
 @app.route('/wheel_cont/Set/raceID_cat_subcat', methods=['POST'])
 @jwt_required
-def get_wheelsSet4():
+def get_wheelsSet8():
     json_data = request.json
     resp = {'status': 'success',
             'data': WheelSet.find_by_raceID_cat_subcat(json_data['raceID'],json_data['cat'],json_data['subcat'])
@@ -197,15 +197,32 @@ def get_wheelsSet4():
 
 @app.route('/wheel_cont/Set/raceID_cat_subcat_status', methods=['POST'])
 @jwt_required
-def get_wheelsSet4():
+def get_wheelsSet9():
     json_data = request.json
     resp = {'status': 'success',
-            'data': WheelSet.find_by_raceID_cat_subcat_status(json_data['raceID'],json_data['cat'],json_data['subcat'],json_data['status'])
+            'data': WheelSet.find_by_raceID_cat_subcat_status(json_data['raceID'],json_data['cat'],
+                                                              json_data['subcat'],json_data['status'])
             }
     return jsonify(resp, 200)
 
 
+@app.route('/wheel_cont/Set/dropdown', methods=['POST'])
+@jwt_required
+def get_wheelsSet10():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data': WheelSet.get_dropdownlist(json_data['raceID'])
+            }
+    return jsonify(resp, 200)
 
+@app.route('/wheel_cont/Set/OrderWheelDict', methods=['POST'])
+@jwt_required
+def get_wheelsSet11():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data': WheelSet.get_wheel_order_dict(json_data['raceID'])
+            }
+    return jsonify(resp, 200)
 
 
 

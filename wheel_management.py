@@ -204,31 +204,32 @@ def get_wheels3():
             }
     return jsonify(resp, 200)
 
-"""
+
 # list great Tabular with all information
 @app.route('/wheel_cont/getgreatList', methods=['POST']) # check
 @jwt_required
 def get_wheels37():
     json_data = request.json
+    greatList = []
     list_setId = WheelSet.find_status_raceID(json_data['raceID'])
-
-    object = Wheels.query.get(objectSet.wheels)
-    object_FL = Wheel.query.get(object.FL)
-    object_FR = Wheel.query.get(object.FR)
-    object_BL = Wheel.query.get(object.BL)
-    object_BR = Wheel.query.get(object.BR)
-
+    for objectSet in list_setId:
+        object = Wheels.query.get(objectSet.wheels)
+        object_FL = Wheel.query.get(object.FL)
+        object_FR = Wheel.query.get(object.FR)
+        object_BL = Wheel.query.get(object.BL)
+        object_BR = Wheel.query.get(object.BR)
+        data= {'setNr':objectSet.setNr,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
+                         'temp':objectSet.temp, 'variant':objectSet.variant,
+                         'fl_pressure': object_FL.air_press,'fr_pressure': object_FR.air_press,
+                         'bl_pressure': object_BL.air_press,'br_pressure': object_BR.air_press,
+                         'fl_wheel_id': object_FL.id_scan,'fr_wheel_id': object_FR.id_scan,
+                         'bl_wheel_id': object_BL.id_scan,'br_wheel_id': object_BR.id_scan}
+        greatList.append(data)
     resp = {'status': 'success',
-            'data': {'setid':objectSet.id,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
-                     'temp':objectSet.temp, 'variant':objectSet.variant,
-                     'fl_id':object_FL.id, 'fr_id':object_FR.id,'br_id':object_BR.id,'bl_id': object_BL.id,
-                     'fl_pressure': object_FL.air_press,'fr_pressure': object_FR.air_press,
-                     'bl_pressure': object_BL.air_press,'br_pressure': object_BR.air_press,
-                     'fl_wheel_id': object_FL.id_scan,'fr_wheel_id': object_FR.id_scan,
-                     'bl_wheel_id': object_BL.id_scan,'br_wheel_id': object_BR.id_scan}
+            'data': greatList
             }
     return jsonify(resp, 200)
-"""
+
 
 
 @app.route('/wheel_cont/Set/raceID_cat_subcat_status', methods=['POST']) #check

@@ -188,10 +188,10 @@ def get_wheels3():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
     object = objectSet.wheels
-    object_FL = Wheel.query.get(int(object.FL))
-    object_FR = Wheel.query.get(int(object.FR))
-    object_BL = Wheel.query.get(int(object.BL))
-    object_BR = Wheel.query.get(int(object.BR))
+    object_FL = Wheel.query.get(object.FL)
+    object_FR = Wheel.query.get(object.FR)
+    object_BL = Wheel.query.get(object.BL)
+    object_BR = Wheel.query.get(object.BR)
 
     resp = {'status': 'success',
             'data': {'setid':objectSet.id,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,

@@ -126,7 +126,7 @@ def get_wheels_start():
 def get_weather_data():
     json_data = request.json
     resp = {'status': 'success',
-            'data':  Weather.find_by_id(json_data["raceID"])
+            'data':  Weather.find_by_id(int(json_data["raceID"]))
             }
     return jsonify(resp, 200)
 

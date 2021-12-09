@@ -17,6 +17,7 @@ def wheel_contigent_create():
         subcat=json_data['subcat'],
         status='free',
         wheels=json_data['wheels'],
+        description = '',
     )
     new_Contigent.save_to_db()
 
@@ -30,11 +31,12 @@ def wheel_contigent_create():
 @app.route('/wheel_cont/changeSet', methods=['POST'])
 def wheel_contigent_change():
     json_data = request.json
-    object = WheelSet.get(int(json_data['id']))
+    object = WheelSet.query.get(int(json_data['id']))
     object.variant = json_data['variant']
     object.status = 'order'
+    object.description = json_data['description']
     object.order_duration = json_data['order_duration']
-    object.order_end = datetime.now()#+timedelta(minutes=int(json_data['order_duration']))
+    object.order_end = datetime.now()+timedelta(minutes=int(json_data['order_duration']))
     object.order_start =datetime.now()
     object.save_to_db()
     resp = {'status': 'success',
@@ -73,7 +75,7 @@ def wheel_contigent_createWheels():
 @app.route('/wheel_cont/change_air_pressWheel', methods=['POST'])
 def wheel_contigent_createSingleWheel():
     json_data = request.json # id, air_press
-    object = Wheel.get(json_data['id'])
+    object = Wheel.query.get(json_data['id'])
     object.air_press= json_data['air_press']
     object.save_to_db()
     resp = {'status': 'success',
@@ -111,7 +113,7 @@ def wheel_contigent_air_press():
 @app.route('/wheel_cont/change_air_pressWheel', methods=['POST'])
 def wheel_contigent_Wheel_air():
     json_data = request.json
-    object = Wheel.get(int(json_data['id']))
+    object = Wheel.query.get(int(json_data['id']))
     object.air_press = json_data["air_press"]
     object.save_to_db()
     resp = {'status': 'success',
@@ -124,7 +126,7 @@ def wheel_contigent_Wheel_air():
 @app.route('/wheel/set_id_tag', methods=['POST'])
 def wheel_contigent_id_scan():
     json_data = request.json
-    object = Wheel.get(int(json_data['wheel_id']))
+    object = Wheel.query.get(int(json_data['wheel_id']))
     object.id_scan = json_data["wheel_id_tag"]
     object.save_to_db()
     resp = {'status': 'success',
@@ -160,11 +162,11 @@ def get_wheels2():
 @jwt_required
 def get_wheels3():
     json_data = request.json
-    object = Wheels.get(json_data['id'])
-    object_FL = Wheel.get(int(object.FL))
-    object_FR = Wheel.get(int(object.FR))
-    object_BL = Wheel.get(int(object.BL))
-    object_BR = Wheel.get(int(object.BR))
+    object = Wheels.query.get(json_data['id'])
+    object_FL = Wheel.query.get(int(object.FL))
+    object_FR = Wheel.query.get(int(object.FR))
+    object_BL = Wheel.query.get(int(object.BL))
+    object_BR = Wheel.query.get(int(object.BR))
 
     resp = {'status': 'success',
             'data': {'id_wheel':int(object.id),'FL':[int(object.FL),'{}'.format(object_FL.id_scan),'{}'.format(object_FL.air_press)],

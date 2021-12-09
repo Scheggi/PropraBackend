@@ -136,6 +136,10 @@ class WheelsStartAstrid(db.Model):
     numberOfSets = db.Column(db.String(120), nullable=False)
 
     @classmethod
+    def get(cls, id):
+        return cls.query.filter_by(id=id).first()
+
+    @classmethod
     def find_by_raceID(cls, raceID):
         return [{'id': x.id, 'set': x.set, 'cat': x.cat, 'subcat': x.subcat, 'identifier': x.identifier,
                  'numberOfSets': x.numberOfSets, 'raceID': x.raceID} for x in cls.query.filter_by(raceID=raceID).all()]
@@ -179,6 +183,10 @@ class Race_Details(db.Model):
     type = db.Column(db.String(120), nullable=False)
 
     @classmethod
+    def get(cls, id):
+        return cls.query.filter_by(id=id).first()
+
+    @classmethod
     def find_by_id(cls, id):
         return [{'place': x.place, 'date': x.date, 'type': x.type} for x in cls.query.filter_by(id=id).all()]
 
@@ -208,6 +216,10 @@ class Wheel(db.Model):
     id_scan = db.Column(db.String(120))
 
     @classmethod
+    def get(cls, id):
+        return cls.query.filter_by(id=id).first()
+
+    @classmethod
     def get_by_id(cls, id):
         object = cls.query.filter_by(id=id).first()
         return [{'id': object.id, 'air_press': object.air_press, 'id_scan': object.id_scan}]
@@ -224,6 +236,10 @@ class Wheels(db.Model):
     FR = db.Column(db.Integer, db.ForeignKey('wheel.id'))
     BL = db.Column(db.Integer, db.ForeignKey('wheel.id'))
     BR = db.Column(db.Integer, db.ForeignKey('wheel.id'))
+
+    @classmethod
+    def get(cls, id):
+        return cls.query.filter_by(id=id).first()
 
     @classmethod
     def get_by_id(cls, id):
@@ -249,6 +265,11 @@ class WheelSet(db.Model):
     order_start = db.Column(db.DateTime)
     order_duration = db.Column(db.Integer)
     order_end = db.Column(db.DateTime)
+    description = db.Column(db.String)
+
+    @classmethod
+    def get(cls,id):
+        return cls.query.filter_by(id=id).first()
 
     @classmethod
     def find_by_raceID_cat_setNr(cls, raceID, cat, setNr):

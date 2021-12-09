@@ -58,7 +58,6 @@ class Weather(db.Model):
         for entry in cls.query.filter_by(raceID=raceID).all():  # .order_by(desc(cls.datetime))
             listData.append({'temp_ground': entry.temp_ground, 'temp_air': entry.temp_air, 'datetime': entry.datetime,
                              'weather_des': entry.weather_des})
-        logger.debug(listData)
         return listData
 
     def save_to_db(self):

@@ -1,6 +1,4 @@
 from app import db
-from loguru import logger
-
 
 class TokenBlacklist(db.Model):
     __tablename__ = 'blacklist'
@@ -251,7 +249,7 @@ class WheelSet(db.Model):
     temp = db.Column(db.Float)
     order_start = db.Column(db.DateTime)
     order_duration = db.Column(db.Integer)
-    order_end = db.Column(db.String)
+    order_end = db.Column(db.DateTime)
 
     @classmethod
     def find_by_raceID_cat_setNr(cls, raceID, cat, setNr):

@@ -10,37 +10,21 @@ from datetime import datetime,timedelta
 @app.route('/wheel_cont/createSet', methods=['POST'])
 def wheel_contigent_create():
     json_data = request.json
-    if json_data['id']!='':
-        new_Contigent = WheelSet(
-            id = json_data['id'],
-            raceID=json_data['raceID'],
-            setNr=json_data['setNr'],
-            cat = json_data['cat'],
-            subcat = json_data['subcat'],
-            status = json_data['status'],
-            variant = json_data['variant'],
-            wheels = json_data['wheels'] ,
-            temp = json_data['temp'],
-            order_start =datetime.now(),
-            order_duration = json_data['order_duration'],
-            order_end = json_data['order_end'],
-        )
-    else:
-        new_Contigent = WheelSet(
-            raceID=json_data['raceID'],
-            setNr=json_data['setNr'],
-            cat=json_data['cat'],
-            subcat=json_data['subcat'],
-            status='free',
-            wheels=json_data['wheels'],
-        )
-        new_Contigent.save_to_db()
+    new_Contigent = WheelSet(
+        raceID=json_data['raceID'],
+        setNr=json_data['setNr'],
+        cat=json_data['cat'],
+        subcat=json_data['subcat'],
+        status='free',
+        wheels=json_data['wheels'],
+    )
+    new_Contigent.save_to_db()
 
-        resp = {'status': 'success',
-                'message': 'Contigent created',
-                'id': int('{}'.format(new_Contigent.id))
-                }
-        return jsonify(resp, 200)
+    resp = {'status': 'success',
+            'message': 'Contigent created',
+            'id': int('{}'.format(new_Contigent.id))
+            }
+    return jsonify(resp, 200)
 
 # change variant,date,status,duration
 @app.route('/wheel_cont/changeSet', methods=['POST'])
@@ -50,7 +34,7 @@ def wheel_contigent_change():
     object.variant = json_data['variant']
     object.status = 'order'
     object.order_duration = json_data['order_duration']
-    object.order_end = datetime.now()+timedelta(minutes=int(json_data['order_duration']))
+    object.order_end = datetime.now()#+timedelta(minutes=int(json_data['order_duration']))
     object.order_start =datetime.now()
     object.save_to_db()
     resp = {'status': 'success',

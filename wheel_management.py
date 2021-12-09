@@ -140,7 +140,7 @@ def wheel_contigent_id_scan():
 
 #id_scan single wheel and return id in response
 @app.route('/wheel/set_temp', methods=['POST'])
-def wheel_contigent_id_scan():
+def wheel_contigent_temp():
     json_data = request.json
     object = WheelSet.query.get(json_data['set_id'])
     object.temp = json_data["temp"]
@@ -208,7 +208,7 @@ def get_wheels3():
 
     resp = {'status': 'success',
             'data': {'setid':objectSet.id,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
-                     'temp':objectSet.temp, 'variant':objectSet.variant,
+                     'temp':objectSet.temp, 'variant':objectSet.variant, 'setNr':objectSet.setNr,
                      'fl_id':object_FL.id, 'fr_id':object_FR.id,'br_id':object_BR.id,'bl_id': object_BL.id,
                      'fl_pressure': object_FL.air_press,'fr_pressure': object_FR.air_press,
                      'bl_pressure': object_BL.air_press,'br_pressure': object_BR.air_press,

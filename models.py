@@ -297,7 +297,7 @@ class WheelSet(db.Model):
                      for x in cls.query.filter_by(raceID=raceID, status='used').all()]
         list_order = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr, x.cat, x.subcat), 'id': x.id}
                      for x in cls.query.filter_by(raceID=raceID, status='order').all()]
-        return [{'free':list_free,'used':list_used,'order':list_order}]
+        return [list_free,list_order,list_used]
 
     @classmethod
     def get_wheel_order_dict(cls,raceID):

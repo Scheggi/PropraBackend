@@ -138,6 +138,19 @@ def wheel_contigent_id_scan():
     return jsonify(resp, 200)
 
 
+#id_scan single wheel and return id in response
+@app.route('/wheel/set_temp', methods=['POST'])
+def wheel_contigent_id_scan():
+    json_data = request.json
+    object = WheelSet.query.get(json_data['set_id'])
+    object.temp = json_data["temp"]
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'id_scan created',
+            }
+    return jsonify(resp, 200)
+
+
 ##############################get##########################
 
 #user/raceDetails/get

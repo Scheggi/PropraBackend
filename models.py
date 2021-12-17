@@ -16,7 +16,6 @@ class TokenBlacklist(db.Model):
     def __repr__(self):
         return '<TokenBlacklist %r>' % self.jti
 
-
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -86,6 +85,8 @@ class Wheels_old(db.Model):
     wheel_editBL = db.Column(db.String(120), nullable=False)
     wheel_editBR = db.Column(db.String(120), nullable=False)
 
+
+    #models
     @classmethod
     def find_by_id(cls, raceID):
         listWheel = []
@@ -173,7 +174,6 @@ class WheelsOrder(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
-
 
 class Race_Details(db.Model):
     __tablename__ = 'race_details'

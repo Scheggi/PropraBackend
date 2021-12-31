@@ -65,50 +65,6 @@ class Weather(db.Model):
         db.session.commit()
 
 
-class Wheels_old(db.Model):
-    __tablename__ = 'wheels_old'
-    id = db.Column(db.Integer, primary_key=True)
-    raceID = db.Column(db.Integer)
-    setnumber = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String, nullable=False)
-    cat = db.Column(db.String(120), nullable=False)
-    subcat = db.Column(db.String(120), nullable=False)
-    air_pressureFL = db.Column(db.Float, nullable=False)
-    air_pressureFR = db.Column(db.Float, nullable=False)
-    air_pressureBL = db.Column(db.Float, nullable=False)
-    air_pressureBR = db.Column(db.Float, nullable=False)
-    wheel_idFL = db.Column(db.String(120), nullable=False)
-    wheel_idFR = db.Column(db.String(120), nullable=False)
-    wheel_idBL = db.Column(db.String(120), nullable=False)
-    wheel_idBR = db.Column(db.String(120), nullable=False)
-    wheel_editFL = db.Column(db.String(120), nullable=False)
-    wheel_editFR = db.Column(db.String(120), nullable=False)
-    wheel_editBL = db.Column(db.String(120), nullable=False)
-    wheel_editBR = db.Column(db.String(120), nullable=False)
-
-    @classmethod
-    def find_by_id(cls, raceID):
-        listWheel = []
-        for item in cls.query:
-            listWheel.append({'id': item.id, 'air_pressureFL': item.air_pressureFL,
-                              'wheel_editBR': item.wheel_editBR, 'wheel_editFR': item.wheel_editFR,
-                              'wheel_editBL': item.wheel_editBL, 'wheel_editFL': item.wheel_editFL,
-                              'air_pressureFR': item.air_pressureFR, 'air_pressureBL': item.air_pressureBL,
-                              'air_pressureBR': item.air_pressureBR, 'air_pressureBL': item.air_pressureBL,
-                              'air_pressureFR': item.air_pressureFR, 'air_pressureFL': item.air_pressureFL,
-                              'status': item.status
-                              })
-        return listWheel
-
-    @classmethod
-    def find_set_by_id(cls, id, set):
-        return cls.query.filter_by(groupid=id, set=set).first()
-
-    def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
-
-
 class Formel(db.Model):
     __tablename__ = 'formel'
     id = db.Column(db.Integer, primary_key=True)
@@ -213,6 +169,7 @@ class Wheel(db.Model):
     tablename = 'wheel'
     id = db.Column(db.Integer, primary_key=True)
     air_press = db.Column(db.Float)
+    hot_air_press = db.Column(db.Float)
     id_scan = db.Column(db.String(120))
 
     @classmethod
@@ -261,7 +218,12 @@ class WheelSet(db.Model):
     status = db.Column(db.String(120))  # 0 or 1
     variant = db.Column(db.String)
     wheels = db.Column(db.Integer, db.ForeignKey('wheels.id'))
-    temp = db.Column(db.Float)
+    temp_air = db.Column(db.Float)
+    temp_heat = db.Column(db.Float)
+    bleed_initial = db.Column(db.Float)
+    bleed_hot = db.Column(db.Float)
+    heat_start = db.Column(db.DateTime)
+    heat_duration = db.Column(db.Integer)
     order_start = db.Column(db.DateTime)
     order_duration = db.Column(db.Integer)
     order_end = db.Column(db.DateTime)

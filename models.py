@@ -110,7 +110,7 @@ class WheelsStartAstrid(db.Model):
 
 
 class WheelsOrder(db.Model):
-    __tablename__ = 'wheels_order'
+    __tablename__ = 'wheels_order'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer)
     tyretype = db.Column(db.String(120), nullable=False)

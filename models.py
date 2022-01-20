@@ -65,6 +65,27 @@ class Weather(db.Model):
         db.session.commit()
 
 
+class FormelReifendruck(db.Model):
+    --tablename = 'formelReifendruck'
+    id = db.Column(db.Integer, primary_key=True)
+    raceID = db.Column(db.Integer,nullable=False)
+    air_temp=db.Column(db.Float, nullable=False)
+    track_temp=db.Column(db.Float,nullable=False)
+    air_pressureFL=db.Column(db.Float,nullable=False)
+    air_pressureFR=db.Column(db.Float,nullable=False)
+    air_pressureBL=db.Column(db.Float, nullable=False)
+    air_pressureBR=db.Column(db.Float, nullable=False)
+    variable1=db.Column(db.Float, nullable=False)
+    variable2=db.Column(db.Float, nullable=False)
+    variable3=db.Column(db.Float, nullable=False)
+    variable4=db.Column(db.Float, nullable=False)
+
+    @classmethod
+    def get_all(cls):
+        #TODO alles zum abspeichern
+        return []
+
+
 class Formel(db.Model):
     __tablename__ = 'formel'
     id = db.Column(db.Integer, primary_key=True)
@@ -110,7 +131,7 @@ class WheelsStartAstrid(db.Model):
 
 
 class WheelsOrder(db.Model):
-    __tablename__ = 'wheels_order'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    __tablename__ = 'wheels_order'
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer)
     tyretype = db.Column(db.String(120), nullable=False)

@@ -150,6 +150,27 @@ def wheel_contigent_temp():
             }
     return jsonify(resp, 200)
 
+# save formel details
+@app.route('wheel_cont/saveformel',methods=['Post'])
+def save_formel():
+    data = ['setid', 'status', 'cat','subcat','temp_air', 'variant', 'setNr',
+            'fl_id', 'fr_id', 'br_id', 'bl_id',
+            'fl_pressure', 'fr_pressure',
+            'bl_pressure', 'br_pressure',
+            'fl_wheel_id', 'fr_wheel_id',
+            'bl_wheel_id', 'br_wheel_id',
+            'bleed_initial','bleed_hot']
+
+    json_data = request.json
+    object = WheelSet.get(json_data['setid'])
+    for k,v in json_data.items():
+        if k in data.keys():
+            object.k=v
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'formel saved',
+            }
+    return jsonify(resp, 200)
 
 ##############################get##########################
 

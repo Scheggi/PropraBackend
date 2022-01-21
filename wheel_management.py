@@ -34,7 +34,7 @@ def wheel_contigent_change():
     object = WheelSet.query.get(int(json_data['id']))
     object.variant = json_data['variant']
     object.status = 'order'
-    object.temp = 99.99
+    object.temp_air = 99.99
     object.description = json_data['description']
     object.order_duration = json_data['order_duration']
     object.order_end = datetime.now()+timedelta(minutes=int(json_data['order_duration']))
@@ -143,7 +143,7 @@ def wheel_contigent_id_scan():
 def wheel_contigent_temp():
     json_data = request.json
     object = WheelSet.query.get(json_data['set_id'])
-    object.temp = json_data["temp"]
+    object.temp_air = json_data["temp_air"]
     object.save_to_db()
     resp = {'status': 'success',
             'message': 'id_scan created',
@@ -250,7 +250,7 @@ def get_wheels3():
 
     resp = {'status': 'success',
             'data': {'setid':objectSet.id,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
-                     'temp_air':objectSet.temp, 'variant':objectSet.variant, 'setNr':objectSet.setNr,
+                     'temp_air':objectSet.temp_air, 'variant':objectSet.variant, 'setNr':objectSet.setNr,
                      'fl_id':object_FL.id, 'fr_id':object_FR.id,'br_id':object_BR.id,'bl_id': object_BL.id,
                      'fl_pressure': object_FL.air_press,'fr_pressure': object_FR.air_press,
                      'bl_pressure': object_BL.air_press,'br_pressure': object_BR.air_press,
@@ -277,7 +277,7 @@ def get_wheels37():
         object_BL = Wheel.query.get(object.BL)
         object_BR = Wheel.query.get(object.BR)
         data= {'setNr':objectSet.setNr,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
-                         'temp':objectSet.temp, 'variant':objectSet.variant,
+                         'temp_air':objectSet.temp_air, 'variant':objectSet.variant,
                          'fl_pressure': object_FL.air_press,'fr_pressure': object_FR.air_press,
                          'bl_pressure': object_BL.air_press,'br_pressure': object_BR.air_press,
                          'fl_wheel_id': object_FL.id_scan,'fr_wheel_id': object_FR.id_scan,

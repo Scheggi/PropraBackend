@@ -267,7 +267,7 @@ class WheelSet(db.Model):
     def find_by_id(cls, id):
         x = cls.query.filter_by(id=id).first()
         return [{'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                 'status': x.status, 'wheels': x.wheels, 'temp': x.temp, 'variant': x.variant,
+                 'status': x.status, 'wheels': x.wheels, 'temp_air': x.temp_air, 'variant': x.variant,
                  'order_start': x.order_start, 'order_duration': x.order_duration,
                  'order_end': x.order_end}]
 
@@ -281,7 +281,7 @@ class WheelSet(db.Model):
         list_objects = []
         for x in cls.query.filter_by(raceID=raceID, cat=cat, subcat=subcat).all():
             list_objects.append({'id': x.id, 'raceID': x.raceID, 'setNR': x.setNr, 'cat': x.cat, 'subcat': x.subcat,
-                                 'status': x.status, 'wheels': x.wheels, 'temp': x.temp, 'variant': x.variant,
+                                 'status': x.status, 'wheels': x.wheels, 'temp_air': x.temp_air, 'variant': x.variant,
                                  'order_start': x.order_start, 'order_duration': x.order_duration,
                                  'order_end': x.order_end})
         return list_objects

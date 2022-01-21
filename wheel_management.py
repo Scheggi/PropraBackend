@@ -257,7 +257,7 @@ def get_wheels3():
                      'fl_wheel_id': object_FL.id_scan,'fr_wheel_id': object_FR.id_scan,
                      'bl_wheel_id': object_BL.id_scan,'br_wheel_id': object_BR.id_scan,
                      'bleed_initial': objectSet.bleed_initial,
-                     'bleed_hot':objectSet.bleed_hot, 'heat_duration':objectSet.heat_duration,
+                     'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end , 'heat_duration':objectSet.heat_duration,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)
@@ -271,7 +271,7 @@ def get_wheels3():
     object = Wheels.query.get(objectSet.wheels)
 
     resp = {'status': 'success',
-            'data': {'bleed_hot':objectSet.bleed_hot, 'heat_duration':objectSet.heat_duration,
+            'data': {'order_end':objectSet.order_end, 'heat_duration':objectSet.heat_duration,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)

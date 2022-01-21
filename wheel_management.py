@@ -28,6 +28,30 @@ def wheel_contigent_create():
             }
     return jsonify(resp, 200)
 
+@app.route('/wheel_cont/createReifencontigent', methods=['POST'])
+def wheel_contigent_create():
+    json_data = request.json
+    new_Contigent = FormelReifendruck(
+        raceID=json_data['raceID'],
+        air_temp = json_data['air_temp'],
+        track_temp = json_data['track_temp'],
+        air_pressureFL = json_data['air_pressureFL'],
+        air_pressureFR=json_data['air_pressureFR'],
+        air_pressureBL=json_data['air_pressureBL'],
+        air_pressureBR=json_data['air_pressureBR'],
+        variable1 = json_data['variable1'],
+        variable2=json_data['variable2'],
+        variable3=json_data['variable3'],
+        variable4=json_data['variable4']
+    )
+    new_Contigent.save_to_db()
+
+    resp = {'status': 'success',
+            'message': 'Contigent created',
+            'id': int('{}'.format(new_Contigent.id))
+            }
+    return jsonify(resp, 200)
+
 # change variant,date,status,duration
 @app.route('/wheel_cont/changeSet', methods=['POST'])
 def wheel_contigent_change():
@@ -197,8 +221,6 @@ def save_status():
             'message': 'status saved',
             }
     return jsonify(resp, 200)
-
-
 
 ##############################get##########################
 

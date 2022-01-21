@@ -301,7 +301,6 @@ class WheelSet(db.Model):
         return [list_free, list_order, list_used, list_astrid]
 
 
-
     @classmethod
     def get_wheel_order_dict(cls, raceID):
         cat1 = [x.id for x in cls.query.filter_by(raceID=raceID, status='free', cat='Slicks', subcat='Cold').all()]

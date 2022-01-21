@@ -183,7 +183,7 @@ def save_bleed():
 
 # save formel details
 @app.route('/wheel_cont/saveStatus',methods=['Post'])
-def save_bleed():
+def save_status():
     json_data = request.json
     object = WheelSet.get(json_data['setid'])
     object.status = json_data['status']

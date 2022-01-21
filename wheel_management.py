@@ -257,7 +257,22 @@ def get_wheels3():
                      'fl_wheel_id': object_FL.id_scan,'fr_wheel_id': object_FR.id_scan,
                      'bl_wheel_id': object_BL.id_scan,'br_wheel_id': object_BR.id_scan,
                      'bleed_initial': objectSet.bleed_initial,
-                     'bleed_hot':objectSet.bleed_hot}
+                     'bleed_hot':objectSet.bleed_hot, 'heat_duration':objectSet.heat_duration,
+                     'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
+            }
+    return jsonify(resp, 200)
+
+
+@app.route('/wheel_cont/getIdsWheaterInformation', methods=['POST']) # check
+@jwt_required
+def get_wheels3():
+    json_data = request.json
+    objectSet = WheelSet.query.get(json_data['id'])
+    object = Wheels.query.get(objectSet.wheels)
+
+    resp = {'status': 'success',
+            'data': {'bleed_hot':objectSet.bleed_hot, 'heat_duration':objectSet.heat_duration,
+                     'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)
 

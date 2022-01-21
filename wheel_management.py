@@ -167,6 +167,32 @@ def save_formel():
             }
     return jsonify(resp, 200)
 
+
+# save formel details
+@app.route('wheel_cont/saveBleed',methods=['Post'])
+def save_bleed():
+    json_data = request.json
+    object = WheelSet.get(json_data['setid'])
+    object.bleed_initial = json_data['bleed_initial']
+    object.bleed_hot = json_data['bleed_hot']
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'bleed saved',
+            }
+    return jsonify(resp, 200)
+
+# save formel details
+@app.route('wheel_cont/saveStatus',methods=['Post'])
+def save_bleed():
+    json_data = request.json
+    object = WheelSet.get(json_data['setid'])
+    object.status = json_data['status']
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'status saved',
+            }
+    return jsonify(resp, 200)
+
 ##############################get##########################
 
 #user/raceDetails/get

@@ -265,7 +265,7 @@ def get_wheels3():
 
 @app.route('/wheel_cont/getIdsWheaterInformation', methods=['POST']) # check
 @jwt_required
-def get_wheels3():
+def get_wheater_timer():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
     object = Wheels.query.get(objectSet.wheels)

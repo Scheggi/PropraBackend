@@ -82,8 +82,17 @@ class FormelReifendruck(db.Model):
 
     @classmethod
     def get_all(cls):
-        #TODO alles zum abspeichern
-        return []
+        x = cls.query.filter_by(raceID=raceID).first()
+        return [{'id': x.id, 'raceID': x.raceID, 'temp_air': x.temp_air,
+                 'track_temp': x.track_temp,
+                 'air_pressureFL':x.air_pressureFL,'air_pressureFR': x.air_pressureFR,
+                 'air_pressureBL':x.air_pressureBL,'air_pressureBR': x.air_pressureBR,
+                 'variable1':x.variable1,'variable2':x.variable2,
+                 'variable3':x.variable3,'variable4':x.variable4}]
+    
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
 
 
 class Formel(db.Model):
@@ -130,27 +139,6 @@ class WheelsStartAstrid(db.Model):
         db.session.commit()
 
 
-class WheelsOrder(db.Model):
-    __tablename__ = 'wheels_order'
-    id = db.Column(db.Integer, primary_key=True)
-    raceID = db.Column(db.Integer)
-    tyretype = db.Column(db.String(120), nullable=False)
-    tyremix = db.Column(db.String(120), nullable=False)
-    term = db.Column(db.String(120), nullable=False)
-    variant = db.Column(db.String(120), nullable=False)
-    number = db.Column(db.String(120), nullable=False)
-    orderdate = db.Column(db.String(120), nullable=False)
-    ordertime = db.Column(db.String(120), nullable=False)
-    pickuptime = db.Column(db.String(120), nullable=False)
-
-    @classmethod
-    def find_by_id(cls, raceID):
-        return cls.query.filter_by(raceID=raceID).all()
-
-    def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
-
 
 class Race_Details(db.Model):
     __tablename__ = 'race_details'
@@ -191,6 +179,7 @@ class Wheel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     air_press = db.Column(db.Float)
     hot_air_press = db.Column(db.Float)
+    bleed_press =db.Column(db.Float)
     id_scan = db.Column(db.String(120))
 
     @classmethod
@@ -249,6 +238,11 @@ class WheelSet(db.Model):
     order_duration = db.Column(db.Integer)
     order_end = db.Column(db.DateTime)
     description = db.Column(db.String)
+    heat_press_front = db.Column(db.Float)
+    heat_press_back = db.Column(db.Float)
+    heat_press_timestamp = db.Column(db.DateTime)
+    gebleeded = db.Column(db.String)
+    runtime = db.Column(db.String)
 
     @classmethod
     def get(cls,id):
@@ -302,7 +296,11 @@ class WheelSet(db.Model):
                      for x in cls.query.filter_by(raceID=raceID, status='used').all()]
         list_order = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr, x.cat, x.subcat), 'id': x.id}
                       for x in cls.query.filter_by(raceID=raceID, status='order').all()]
-        return [list_free, list_order, list_used]
+        list_astrid = [{'name': 'SetNr.{}_{}_{}_{}'.format(x.description,x.order_start, x.cat, x.subcat), 'id': x.id}
+                      for x in cls.query.filter_by(raceID=raceID).all() if x.status != 'free']
+        return [list_free, list_order, list_used, list_astrid]
+
+
 
     @classmethod
     def get_wheel_order_dict(cls, raceID):

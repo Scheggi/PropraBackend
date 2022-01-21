@@ -18,6 +18,7 @@ def wheel_contigent_create():
         status='free',
         wheels=json_data['wheels'],
         description = '',
+        gebleeded = 'nein'
     )
     new_Contigent.save_to_db()
 
@@ -150,6 +151,10 @@ def wheel_contigent_temp():
             }
     return jsonify(resp, 200)
 
+
+
+
+
 # save formel details
 @app.route('/wheel_cont/saveformel',methods=['Post'])
 def save_formel():
@@ -205,6 +210,16 @@ def get_wheel1():
             }
     return jsonify(resp, 200)
 
+#user/formelDetails/get
+@app.route('/wheel_cont/getReifendruck', methods=['POST']) # check
+@jwt_required
+def get_Reifendruck():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data': FormelReifendruck.get_all(json_data['raceID'])
+            }
+    return jsonify(resp, 200)
+
 
 @app.route('/wheel_cont/getWheels', methods=['POST']) # check
 @jwt_required
@@ -247,17 +262,23 @@ def get_wheels3():
     object_FR = Wheel.query.get(object.FR)
     object_BL = Wheel.query.get(object.BL)
     object_BR = Wheel.query.get(object.BR)
+    if isinstance(objectSet.heat_duration,int) and isinstance(objectSet.heat_start,datetime):
+        heat_end =  objectSet.heat_start + timedelta(minutes=int(objectSet.heat_duration))
+    else: heat_end = ''
 
     resp = {'status': 'success',
             'data': {'setid':objectSet.id,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
                      'temp_air':objectSet.temp_air, 'variant':objectSet.variant, 'setNr':objectSet.setNr,
+                     'gebleeded': objectSet.gebleeded, 
                      'fl_id':object_FL.id, 'fr_id':object_FR.id,'br_id':object_BR.id,'bl_id': object_BL.id,
                      'fl_pressure': object_FL.air_press,'fr_pressure': object_FR.air_press,
                      'bl_pressure': object_BL.air_press,'br_pressure': object_BR.air_press,
                      'fl_wheel_id': object_FL.id_scan,'fr_wheel_id': object_FR.id_scan,
                      'bl_wheel_id': object_BL.id_scan,'br_wheel_id': object_BR.id_scan,
                      'bleed_initial': objectSet.bleed_initial,
-                     'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end , 'heat_duration':objectSet.heat_duration,
+                     'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end ,
+                     'heat_start':objectSet.heat_start, 'heat_duration':objectSet.heat_duration,
+                     'heat_end': heat_end, 
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)

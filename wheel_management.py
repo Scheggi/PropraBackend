@@ -29,7 +29,7 @@ def wheel_contigent_create():
     return jsonify(resp, 200)
 
 @app.route('/wheel_cont/createReifencontigent', methods=['POST'])
-def wheel_contigent_create():
+def wheel_reifencontigent_create():
     json_data = request.json
     new_Contigent = FormelReifendruck(
         raceID=json_data['raceID'],

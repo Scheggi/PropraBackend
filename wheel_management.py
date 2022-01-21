@@ -151,7 +151,7 @@ def wheel_contigent_temp():
     return jsonify(resp, 200)
 
 # save formel details
-@app.route('wheel_cont/saveformel',methods=['Post'])
+@app.route('/wheel_cont/saveformel',methods=['Post'])
 def save_formel():
     data = ['setid', 'status', 'cat','subcat','temp_air', 'variant', 'setNr',
             'bleed_initial','bleed_hot']
@@ -169,7 +169,7 @@ def save_formel():
 
 
 # save formel details
-@app.route('wheel_cont/saveBleed',methods=['Post'])
+@app.route('/wheel_cont/saveBleed',methods=['Post'])
 def save_bleed():
     json_data = request.json
     object = WheelSet.get(json_data['setid'])
@@ -182,7 +182,7 @@ def save_bleed():
     return jsonify(resp, 200)
 
 # save formel details
-@app.route('wheel_cont/saveStatus',methods=['Post'])
+@app.route('/wheel_cont/saveStatus',methods=['Post'])
 def save_bleed():
     json_data = request.json
     object = WheelSet.get(json_data['setid'])

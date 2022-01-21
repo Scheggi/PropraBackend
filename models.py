@@ -66,7 +66,7 @@ class Weather(db.Model):
 
 
 class FormelReifendruck(db.Model):
-    --tablename = 'formelReifendruck'
+    __tablename__ = 'formelReifendruck'
     id = db.Column(db.Integer, primary_key=True)
     raceID = db.Column(db.Integer,nullable=False)
     air_temp=db.Column(db.Float, nullable=False)

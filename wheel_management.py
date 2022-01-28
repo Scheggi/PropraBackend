@@ -302,7 +302,7 @@ def get_wheels3():
                      'bleed_initial': objectSet.bleed_initial,
                      'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end ,
                      'heat_start':objectSet.heat_start, 'heat_duration':objectSet.heat_duration,
-                     'heat_end': heat_end, 
+                     'heat_end': heat_end, 'temp_heat':objectSect.temp_heat,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)

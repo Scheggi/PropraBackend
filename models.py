@@ -83,7 +83,7 @@ class FormelReifendruck(db.Model):
     @classmethod
     def get_all(cls):
         x = cls.query.filter_by(raceID=raceID).first()
-        return [{'id': x.id, 'raceID': x.raceID, 'temp_air': x.temp_air,
+        return [{'id': x.id, 'raceID': x.raceID, 'air_temp': x.air_temp,
                  'track_temp': x.track_temp,
                  'air_pressureFL':x.air_pressureFL,'air_pressureFR': x.air_pressureFR,
                  'air_pressureBL':x.air_pressureBL,'air_pressureBR': x.air_pressureBR,

@@ -70,8 +70,6 @@ def wheel_contigent_change():
             }
     return jsonify(resp, 200)
 
-
-
 # create wheels and return id in response
 @app.route('/wheel_cont/createWheels', methods=['POST'])
 def wheel_contigent_createWheels():
@@ -302,7 +300,7 @@ def get_wheels3():
                      'bleed_initial': objectSet.bleed_initial,
                      'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end ,
                      'heat_start':objectSet.heat_start, 'heat_duration':objectSet.heat_duration,
-                     'heat_end': heat_end, 'temp_heat':objectSect.temp_heat,
+                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)

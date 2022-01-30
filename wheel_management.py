@@ -4,8 +4,8 @@ from hmac import compare_digest as compare_hash
 from app import app, request, create_refresh_token, create_access_token, jsonify, jwt_refresh_token_required, \
     get_jwt_identity, jwt, get_raw_jwt, jwt_required
 from models import *
-from datetime import datetime, timedelta
-
+#from datetime import datetime, timedelta
+import datetime
 
 ######################### create###################################
 @app.route('/wheel_cont/createSet', methods=['POST'])
@@ -65,8 +65,8 @@ def wheel_contigent_change():
     object.temp_air = 99.99
     object.description = json_data['description']
     object.order_duration = json_data['order_duration']
-    object.order_end = datetime.now() + timedelta(minutes=int(json_data['order_duration']))
-    object.order_start = datetime.now()
+    object.order_end = datetime.datetime.now() + timedelta(minutes=int(json_data['order_duration']))
+    object.order_start = datetime.datetime.now()
     object.save_to_db()
     resp = {'status': 'success',
             'message': 'Contigent created',
@@ -311,7 +311,7 @@ def save_wheelSet():
 def heat_start():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
-    objectSet.heat_start = datetime.now()
+    objectSet.heat_start = datetime.datetime.now()
 
     objectSet.save_to_db()
     resp = {'status': 'success',
@@ -346,10 +346,10 @@ def save_timer_changes():
     object = Timer.query.filter_by(raceID=json_data['raceID']).first()
     for entry in json_data['liste']:
         if entry[0].find('heat') != -1:
-            object.heat_start = datetime.now()
+            object.heat_start = datetime.datetime.now()
             object.heat_duration = entry[1]
         if entry[0].find('order') != -1:
-            object.order_start = datetime.now()
+            object.order_start = datetime.datetime.now()
             object.order_duration = entry[1]
     object.save_to_db()
     resp = {'status': 'success',
@@ -461,7 +461,7 @@ def get_wheels3():
     object_BL = Wheel.query.get(object.BL)
     object_BR = Wheel.query.get(object.BR)
     if isinstance(objectSet.heat_duration, int) and isinstance(objectSet.heat_start, datetime.date):
-        heat_end = objectSet.heat_start + timedelta(minutes=int(objectSet.heat_duration))
+        heat_end = objectSet.heat_start + datetime.timedelta(minutes=int(objectSet.heat_duration))
     else:
         heat_end = ''
 
@@ -521,7 +521,7 @@ def get_wheels37():
         object_BL = Wheel.query.get(object.BL)
         object_BR = Wheel.query.get(object.BR)
         if isinstance(objectSet.heat_duration, int) and isinstance(objectSet.heat_start, datetime.date):
-            heat_end = objectSet.heat_start + timedelta(minutes=int(objectSet.heat_duration))
+            heat_end = objectSet.heat_start + datetime.timedelta(minutes=int(objectSet.heat_duration))
         else:
             heat_end = ''
         data = {'setid': objectSet.id, 'status': objectSet.status, 'cat': objectSet.cat, 'subcat': objectSet.subcat,

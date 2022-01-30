@@ -233,6 +233,7 @@ def save_wheelSet():
     objectSet.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet saved',
+            'test':'variant_{}'.format(objectSet.variant)
             }
     return jsonify(resp, 200)
 

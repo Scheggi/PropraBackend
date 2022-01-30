@@ -95,6 +95,26 @@ class FormelReifendruck(db.Model):
         db.session.commit()
 
 
+class Timer(db.Model):
+    __tablename__ = 'timer'
+    id = db.Column(db.Integer, primary_key=True)
+    heat_start = db.Column(db.DateTime)
+    heat_duration = db.Column(db.Integer)
+    order_start = db.Column(db.DateTime)
+    order_duration = db.Column(db.Integer)
+    raceID = db.Column(db.Integer, nullable=False)
+
+    @classmethod
+    def get_all(cls):
+        return [{'heat_duration': x.heat_duration, 'heat_duration':x.heat_duration,
+               'order_start': x.order_start,'order_duration':x.order_duration, 'raceID':x.raceID } for x in
+                cls.query]
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+
 class Formel(db.Model):
     __tablename__ = 'formel'
     id = db.Column(db.Integer, primary_key=True)

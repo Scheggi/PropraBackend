@@ -224,8 +224,8 @@ def get_attribute_wheelSingle(object,attribute,value):
 
 
 # save single wheel
-@app.route('/wheel_cont/change_wheelSet',methods=['Post'])
-def save_wheelSet():
+@app.route('/wheel_cont/change_wheelSet_old',methods=['Post'])
+def save_wheelSet_old():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
     data = {'setid': objectSet.id, 'status': objectSet.status, 'cat': objectSet.cat, 'subcat': objectSet.subcat,
@@ -250,6 +250,42 @@ def save_wheelSet():
             'test':'variant_{}'.format(objectSet.variant)
             }
     return jsonify(resp, 200)
+
+
+@app.route('/wheel_cont/change_wheelSet',methods=['Post'])
+def save_wheelSet():
+    json_data = request.json
+    objectSet = WheelSet.query.get(json_data['id'])
+    for entry in json_data['liste_attribute']:
+        if entry[0] =='setid': objectSet.id = entry[1]
+        elif entry[0] == 'status': objectSet.status = entry[1]
+        elif entry[0] == 'cat':objectSet.cat = entry[1]
+        elif entry[0] == 'status': objectSet.status = entry[1]
+        elif entry[0] == 'subcat':objectSet.subcat = entry[1]
+        elif entry[0] == 'temp_air': objectSet.temp_air = entry[1]
+        elif entry[0] == 'variant':objectSet.variant = entry[1]
+        elif entry[0] == 'gebleeded': objectSet.gebleeded = entry[1]
+        elif entry[0] == 'setNr':objectSet.setNr = entry[1]
+        elif entry[0] == 'description':objectSet.description = entry[1]
+        elif entry[0] == 'heat_press_front':objectSet.heat_press_front = entry[1]
+        elif entry[0] == 'heat_press_back': objectSet.heat_press_back = entry[1]
+        elif entry[0] == 'heat_press_timestamp': objectSet.heat_press_timestamp = entry[1]
+        elif entry[0] == 'bleed_initial':objectSet.bleed_initial = entry[1]
+        elif entry[0] == 'bleed_hot': objectSet.bleed_hot = entry[1]
+        elif entry[0] == 'heat_start':objectSet.heat_start = entry[1]
+        elif entry[0] == 'order_end': objectSet.order_end = entry[1]
+        elif entry[0] == 'heat_duration':objectSet.heat_duration = entry[1]
+        elif entry[0] == 'temp_heat': objectSet.temp_heat = entry[1]
+        elif entry[0] == 'runtime':objectSet.runtime = entry[1]
+        elif entry[0] == 'order_duration': objectSet.order_duration = entry[1]
+        elif entry[0] == 'order_start':objectSet.order_start = entry[1]
+        objectSet.save_to_db()
+    resp = {'status': 'success',
+            'message': 'WheelSet ',
+            'test':'variant_{}'.format(objectSet.variant)
+            }
+    return jsonify(resp, 200)
+
 
 # save single wheel
 @app.route('/wheel_cont/change_single_wheel',methods=['Post'])

@@ -312,6 +312,7 @@ def heat_start():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
     objectSet.heat_start = datetime.now()
+
     objectSet.save_to_db()
     resp = {'status': 'success',
             'data': '{}'.format(objectSet.heat_start)
@@ -459,7 +460,7 @@ def get_wheels3():
     object_FR = Wheel.query.get(object.FR)
     object_BL = Wheel.query.get(object.BL)
     object_BR = Wheel.query.get(object.BR)
-    if isinstance(objectSet.heat_duration, int) and isinstance(objectSet.heat_start, datetime):
+    if isinstance(objectSet.heat_duration, int) and isinstance(objectSet.heat_start, datetime.date):
         heat_end = objectSet.heat_start + timedelta(minutes=int(objectSet.heat_duration))
     else:
         heat_end = ''
@@ -519,7 +520,7 @@ def get_wheels37():
         object_FR = Wheel.query.get(object.FR)
         object_BL = Wheel.query.get(object.BL)
         object_BR = Wheel.query.get(object.BR)
-        if isinstance(objectSet.heat_duration, int) and isinstance(objectSet.heat_start, datetime):
+        if isinstance(objectSet.heat_duration, int) and isinstance(objectSet.heat_start, datetime.date):
             heat_end = objectSet.heat_start + timedelta(minutes=int(objectSet.heat_duration))
         else:
             heat_end = ''

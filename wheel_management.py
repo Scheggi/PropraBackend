@@ -241,7 +241,7 @@ def save_wheelSet():
     for entry in json_data['liste_attribute']:
         test1 = data[entry[0]]
         data[entry[0]] = entry[1]
-        test1 = data[entry[0]]
+        
         test2 = data[entry[0]]
         test3 = entry[0]
         objectSet.save_to_db()

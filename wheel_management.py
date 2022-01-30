@@ -195,35 +195,65 @@ def save_formel():
     return jsonify(resp, 200)
 
 
+# help function to get attr
+def get_attribute_wheelSet(objectSet,attribute,value):
+    data={'setid': objectSet.id, 'status': objectSet.status, 'cat': objectSet.cat, 'subcat': objectSet.subcat,
+             'temp_air': objectSet.temp_air, 'variant': objectSet.variant, 'setNr': objectSet.setNr,
+             'gebleeded': objectSet.gebleeded, 'description': objectSet.description,
+             'heat_press_front': objectSet.heat_press_front, 'heat_press_back': objectSet.heat_press_back,
+             'heat_press_timestamp': objectSet.heat_press_timestamp,
+             'bleed_initial': objectSet.bleed_initial,
+             'bleed_hot': objectSet.bleed_hot, 'order_end': objectSet.order_end,
+             'heat_start': objectSet.heat_start, 'heat_duration': objectSet.heat_duration,
+             'temp_heat': objectSet.temp_heat, 'runtime': objectSet.runtime,
+             'order_start': objectSet.order_start, 'order_duration': objectSet.order_duration}
+    if attribute in data.keys():
+        data[attribute] = value
+    return objectSet
+
+# help function to get attr single wheel
+def get_attribute_wheelSingle(object,attribute,value):
+    data= {'hot_air_press': object.hot_air_press, 'bleed_press': object.bleed_press,
+             'id_scan': object.id_scan,
+             'id': object.id, 'pressure': object.air_press,
+             'wheel_id': object.id_scan}
+    if attribute in data.keys():
+        data[attribute] = value
+    return object
+
+
 # save single wheel
-@app.route('/wheel_cont/change_single_wheel',methods=['Post'])
-def save_single_wheel():
+@app.route('/wheel_cont/change_wheelSet',methods=['Post'])
+def save_wheelSet():
     json_data = request.json
-    object = Wheel.query.get(json_data['id'])
-    attribute = {}
+    objectSet = WheelSet.query.get(json_data['id'])
     for entry in json_data['liste_attribute']:
-        object.entry[0] = entry[1]
-    object.save_to_db()
+        try:
+            objectSet = (objectSet,entry[0],entry[1])
+        except:
+            pass
+    objectSet.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet saved',
             }
     return jsonify(resp, 200)
 
 # save single wheel
-@app.route('/wheel_cont/change_wheelSet',methods=['Post'])
-def save_wheelSet():
+@app.route('/wheel_cont/change_single_wheel',methods=['Post'])
+def save_single_wheel():
     json_data = request.json
-    object = WheelSet.query.get(json_data['id'])
+    object = Wheel.query.get(json_data['id'])
     for entry in json_data['liste_attribute']:
-        if entry[0]=='variant':
-            object.variant = entry[1]
-        else:
-            object.entry[0] = entry[1]
+        try:
+            object =  get_attribute_wheelSingle(object,entry[0],entry[1])
+        except:
+            pass
     object.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet saved',
             }
     return jsonify(resp, 200)
+
 
 # save Timer changes
 @app.route('/timer/change_times',methods=['Post'])
@@ -233,9 +263,10 @@ def save_timer_changes():
     for entry in json_data['liste']:
         if entry[0].find('heat')!=-1:
             object.heat_start = datetime.now()
+            object.heat_duration = entry[1]
         if entry[0].find('order') != -1:
             object.order_start = datetime.now()
-        object.entry[0] = entry[1]
+            object.order_duration = entry[1]
     object.save_to_db()
     resp = {'status': 'success',
             'message': 'Timer saved',

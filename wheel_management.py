@@ -215,8 +215,10 @@ def save_wheelSet():
     json_data = request.json
     object = WheelSet.query.get(json_data['id'])
     for entry in json_data['liste_attribute']:
-        object.entry[0] = entry[1]
-        #object.variant = entry[1]
+        if entry[0]=='variant':
+            object.variant = entry[1]
+        else:
+            object.entry[0] = entry[1]
     object.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet saved',

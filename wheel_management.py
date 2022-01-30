@@ -208,6 +208,7 @@ def get_attribute_wheelSet(objectSet,attribute,value):
              'temp_heat': objectSet.temp_heat, 'runtime': objectSet.runtime,
              'order_start': objectSet.order_start, 'order_duration': objectSet.order_duration}
     data[attribute] = value
+    objectSet.save_to_db()
     return objectSet
 
 # help function to get attr single wheel
@@ -218,6 +219,7 @@ def get_attribute_wheelSingle(object,attribute,value):
              'wheel_id': object.id_scan}
     if attribute in data.keys():
         data[attribute] = value
+        object.save_to_db()
     return object
 
 

@@ -307,6 +307,19 @@ def save_wheelSet():
     return jsonify(resp, 200)
 
 
+@app.route('/wheel_cont/change_HeatStart', methods=['Post'])
+def heat_start():
+    json_data = request.json
+    objectSet = WheelSet.query.get(json_data['id'])
+    objectSet.heat_start = datetime.now()
+    objectSet.save_to_db()
+    resp = {'status': 'success',
+            'data': '{}'.format(objectSet.heat_start)
+            }
+    return jsonify(resp, 200)
+
+
+
 # save single wheel
 @app.route('/wheel_cont/change_single_wheel', methods=['Post'])
 def save_single_wheel():

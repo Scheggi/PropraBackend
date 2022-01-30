@@ -334,6 +334,10 @@ def get_wheels37():
         object_FR = Wheel.query.get(object.FR)
         object_BL = Wheel.query.get(object.BL)
         object_BR = Wheel.query.get(object.BR)
+        if isinstance(objectSet.heat_duration, int) and isinstance(objectSet.heat_start, datetime):
+            heat_end = objectSet.heat_start + timedelta(minutes=int(objectSet.heat_duration))
+        else:
+            heat_end = ''
         data= {'setid':objectSet.id,'status':objectSet.status,'cat' :objectSet.cat, 'subcat':  objectSet.subcat,
                      'temp_air':objectSet.temp_air, 'variant':objectSet.variant, 'setNr':objectSet.setNr,
                      'gebleeded': objectSet.gebleeded,

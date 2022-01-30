@@ -239,12 +239,14 @@ def save_wheelSet():
             'temp_heat': objectSet.temp_heat, 'runtime': objectSet.runtime,
             'order_start': objectSet.order_start, 'order_duration': objectSet.order_duration}
     for entry in json_data['liste_attribute']:
+        test1 = data[entry[0]]
         data[entry[0]] = entry[1]
         test1 = data[entry[0]]
-        test2 = entry[1]
+        test2 = data[entry[0]]
+        test3 = entry[0]
         objectSet.save_to_db()
     resp = {'status': 'success',
-            'message': 'WheelSet {} {}saved'.format(test1,test2),
+            'message': 'WheelSet vorher {} nachher {} value {} saved'.format(test1,test2,test3),
             'test':'variant_{}'.format(objectSet.variant)
             }
     return jsonify(resp, 200)

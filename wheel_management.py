@@ -229,7 +229,7 @@ def save_wheelSet():
     objectSet = WheelSet.query.get(json_data['id'])
     for entry in json_data['liste_attribute']:
         try:
-            objectSet = (objectSet,entry[0],entry[1])
+            objectSet = get_attribute_wheelSet(objectSet,entry[0],entry[1])
         except:
             pass
     objectSet.save_to_db()

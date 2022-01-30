@@ -183,7 +183,7 @@ def save_formel():
     data = ['setid', 'status', 'cat','subcat','temp_air', 'variant', 'setNr',
             'bleed_initial','bleed_hot']
     json_data = request.json
-    object = WheelSet.get(json_data['setid'])
+    object = WheelSet.query.get(json_data['setid'])
     data_dict = json_data['data_dict']
     for k,v in data_dict.items():
         if k in data:
@@ -195,11 +195,62 @@ def save_formel():
     return jsonify(resp, 200)
 
 
+# save single wheel
+@app.route('/wheel_cont/change_single_wheel',methods=['Post'])
+def save_single_wheel():
+    json_data = request.json
+    object = Wheel.query.get(json_data['id'])
+    attribute = {}
+    for entry in json_data:
+        attribute.update({entry[0]:entry[1]})
+    for k,v in attribute.items():
+        object.k = v
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'WheelSet saved',
+            }
+    return jsonify(resp, 200)
+
+# save single wheel
+@app.route('/wheel_cont/change_wheelSet',methods=['Post'])
+def save_wheelSet():
+    json_data = request.json
+    object = WheelSet.query.get(json_data['id'])
+    attribute = {}
+    for entry in json_data:
+        attribute.update({entry[0]:entry[1]})
+    for k,v in attribute.items():
+        object.k = v
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'WheelSet saved',
+            }
+    return jsonify(resp, 200)
+
+# save Timer changes
+@app.route('/timer/change_times',methods=['Post'])
+def save_timer_changes():
+    json_data = request.json
+    object = Timer.query.filter_by(raceID=json_data['raceID']).first()
+    for entry in json_data['liste']:
+        if entry[0].find('heat')!=-1:
+            object.heat_start = datetime.now()
+        if entry[0].find('order') != -1:
+            object.order_start = datetime.now()
+        object.entry[0] = entry[1]
+    object.save_to_db()
+    resp = {'status': 'success',
+            'message': 'Timer saved',
+            }
+    return jsonify(resp, 200)
+
+
+
 # save formel details
 @app.route('/wheel_cont/saveBleed',methods=['Post'])
 def save_bleed():
     json_data = request.json
-    object = WheelSet.get(json_data['setid'])
+    object = WheelSet.query.get(json_data['setid'])
     object.bleed_initial = json_data['bleed_initial']
     object.bleed_hot = json_data['bleed_hot']
     object.save_to_db()
@@ -308,7 +359,7 @@ def get_wheels3():
                      'bleed_initial': objectSet.bleed_initial,
                      'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end ,
                      'heat_start':objectSet.heat_start, 'heat_duration':objectSet.heat_duration,
-                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat,
+                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat, 'runtime':x.runtime,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)
@@ -365,7 +416,7 @@ def get_wheels37():
                      'bleed_initial': objectSet.bleed_initial,
                      'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end ,
                      'heat_start':objectSet.heat_start, 'heat_duration':objectSet.heat_duration,
-                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat,
+                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat,'runtime':x.runtime,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
         greatList.append(data)
     resp = {'status': 'success',

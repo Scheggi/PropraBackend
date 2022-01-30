@@ -241,12 +241,12 @@ def save_wheelSet():
     for entry in json_data['liste_attribute']:
         test1 = data[entry[0]]
         data[entry[0]] = entry[1]
-        
+        a = objectSet.variant
         test2 = data[entry[0]]
         test3 = entry[0]
         objectSet.save_to_db()
     resp = {'status': 'success',
-            'message': 'WheelSet vorher {} nachher {} value {} saved'.format(test1,test2,test3),
+            'message': 'WheelSet vorher {} nachher {} value {} {} saved'.format(test1,test2,test3,a),
             'test':'variant_{}'.format(objectSet.variant)
             }
     return jsonify(resp, 200)

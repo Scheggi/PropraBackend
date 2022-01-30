@@ -228,9 +228,19 @@ def get_attribute_wheelSingle(object,attribute,value):
 def save_wheelSet():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
+    data = {'setid': objectSet.id, 'status': objectSet.status, 'cat': objectSet.cat, 'subcat': objectSet.subcat,
+            'temp_air': objectSet.temp_air, 'variant': objectSet.variant, 'setNr': objectSet.setNr,
+            'gebleeded': objectSet.gebleeded, 'description': objectSet.description,
+            'heat_press_front': objectSet.heat_press_front, 'heat_press_back': objectSet.heat_press_back,
+            'heat_press_timestamp': objectSet.heat_press_timestamp,
+            'bleed_initial': objectSet.bleed_initial,
+            'bleed_hot': objectSet.bleed_hot, 'order_end': objectSet.order_end,
+            'heat_start': objectSet.heat_start, 'heat_duration': objectSet.heat_duration,
+            'temp_heat': objectSet.temp_heat, 'runtime': objectSet.runtime,
+            'order_start': objectSet.order_start, 'order_duration': objectSet.order_duration}
     for entry in json_data['liste_attribute']:
-        objectSet = get_attribute_wheelSet(objectSet,entry[0],entry[1])
-    objectSet.save_to_db()
+        data[entry[0]] = entry[1]
+        objectSet.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet saved',
             'test':'variant_{}'.format(objectSet.variant)

@@ -207,8 +207,7 @@ def get_attribute_wheelSet(objectSet,attribute,value):
              'heat_start': objectSet.heat_start, 'heat_duration': objectSet.heat_duration,
              'temp_heat': objectSet.temp_heat, 'runtime': objectSet.runtime,
              'order_start': objectSet.order_start, 'order_duration': objectSet.order_duration}
-    if attribute in data.keys():
-        data[attribute] = value
+    data[attribute] = value
     return objectSet
 
 # help function to get attr single wheel
@@ -228,10 +227,7 @@ def save_wheelSet():
     json_data = request.json
     objectSet = WheelSet.query.get(json_data['id'])
     for entry in json_data['liste_attribute']:
-        try:
-            objectSet = get_attribute_wheelSet(objectSet,entry[0],entry[1])
-        except:
-            pass
+        objectSet = get_attribute_wheelSet(objectSet,entry[0],entry[1])
     objectSet.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet saved',
@@ -244,10 +240,7 @@ def save_single_wheel():
     json_data = request.json
     object = Wheel.query.get(json_data['id'])
     for entry in json_data['liste_attribute']:
-        try:
-            object =  get_attribute_wheelSingle(object,entry[0],entry[1])
-        except:
-            pass
+        object =  get_attribute_wheelSingle(object,entry[0],entry[1])
     object.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet saved',

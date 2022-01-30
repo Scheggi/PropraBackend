@@ -81,7 +81,7 @@ class FormelReifendruck(db.Model):
     variable4=db.Column(db.Float, nullable=False)
 
     @classmethod
-    def get_all(cls):
+    def get_all(cls,raceID):
         x = cls.query.filter_by(raceID=raceID).first()
         return [{'id': x.id, 'raceID': x.raceID, 'air_temp': x.air_temp,
                  'track_temp': x.track_temp,

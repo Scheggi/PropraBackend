@@ -359,7 +359,7 @@ def get_wheels3():
                      'bleed_initial': objectSet.bleed_initial,
                      'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end ,
                      'heat_start':objectSet.heat_start, 'heat_duration':objectSet.heat_duration,
-                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat, 'runtime':x.runtime,
+                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat, 'runtime':objectSet.runtime,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
             }
     return jsonify(resp, 200)
@@ -416,7 +416,7 @@ def get_wheels37():
                      'bleed_initial': objectSet.bleed_initial,
                      'bleed_hot':objectSet.bleed_hot,'order_end':objectSet.order_end ,
                      'heat_start':objectSet.heat_start, 'heat_duration':objectSet.heat_duration,
-                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat,'runtime':x.runtime,
+                     'heat_end': heat_end, 'temp_heat':objectSet.temp_heat,'runtime':objectSet.runtime,
                      'order_start':objectSet.order_start, 'order_duration': objectSet.order_duration}
         greatList.append(data)
     resp = {'status': 'success',

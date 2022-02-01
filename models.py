@@ -270,7 +270,7 @@ class WheelSet(db.Model):
 
     @classmethod
     def getAllRaceID(cls,raceID):
-        return [x.id for x in cls.query.filter_by(raceID=raceID).all()]
+        return [x.id for x in cls.query.filter_by(raceID=raceID).order_by(cls.status,cls.order_start,cls.cat,cls.subcat).all()]
 
     @classmethod
     def find_by_raceID_cat_setNr(cls, raceID, cat, setNr):
@@ -332,6 +332,22 @@ class WheelSet(db.Model):
         cat6 = [x.id for x in cls.query.filter_by(raceID=raceID, status='free', cat='Rain', subcat='HeavyWet').all()]
         return [[len(cat1), cat1], [len(cat2), cat2], [len(cat3), cat3], [len(cat4), cat4], [len(cat5), cat5],
                 [len(cat6), cat6]]
+
+    @classmethod
+    def get_wheel_order_dropdown(cls, raceID):
+        cat1 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold').order_by(cls.status,cls.SetNr).all()]
+        cat2 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+                for x in cls.query.filter_by(raceID=raceID,  cat='Slicks', subcat='Medium').order_by(cls.status,cls.SetNr).all()]
+        cat3 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot').order_by(cls.status,cls.SetNr).order_by(cls.status,cls.SetNr).all()]
+        cat4 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate').order_by(cls.status,cls.SetNr).all()]
+        cat5 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+                for x in cls.query.filter_by(raceID=raceID,cat='Rain', subcat='DryWet').order_by(cls.status,cls.SetNr).all()]
+        cat6 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet').order_by(cls.status,cls.SetNr).all()]
+        return [ cat1,  cat2, cat3, cat4, cat5, cat6]
 
     @classmethod
     def get_wheel_order_dict_old(cls, raceID):

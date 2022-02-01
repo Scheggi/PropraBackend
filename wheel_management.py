@@ -208,7 +208,6 @@ def get_attribute_wheelSet(objectSet, attribute, value):
     objectSet.save_to_db()
     return objectSet
 
-
 # help function to get attr single wheel
 def get_attribute_wheelSingle(object, attribute, value):
     data = {'hot_air_press': object.hot_air_press, 'bleed_press': object.bleed_press,
@@ -219,7 +218,6 @@ def get_attribute_wheelSingle(object, attribute, value):
         data[attribute] = value
         object.save_to_db()
     return object
-
 
 # save single wheel
 @app.route('/wheel_cont/change_wheelSet_old', methods=['Post'])
@@ -320,7 +318,6 @@ def heat_start():
     return jsonify(resp, 200)
 
 
-
 # save single wheel
 @app.route('/wheel_cont/change_single_wheel', methods=['Post'])
 def save_single_wheel():
@@ -337,7 +334,6 @@ def save_single_wheel():
             'message': 'Wheel saved',
             }
     return jsonify(resp, 200)
-
 
 # save Timer changes
 @app.route('/timer/change_times', methods=['Post'])
@@ -356,7 +352,6 @@ def save_timer_changes():
             'message': 'Timer saved',
             }
     return jsonify(resp, 200)
-
 
 # save formel details
 @app.route('/wheel_cont/saveBleed', methods=['Post'])
@@ -630,5 +625,14 @@ def get_wheelsSet11():
     json_data = request.json
     resp = {'status': 'success',
             'data': WheelSet.get_wheel_order_dict(json_data['raceID'])
+            }
+    return jsonify(resp, 200)
+
+@app.route('/wheel_cont/Set/OrderWheelDropdown', methods=['POST'])
+@jwt_required
+def get_wheelsDropdown():
+    json_data = request.json
+    resp = {'status': 'success',
+            'data': WheelSet.get_wheel_order_dropdown(json_data['raceID'])
             }
     return jsonify(resp, 200)

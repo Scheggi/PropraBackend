@@ -335,18 +335,77 @@ class WheelSet(db.Model):
 
     @classmethod
     def get_wheel_order_dropdown(cls, raceID):
-        cat1 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
-                for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold').order_by(cls.status,cls.setNr).all()]
-        cat2 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
-                for x in cls.query.filter_by(raceID=raceID,  cat='Slicks', subcat='Medium').order_by(cls.status,cls.setNr).all()]
-        cat3 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
-                for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot').order_by(cls.status,cls.setNr).order_by(cls.status,cls.setNr).all()]
-        cat4 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
-                for x in cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate').order_by(cls.status,cls.setNr).all()]
-        cat5 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
-                for x in cls.query.filter_by(raceID=raceID,cat='Rain', subcat='DryWet').order_by(cls.status,cls.setNr).all()]
-        cat6 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
-                for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet').order_by(cls.status,cls.setNr).all()]
+        cat1 = [
+            [{'label': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,'value':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold').order_by(cls.status,cls.setNr).all()],
+            [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
+            for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold', status='free').order_by(cls.status, cls.setNr).all()],
+            [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status), 'value': x.id}
+             for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold', status='order').order_by(cls.status, cls.setNr).all() ],
+            [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+             for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold', status='used').order_by(cls.status,cls.setNr).all()]
+        ]
+        cat2 = [[{'label': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,'value':x.id }
+                for x in cls.query.filter_by(raceID=raceID,  cat='Slicks', subcat='Medium').order_by(cls.status,cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Medium', status ='free').order_by(cls.status,cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Medium',status='order').order_by(cls.status,
+                                                                                                     cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Medium', status='used').order_by(cls.status,
+                                                                                                     cls.setNr).all()]
+                ]
+        cat3 = [[{'label': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,'value':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot').order_by(cls.status,cls.setNr).order_by(cls.status,cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot',status='free').order_by(cls.status,cls.setNr).order_by(
+                    cls.status, cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot', status='order').order_by(cls.status,cls.setNr).order_by(
+                    cls.status, cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot',status='used').order_by(cls.status,cls.setNr).order_by(
+                    cls.status, cls.setNr).all()]
+                ]
+        cat4 = [[{'label': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,'value':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate').order_by(cls.status,cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate',status='free').order_by(cls.status,cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in
+                 cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate', status='order').order_by(
+                     cls.status, cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in
+                 cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate', status='used').order_by(
+                     cls.status, cls.setNr).all()],
+                ]
+
+        cat5 = [[{'label': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,'value':x.id }
+                for x in cls.query.filter_by(raceID=raceID,cat='Rain', subcat='DryWet').order_by(cls.status,cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='DryWet',status='free').order_by(cls.status, cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in
+                 cls.query.filter_by(raceID=raceID, cat='Rain', subcat='DryWet', status='order').order_by(cls.status,
+                                                                                                          cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
+                 for x in
+                 cls.query.filter_by(raceID=raceID, cat='Rain', subcat='DryWet', status='used').order_by(cls.status,
+                                                                                                          cls.setNr).all()],
+                ]
+        cat6 = [[{'label': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,'value':x.id }
+                for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet').order_by(cls.status,cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet',status='free').order_by(cls.status,
+                                                                                                     cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet',status='order').order_by(cls.status,
+                                                                                                     cls.setNr).all()],
+                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                 for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet', status='used').order_by(cls.status,
+                                                                                                     cls.setNr).all()]]
         return [ cat1,  cat2, cat3, cat4, cat5, cat6]
 
     @classmethod

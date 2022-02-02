@@ -314,7 +314,7 @@ def save_wheelSet():
 def save_wheelSetchange():
     json_data = request.json
     Dictionary= {}
-    for k,v in json_data['setData'][0]:
+    for k,v in json_data['setData']:
         if isinstance(v,str) or isinstance(v,int) or isinstance(v,float) or isinstance(v,datetime.date):
             Dictionary.update({k:v})
             

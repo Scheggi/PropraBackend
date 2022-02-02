@@ -335,17 +335,17 @@ class WheelSet(db.Model):
 
     @classmethod
     def get_wheel_order_dropdown(cls, raceID):
-        cat1 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+        cat1 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold').order_by(cls.status,cls.setNr).all()]
-        cat2 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+        cat2 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
                 for x in cls.query.filter_by(raceID=raceID,  cat='Slicks', subcat='Medium').order_by(cls.status,cls.setNr).all()]
-        cat3 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+        cat3 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot').order_by(cls.status,cls.setNr).order_by(cls.status,cls.setNr).all()]
-        cat4 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+        cat4 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
                 for x in cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate').order_by(cls.status,cls.setNr).all()]
-        cat5 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+        cat5 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
                 for x in cls.query.filter_by(raceID=raceID,cat='Rain', subcat='DryWet').order_by(cls.status,cls.setNr).all()]
-        cat6 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,status,x.order_start) ,' id':x.id }
+        cat6 = [{'name': 'SetNr.{}_{}_{}'.format(x.setNr,x.status,x.order_start) ,' id':x.id }
                 for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet').order_by(cls.status,cls.setNr).all()]
         return [ cat1,  cat2, cat3, cat4, cat5, cat6]
 

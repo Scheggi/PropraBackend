@@ -310,7 +310,7 @@ def save_wheelSet():
 """
 
 # save Set
-@app.route('/wheel_cont/changeSet', methods=['Post'])
+@app.route('/wheel_cont/changeSetData', methods=['Post'])
 def save_wheelSetchange():
     json_data = request.json
     Dictionary= {}

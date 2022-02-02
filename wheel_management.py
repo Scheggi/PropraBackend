@@ -318,7 +318,6 @@ def save_wheelSetchange():
         if isinstance(v,str) or isinstance(v,int) or isinstance(v,float) or isinstance(v,datetime.date):
             Dictionary.update({k:v})
             
-    Dictionary = json_data['setData']
     objectSet = WheelSet.query.get(Dictionary['setID'])
     object_fl = Wheel.query.get(Dictionary['fl_id'])
     object_fr = Wheel.query.get(Dictionary['fr_id'])

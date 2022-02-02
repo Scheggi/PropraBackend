@@ -372,7 +372,7 @@ def save_single_wheel():
         elif entry[0] == 'bleed_press': object.bleed_press = entry[1]
         elif entry[0] == 'id_scan':object.id_scan = entry[1]
         elif entry[0] == 'id': object.id = entry[1]
-        elif entry[0] == 'pressure': object.pressure = entry[1]
+        elif entry[0] == 'pressure': object.air_press = entry[1]
     object.save_to_db()
     resp = {'status': 'success',
             'message': 'Wheel saved',

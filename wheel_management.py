@@ -325,11 +325,9 @@ def save_wheelSetchange():
     object_br = Wheel.query.get(Dictionary['br_id'])
     objectSet.order_start = datetime.datetime.now()
     objectSet.status = 'order'
-    try:
-        objectSet.order_duration = int(Dictionary['order_duration'])
-        objectSet.order_end = objectSet.order_start + datetime.timedelta( objectSet.order_duration)
-    except:
-        pass
+    objectSet.order_duration = int(Dictionary['order_duration']) #order_duration
+    objectSet.order_end = objectSet.order_start + datetime.timedelta( objectSet.order_duration)
+
     for k,v in Dictionary.items():
         if k == 'temp_air':
             objectSet.temp_air = v
@@ -382,11 +380,11 @@ def save_wheelSetchange():
             object_br.hot_air_press= v
         # wheel bleed_press
         if k =='fl_bleed_press':
-            object_fl.bleed_press= v
+            object_fl.bleed_press = v
         if k =='fr_bleed_press':
-            object_fr.bleed_press= v
+            object_fr.bleed_press = v
         if k =='bl_bleed_press':
-            object_bl.bleed_press= v
+            object_bl.bleed_press = v
         if k =='br_bleed_press':
             object_br.bleed_press= v
             

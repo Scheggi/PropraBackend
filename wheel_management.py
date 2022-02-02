@@ -304,43 +304,96 @@ def save_wheelSet():
             }
     return jsonify(resp, 200)
 
+"""
+'fl_bleed_press': object_FL.bleed_press, 'fr_bleed_press': object_FR.bleed_press,
+'br_bleed_press': object_BR.bleed_press, 'bl_bleed_press': object_BL.bleed_press,         
+"""
+
 # save Set
 @app.route('/wheel_cont/changeSet', methods=['Post'])
 def save_wheelSet():
     json_data = request.json
+    Dictionary= {}
+    for k,v in json['setData']:
+        if isinstance(v,str) or isinstance(v,int) or isinstance(v,float) or isinstance(v,datetime.date):
+            Dictionary.update({k:v})
+            
     Dictionary = json_data['setData']
-    if 'setid' in Dictionary.keys():
-        objectSet = WheelSet.query.get(Dictionary['setID'])
-        objectSet.order_start = datetime.datetime.now()
-        objectSet.status = 'status'
-        if isinstance(Dictionary['order_duration'],int) :
-            objectSet.order_duration = Dictionary['order_duration']
-            objectSet.order_end = objectSet.order_start + datetime.timedelta(Dictionary['order_duration'])
-        for k,v in Dictionary:
-            if isinstance(v,str) or isinstance(v,int) or isinstance(v,float):
-                if k == 'temp_air':
-                    objectSet.temp_air = v
-                if k == 'variant':
-                    objectSet.variant = v
-                if k == 'gebleeded':
-                    objectSet.gebleeded = v
-                if k == 'description':
-                    objectSet.description = v
-                if k == 'heat_press_front':
-                    objectSet.heat_press_front = v
-                if k == 'heat_press_back':
-                    objectSet.heat_press_back = v
-                if k == 'bleed_initial':
-                    objectSet.bleed_initial = v
-                if k == 'bleed_hot':
-                    objectSet.bleed_hot = v
-                if k == 'heat_duration':
-                    objectSet.heat_duration = v
-                if k == 'temp_heat':
-                    objectSet.temp_heat = v
-                if k == 'runtime':
-                    objectSet.runtime = v
-        objectSet.save_to_db()
+    objectSet = WheelSet.query.get(Dictionary['setID'])
+    object_fl = Wheel.query.get(Dictionary['fl_id'])
+    object_fr = Wheel.query.get(Dictionary['fr_id'])
+    object_bl = Wheel.query.get(Dictionary['bl_id'])
+    object_br = Wheel.query.get(Dictionary['br_id'])
+    objectSet.order_start = datetime.datetime.now()
+    objectSet.status = 'order'
+    if isinstance(Dictionary['order_duration'],int) :
+        objectSet.order_duration = Dictionary['order_duration']
+        objectSet.order_end = objectSet.order_start + datetime.timedelta(Dictionary['order_duration'])
+    for k,v in Dictionary:
+        if k == 'temp_air':
+            objectSet.temp_air = v
+        if k == 'variant':
+            objectSet.variant = v
+        if k == 'gebleeded':
+            objectSet.gebleeded = v
+        if k == 'description':
+            objectSet.description = v
+        if k == 'heat_press_front':
+            objectSet.heat_press_front = v
+        if k == 'heat_press_back':
+            objectSet.heat_press_back = v
+        if k == 'bleed_initial':
+            objectSet.bleed_initial = v
+        if k == 'bleed_hot':
+            objectSet.bleed_hot = v
+        if k == 'heat_duration':
+            objectSet.heat_duration = v
+        if k == 'temp_heat':
+            objectSet.temp_heat = v
+        if k == 'runtime':
+            objectSet.runtime = v
+        #wheel id_scan
+        if k =='fl_id_scan':
+            object_fl.id_scan= v
+        if k =='fr_id_scan':
+            object_fr.id_scan= v
+        if k =='bl_id_scan':
+            object_bl.id_scan= v
+        if k =='br_id_scan':
+            object_br.id_scan= v
+        # wheel fl_pressure
+        if k =='fl_pressure':
+            object_fl.air_press= v
+        if k =='fr_pressure':
+            object_fr.air_press= v
+        if k =='bl_pressure':
+            object_bl.air_press= v
+        if k =='br_pressure':
+            object_br.air_press= v
+         # wheel br_hot_air_press
+        if k =='fl_hot_air_press':
+            object_fl.hot_air_press= v
+        if k =='fr_hot_air_press':
+            object_fr.hot_air_press= v
+        if k =='bl_hot_air_press':
+            object_bl.hot_air_press= v
+        if k =='br_hot_air_press':
+            object_br.hot_air_press= v
+        # wheel bleed_press
+        if k =='fl_bleed_press':
+            object_fl.bleed_press= v
+        if k =='fr_bleed_press':
+            object_fr.bleed_press= v
+        if k =='bl_bleed_press':
+            object_bl.bleed_press= v
+        if k =='br_bleed_press':
+            object_br.bleed_press= v
+            
+    objectSet.save_to_db()
+    object_fl.save_to_db()
+    object_fr.save_to_db()
+    object_bl.save_to_db()
+    object_br.save_to_db()
     resp = {'status': 'success',
             'message': 'WheelSet ',
             }

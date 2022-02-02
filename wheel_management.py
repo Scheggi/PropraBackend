@@ -317,7 +317,7 @@ def save_wheelSetchange():
     for k,v in json_data['setData'].items():
         if isinstance(v,str) or isinstance(v,int) or isinstance(v,float) or isinstance(v,datetime.date):
             Dictionary.update({k:v})
-            
+
     objectSet = WheelSet.query.get(Dictionary['setid'])
     object_fl = Wheel.query.get(Dictionary['fl_id'])
     object_fr = Wheel.query.get(Dictionary['fr_id'])
@@ -325,9 +325,11 @@ def save_wheelSetchange():
     object_br = Wheel.query.get(Dictionary['br_id'])
     objectSet.order_start = datetime.datetime.now()
     objectSet.status = 'order'
-    if isinstance(Dictionary['order_duration'],int) :
-        objectSet.order_duration = Dictionary['order_duration']
-        objectSet.order_end = objectSet.order_start + datetime.timedelta(Dictionary['order_duration'])
+    try:
+        objectSet.order_duration = int(Dictionary['order_duration'])
+        objectSet.order_end = objectSet.order_start + datetime.timedelta( objectSet.order_duration)
+    except:
+        pass
     for k,v in Dictionary.items():
         if k == 'temp_air':
             objectSet.temp_air = v
@@ -346,7 +348,7 @@ def save_wheelSetchange():
         if k == 'bleed_hot':
             objectSet.bleed_hot = v
         if k == 'heat_duration':
-            objectSet.heat_duration = v
+            objectSet.heat_duration = int(v)
         if k == 'temp_heat':
             objectSet.temp_heat = v
         if k == 'runtime':

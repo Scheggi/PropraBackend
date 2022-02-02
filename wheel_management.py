@@ -304,6 +304,50 @@ def save_wheelSet():
             }
     return jsonify(resp, 200)
 
+# save Set
+@app.route('/wheel_cont/changeSet', methods=['Post'])
+def save_wheelSet():
+    json_data = request.json
+    Dictionary = json_data['setData']
+    if 'setid' in Dictionary.keys():
+        objectSet = WheelSet.query.get(Dictionary['setID'])
+        objectSet.order_start = datetime.datetime.now()
+        objectSet.status = 'status'
+        if isinstance(Dictionary['order_duration'],int) :
+            objectSet.order_duration = Dictionary['order_duration']
+            objectSet.order_end = objectSet.order_start + datetime.timedelta(Dictionary['order_duration'])
+        for k,v in Dictionary:
+            if isinstance(v,str) or isinstance(v,int) or isinstance(v,float):
+                if k == 'temp_air':
+                    objectSet.temp_air = v
+                if k == 'variant':
+                    objectSet.variant = v
+                if k == 'gebleeded':
+                    objectSet.gebleeded = v
+                if k == 'description':
+                    objectSet.description = v
+                if k == 'heat_press_front':
+                    objectSet.heat_press_front = v
+                if k == 'heat_press_back':
+                    objectSet.heat_press_back = v
+                if k == 'bleed_initial':
+                    objectSet.bleed_initial = v
+                if k == 'bleed_hot':
+                    objectSet.bleed_hot = v
+                if k == 'heat_duration':
+                    objectSet.heat_duration = v
+                if k == 'temp_heat':
+                    objectSet.temp_heat = v
+                if k == 'runtime':
+                    objectSet.runtime = v
+        objectSet.save_to_db()
+    resp = {'status': 'success',
+            'message': 'WheelSet ',
+            }
+    return jsonify(resp, 200)
+
+
+
 
 @app.route('/wheel_cont/change_HeatStart', methods=['Post'])
 def heat_start():

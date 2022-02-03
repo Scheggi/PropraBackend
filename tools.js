@@ -398,10 +398,11 @@ async function getHourlyForecastByLocationName(location) {
         "headers": {
             "x-rapidapi-host": "forecast9.p.rapidapi.com",
             "x-rapidapi-key": "2b8430ac95msh6035f288b7f2b81p1f2f5ejsnd3de235ba3ff"
-        }
+        },
     })
-    .then(response => {
-        console.log(response);
+    .then(response => response.json).then(data =>{
+        console.log(data);
+        return data
     })
     .catch(err => {
         console.error(err);

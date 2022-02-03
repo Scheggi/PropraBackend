@@ -32,7 +32,6 @@ async function changeWheelSet(id,variant,order_duration,description){
 }
 
 
-
 async function createNewRaceRequest(accesstoken,type,place,date) {
     console.log([accesstoken,type,place,date]);
     return await timeoutPromise(2000, fetch(
@@ -400,7 +399,7 @@ async function getHourlyForecastByLocationName(location) {
             "x-rapidapi-key": "2b8430ac95msh6035f288b7f2b81p1f2f5ejsnd3de235ba3ff"
         },
     })
-    .then(response => response.json).then(data =>{
+    .then(response => response.json()).then(data =>{
         console.log(data);
         return data
     })
@@ -409,5 +408,26 @@ async function getHourlyForecastByLocationName(location) {
     });
 }
 
+function getWetterbericht(location) {
+  //const accesstoken = AsyncStorage.getItem('accesstoken');
+  return timeoutPromise(2000, fetch(`https://forecast9.p.rapidapi.com/rapidapi/forecast/${location}/hourly/`, {
+            "method": "GET",
+            "headers": {
+                "x-rapidapi-host": "forecast9.p.rapidapi.com",
+                "x-rapidapi-key": "2b8430ac95msh6035f288b7f2b81p1f2f5ejsnd3de235ba3ff",
+                "Accept": "application/json"
+            },
+        })).then(response => response.json()).then(data =>{
+            console.log(data);
+            return data['forecast']
+        }).then(data => {
+        return data;
+    }).catch(err => {
+            console.error(err);
+            return ['iwas']
+        });
+}
 
-export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID,changeWheelSet, getHourlyForecastByLocationName}
+
+
+export {getWetterbericht,createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID,changeWheelSet, getHourlyForecastByLocationName}

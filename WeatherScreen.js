@@ -11,12 +11,11 @@ import {
     ScrollView,
 } from 'react-native';
 import {styles} from "./styles"
-import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID, getHourlyForecastByLocationName} from "./tools"
+import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID, getHourlyForecastByLocationName,getWetterbericht} from "./tools"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 import Table from "./Table";
-import apiData from "./apiAnswer.json"
 import TouchHistoryMath from "react-native/Libraries/Interaction/TouchHistoryMath";
 import RenderApiData from "./RenderApiData";
 
@@ -30,13 +29,10 @@ export default class WeatherScreen extends React.Component {
             dataWeather: [],
             listWheelStart:[],
             RaceDetails:[],
-
             apiWeatherData: [],
-            apiWeatherData_Parsed: [], 
-
+            apiWeatherData_Parsed: [],
             raceLocation: "",
             raceDate: "",
-
         }
 
     }
@@ -120,21 +116,36 @@ export default class WeatherScreen extends React.Component {
     async getWeatherByWeatherCom() {
         const date = this.state.RaceDetails[0].date
         const location = this.state.RaceDetails[0].place
-
-        await getHourlyForecastByLocationName(location).then(data => {
-            this.setState({apiWeatherData: data});
-
-        }).catch(function (error) {
-            console.log(error);
-        })
-
+        getWetterbericht(location).then(data => {console.log(data)})
         console.log(this.state.apiWeatherData)
     }
+
+    // test
+    async getHourlyForecastByLocationName(location) {
+        return fetch(`https://forecast9.p.rapidapi.com/rapidapi/forecast/${location}/hourly/`, {
+            "method": "GET",
+            "headers": {
+                "x-rapidapi-host": "forecast9.p.rapidapi.com",
+                "x-rapidapi-key": "2b8430ac95msh6035f288b7f2b81p1f2f5ejsnd3de235ba3ff",
+                "Accept": "application/json"
+            },
+        })
+        .then(response => response.json()).then(data =>{
+            console.log(data);
+            return data['forecast']
+        }).then(data => {
+        return data;
+    })
+        .catch(err => {
+            console.error(err);
+            return ['iwas']
+        });
+    }
+
 
 
     //get RaceDetails by RaceID
     async getRaceDetails(){
-
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         await getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
@@ -144,7 +155,7 @@ export default class WeatherScreen extends React.Component {
                 raceLocation: liste[0].date,
                 raceDate : liste[0].place,
             })
-        }).catch(function (error) {
+        }).catch(error=> {
             console.log(error);
         })
 

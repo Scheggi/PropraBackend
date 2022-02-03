@@ -37,7 +37,6 @@ export default class NiklasScreen extends React.Component {
                         title="zurück"
                         onPress={this.changeRace}
                 />
-
             </View>
         );
     }

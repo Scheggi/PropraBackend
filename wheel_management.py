@@ -436,7 +436,9 @@ def save_single_wheel():
 def save_timer_changes():
     json_data = request.json
     object = Timer.query.filter_by(raceID=json_data['raceID']).first()
-    if isinstance(object,None):
+    try:
+        object.raceID == json_data['raceID']
+    except:
         object = Timer(
             raceID=json_data['raceID'])
         object.save_to_db()

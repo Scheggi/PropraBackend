@@ -11,7 +11,7 @@ export default class NewFormelScreen extends React.Component {
         super(props);
         this.state = {
             raceList:[],
-            raceID: 0,
+            raceID: -1,
             variable1: 273.15,
             variable2: 273.15,
             variable3: 1.013,
@@ -95,13 +95,12 @@ export default class NewFormelScreen extends React.Component {
         this.props.navigation.push('Helper')
     }
 
-
     validateForm() {
-        return this.state.raceID!=0&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
+        return this.state.raceID!=-1&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
 
     }
     validateForm1(){
-        return this.state.raceID!=0&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
+        return this.state.raceID!=-1&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
     }
     handleSubmit = event => {
         event.preventDefault();
@@ -125,7 +124,7 @@ export default class NewFormelScreen extends React.Component {
 
     }
     async sendDataReifenFormel(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         this.createReifendruckRequest(accesstoken, this.state.raceID, this.state.variable1, this.state.variable2, this.state.variable3, this.state.variable4, this.state.airTemperature, this.state.trackTemperature, this.state.air_pressureFL, this.state.air_pressureFR, this.state.air_pressureBL, this.state.air_pressureBR)
 
     }
@@ -183,13 +182,18 @@ export default class NewFormelScreen extends React.Component {
 
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
-        this.setState({raceID: 0});
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceid = await AsyncStorage.getItem('raceID');
+        this.setState({raceID: raceid});
         getRaceList(accesstoken).then(racelistDropdown => {
-            let raceListModified=racelistDropdown;
-            raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
-            console.log(raceListModified);
-            this.setState({raceList: raceListModified});
+            let raceList=racelistDropdown;
+            let liste = raceList.filter(entry => entry.id == raceid);
+            let name=liste[0].name;
+            var raceListfiltered = raceList.filter(function(value, index, arr){
+            return value.id!=raceid;
+            });
+            raceListfiltered.unshift({'name': name, 'id':raceid});
+            this.setState({raceList: raceListfiltered});
         }).catch(function (error) {
             console.log(error);
         });

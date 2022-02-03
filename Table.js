@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 
-function Table({list, width=920, height='auto'}) {
+function Table({list, width= 'auto', height='auto'}) {
 
       const colNames = ['Zeitstempel', 'Lufttemperatur', 'Streckentemperatur', 'Streckenverhältnis']
 
@@ -8,28 +8,29 @@ function Table({list, width=920, height='auto'}) {
       return (
         <div>
           {list.length > 0 && (
-            <table
+            <table className="table table-striped table-hover table-bordered"
               cellSpacing='0'
               style={{
               	width: width,
               	height: height,
               	margin: 15,
-
+                backgroundColor: '#d0d7de',
+                tableLayout: 'fixed'
               }}>
 
                 <thead >
-                  <tr bgcolor='#696969' style={{height: 40, textAlign: "center", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}>
+                  <tr style={{backgroundColor: '#72869d', textAlign: 'center'}}>
                     {colNames.map((headerItem, index) => (
-                      <th style={{borderStyle: 'solid',  borderWidth: 'thin'}} key={index}>{headerItem}</th>
+                      <th key={index}>{headerItem}</th>
                     ))}
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody style={{textAlign: 'center'}}>
                   {Object.values(list).map((obj, index) => (
                     <tr key={index}>
                       {Object.values(obj).map((value, index2) => (
-                        <td style={{backgroundColor: 'lightgrey', borderStyle: 'solid', borderWidth: 'thin', borderColor: 'white', height: 20, padding: '8px', fontFamily: 'arial'}} key={index2}>{value}</td>
+                        <td key={index2}>{value}</td>
                       ))}
                     </tr>
                   ))}

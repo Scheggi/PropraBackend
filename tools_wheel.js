@@ -126,7 +126,7 @@ async function sendWheelsRequest(accesstoken,id_FL,id_FR,id_BL,id_BR,id = '') {
 //saveSet
 async function changeSetData(setData) {
         timeoutPromise(1000, fetch(
-            'https://api.race24.cloud/wheel_cont/change_Set', {
+            'https://api.race24.cloud/wheel_cont/changeSetData', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

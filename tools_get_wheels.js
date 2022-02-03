@@ -161,9 +161,8 @@ function getOrderDropdown(accesstoken,raceID) {
 
 //get all info
 ///wheel_cont/getWheels_withWheel
-// geht set informarion
 function getWheelInformations(accesstoken,raceID) {
-    return timeoutPromise(2000, fetch('https:/api.race24.cloud/wheel_cont/getgreatList', {
+    return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getgreatList', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -171,7 +170,7 @@ function getWheelInformations(accesstoken,raceID) {
         },
         body: JSON.stringify({
             access_token: accesstoken,
-            raceID:parseInt(raceID),
+            raceID:raceID,
         })
     })).then(response => response.json()).then(data => {
         console.log(data);

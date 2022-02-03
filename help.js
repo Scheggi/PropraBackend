@@ -1,498 +1,443 @@
 import React from "react";
-import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
+import {Button, Text, TextInput, ToastAndroid,ScrollView, View} from "react-native";
 import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {timeoutPromise, refreshToken, getRaceList, getRaceDetails_by_ID, getWheelsList, getWeatherTab} from "./tools";
-import {get_Dict_WheelOrder,getDropdown} from "./tools_get_wheels";
-import Table from "./TableWheels";
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
+import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
+import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation,getOrderDropdown,getWheelInformations} from "./tools_get_wheels";
+import {changeSetData} from "./tools_wheel"
 
 export default class NewOrderScreen extends React.Component {
    constructor(props) {
         super(props);
         this.state = {
-            raceid: 0,
-            tyretype: '',
-            tyremix: '',
-            term: '',
-            variant: '',
-            tyretype1: '',
-            tyremix1: '',
-            variant1: '',
-            number: '',
-            orderdate: '',
-            ordertime: '',
-            ordertime1: '',
-            pickuptime: '',
-            raceList: [],
-            listDropdown1:[],
-            listDropdown2:[],
-            listDropdown3:[],
-            dictButtons:[],
-            time: {},
-            seconds: 1800,
-            timervalue: "",
             setID:0,
+            setData:[],
+            list_wheels : [],
+            dropdownlist : [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
+            ButtonsList : ['Slicks Cold','Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'],
         }
-        this.timer = 0;
-        this.startTimer = this.startTimer.bind(this);
-        this.countDown = this.countDown.bind(this);
     }
 
-    // get Data
-    async componentDidMount(){
+     changeRace = event => {
+        this.props.navigation.goBack();
+    }
+
+     async getTabularData() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
-        getDropdown(accesstoken,raceID).then(racelistDropdown => {
-            console.log(racelistDropdown);
-            this.setState({listDropdown1: racelistDropdown[0]});
-            this.setState({listDropdown2: racelistDropdown[1]});
-            this.setState({listDropdown3: racelistDropdown[2]});
+        await getWheelInformations(accesstoken, raceID).then(Tab => {
+            this.setState({list_wheels: Tab});
         }).catch(function (error) {
             console.log(error);
         })
-
-       console.log(2)
-        this.getWheelDict();
-        this.getDropdownList();
     }
 
-    //get Wheel Data
-    async getWheelDict(){
-       const accesstoken = await AsyncStorage.getItem('accesstoken');
-       const raceID = await AsyncStorage.getItem('raceID');
-       //const raceID = await AsyncStorage.getItem('raceID');
-       console.log(raceID)
-       await get_Dict_WheelOrder(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
-                this.setState({dictButtons: DataTabular});
-            }).catch(function (error) {
-                console.log(error);
-            })
-        console.log(this.state.dictButtons)
-    }
-    // get Dropdown list free,order,used
-    async getDropdownList(){
-       const accesstoken = await AsyncStorage.getItem('accesstoken');
-       const raceID = await AsyncStorage.getItem('raceID');
-       //const raceID = await AsyncStorage.getItem('raceID');
-       console.log(raceID)
-       await getDropdown(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
-                this.setState({listDropdown: DataTabular});
-            }).catch(function (error) {
-                console.log(error);
-            })
-        console.log(this.state.listDropdown)
-    }
-
-    async getSetID(event){
-        AsyncStorage.setItem("SetID",event.target.value);
-        const setid = await AsyncStorage.getItem("SetID");
-        console.log(setid);
-    }
+    async getDropdownData() {
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceID = await AsyncStorage.getItem('raceID');
+        await getOrderDropdown(accesstoken, raceID).then(Tab => {
+            this.setState({dropdownlist: Tab});
+        }).catch(function (error) {
+            console.log(error);
+        })
+    };
 
 
+    handle_choosen_order = event =>{
+        console.log(event)
+        let copyArray = []
+        this.setState({setID:event.value})
+       this.state.list_wheels.forEach( function (element,index){if(element.setid==event.value){copyArray=[element]}});
+        console.log(copyArray)
+        copyArray[0]['status']='order';
+        this.setState({setData:copyArray});
+        console.log(this.state.setData);
+    };
 
+    change_state_in_tabular_set = event =>{
+       let copyArray = this.state.setData;
+        this.state.setData.forEach( function (element,index){copyArray[index][event.target.name]=event.target.value});
+        this.setState({setData:copyArray});
+        console.log(this.state.setData);
+    };
 
-    getRaceID = event => {
-        const id = event.target.value;
-        AsyncStorage.setItem("raceIDHelper", event.target.value);
-        this.saveRaceIDinState();
-    }
-
-    changeRace = event => {
-        event.preventDefault();
-        this.props.navigation.replace('Race');
-    }
-     handleSubmit = event => {
-        event.preventDefault();
-        this.sendNewRaceRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
-            this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
-    }
-     handleSubmitButton1 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Cold"});
-    }
-    handleSubmitButton1 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Cold"});
-    }
-    handleSubmitButton2 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Medium"});
-    }
-    handleSubmitButton3 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Hot"});
-    }
-    handleSubmitButton4 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Inters"});
-        this.setState({tyremix: "Intermediate"});
-    }
-    handleSubmitButton5 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Rain"});
-        this.setState({tyremix: "Dry Wet"});
-    }
-    handleSubmitButton6 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Rain"});
-        this.setState({tyremix: "Heavy Wet"});
+     async componentDidMount(){
+        await this.getTabularData();
+        console.log(this.state.list_wheels)
+        await this.getDropdownData();
+        console.log(this.state.dropdownlist)
     }
 
-     async sendNewRaceRequest(type,place,date) {
-       timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/race/create', {
+    // save change
+    changeSingleWheel(id, liste_attribute) {
+        console.log(liste_attribute);
+        console.log(id);
+        timeoutPromise(1000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_single_wheel', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    type:type,
-                    place:place,
-                    date:date,
+                    id: id,
+                    liste_attribute: liste_attribute,
                 })
             })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    AsyncStorage.setItem("raceIDNewRace",data[0].id)
-                    console.log("changeNav")
-                    this.props.navigation.replace("Race");//replace('Race');
-                    return parseInt(data[0].id)
-                }
-                else {
-                    console.log("failed")
-                }
-            }).catch(function (error) {
-                console.log(error);
+        ).then(response => response.json()).then(data => {
+            if (data[1] == 200) {
+                console.log("Wheel Changed")
+            } else {
+                console.log("failed")
+            }
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    changeWheelSet(id, liste_attribute) {
+        console.log(liste_attribute);
+        console.log(id);
+        timeoutPromise(1000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_wheelSet', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id,
+                    liste_attribute: liste_attribute,
+                })
             })
+        ).then(response => response.json()).then(data => {
+            if (data[1] == 200) {
+                console.log(data[0]);
+            } else {
+                console.log("failed")
+            }
+        }).catch(function (error) {
+            console.log(error);
+        })
     }
 
 
+    save_order = event =>{
+         console.log(this.state.setData[0])
+         //this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
+         changeSetData(this.state.setData[0])
+    }
+      // end save change
 
 
+     renderTableHeader(number) {
+         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
+         let headerOrder = ['Art', 'Bestellung','Abholdauer', 'Status'];
+         let headerOrder2 = ['Kaltdruck', 'Bleed', 'Heizdaten', 'Warmdruck', 'Target Warmdruck', 'Bleed', 'Reifen ID'];
+         if (number ==1){
+             return header.map((key, index) => {
+                 return <td bgcolor='#696969'
+                            style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                            key={index}>{key.toUpperCase()}</td>
+             })
+         }
+         if (number ==2){
+             return headerOrder.map((key, index) => {
+                 return <td bgcolor='#696969'
+                            style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                            key={index}>{key.toUpperCase()}</td>
+             })
+         }
+         if (number ==3){
+             return headerOrder2.map((key, index) => {
+                 return <td bgcolor='#696969'
+                            style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                            key={index}>{key.toUpperCase()}</td>
+             })
+         }
+     }
 
+     renderTableHeaderChoosen() {
+         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
+         return header.map((key, index) => {
+             return <th bgcolor='#696969'
+                        style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                        key={index}>{key.toUpperCase()}</th>
+         })
+     }
 
-        secondsToTime(secs)
-        {
-            let hours = Math.floor(secs / (60 * 60));
-            let divisor_for_minutes = secs % (60 * 60);
-            let minutes = Math.floor(divisor_for_minutes / 60);
-            let divisor_for_seconds = divisor_for_minutes % 60;
-            let seconds = Math.ceil(divisor_for_seconds);
-            let obj = {
-                "h": hours,
-                "m": minutes,
-                "s": seconds
-            };
-            return obj;
-        }
-
-        startTimer()
-        {
-            var hour = 0;
-            var minute = 0;
-            var second = 0;
-            var atime = this.state.timervalue.split(':');
-            if (atime[0].length > 0) {
-                hour = parseInt(atime[0]);
-            }
-            if (atime[1].length > 0) {
-                minute = parseInt(atime[1]);
-            }
-            if (atime[2].length > 0) {
-                second = parseInt(atime[2]);
-            }
-            this.state.seconds = stunde * 3600 + minute * 60 + sekunde;
-
-            if (this.state.seconds > 0) {
-                this.timer = setInterval(this.countDown, this.state.seconds);
-            }
-        }
-
-        countDown()
-        {
-            let seconds = this.state.seconds - 1;
-            this.setState({
-                time: this.secondsToTime(seconds),
-                seconds: seconds,
-            });
-            // Check if  zero.
-            if (seconds == 0) {
-                clearInterval(this.timer);
-            }
-        }
-
-        getTime()
-        {
-            var today = new Date();
-            var h = today.getHours();
-            var m = today.getMinutes();
-            return h + ":" + m;
-        }
-
-        validateForm()
-        {
-            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.number.length > 0 && this.state.orderdate.length > 0 && this.state.ordertime.length > 0 && this.state.pickuptime.length > 0;
-        }
-
-
-        validateForm1()
-        {
-            return this.state.timervalue.length > 0;
-        }
-
-        render()
-        {
-            let optionTemplate = this.state.raceList.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-            ));
-            // dropdown list free
-            console.log(this.state.listDropdown1)
-            let optionfree = this.state.listDropdown1.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-        ));
-            // dropdown list order
-            let optionorder = this.state.listDropdown2.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-        ));
-            // dropdown list used
-            let optionused = this.state.listDropdown3.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-        ));
-
-
+     renderTableOrderCat1(){
+       const optiondropdown1 = this.state.dropdownlist[0][0]
+       const optiondropdown2 = this.state.dropdownlist[1][0]
+       const optiondropdown3 = this.state.dropdownlist[2][0]
+       const optiondropdown4 = this.state.dropdownlist[3][0]
+       const optiondropdown5 = this.state.dropdownlist[4][0]
+       const optiondropdown6 = this.state.dropdownlist[5][0]
+       const coloumns = ['all'];
+       return coloumns.map((buttons, index) => {
             return (
-                <View style={container2}>
-                    <View style={container3}>
-                        <View style={container5}>
-                        <Text style={{fontSize: 40, fontWeight: 'bold', textAlign: 'center'}}>
-                        Neue Reifenbestellung anlegen
-                    </Text>
-                        </View>
-                        <View style={container4}>
-                            <Button
-                            //disabled={!this.validateFormButton1()}
-                            title="Slicks Cold"
-                            onPress={this.handleSubmitButton1}
-                        />
-                        <Button
-                            //disabled={!this.validateFormButton2()}
-                            title="Slicks Medium"
-                            onPress={this.handleSubmitButton2}
-                        />
-                        <Button
-                            //disabled={!this.validateFormButton3()}
-                            title="Slicks Hot"
-                            onPress={this.handleSubmitButton3}
-                        />
-                        <Button
-                            //disabled={!this.validateFormButton4()}
-                            title="Inters Intermediate"
-                            onPress={this.handleSubmitButton4}
-                        />
-                        <Button
-                            //disabled={!this.validateFormButton5()}
-                            title="Rain Dry Wet"
-                            onPress={this.handleSubmitButton5}
-                        />
-                        <Button
-                            //disabled={!this.validateFormButton6()}
-                            title="Rain Heavy Wet"
-                            onPress={this.handleSubmitButton6}
-                        />
+                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                    key={'1Tabelle'}>
+                    <td>
+                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Alle Sets" />
+                    </td>
+                </tr>
+            )})
+     }
+     renderTableOrderCat2(){
+       const optiondropdown1 = this.state.dropdownlist[0][1]
+       const optiondropdown2 = this.state.dropdownlist[1][1]
+       const optiondropdown3 = this.state.dropdownlist[2][1]
+       const optiondropdown4 = this.state.dropdownlist[3][1]
+       const optiondropdown5 = this.state.dropdownlist[4][1]
+       const optiondropdown6 = this.state.dropdownlist[5][1]
+       const coloumns = ['all'];
+       return coloumns.map((buttons, index) => {
+            return (
+                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                    key={'2Tabelle'}>
+                    <td>
+                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                </tr>
+            )})
+     }
 
-                        </View>
-                    </View>
-                <View style={container1}>
-                <View style={{justifyContent: 'flex-start'}}>
-                    <Text style={{height: 10}}> </Text>
-                    <table >
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.tyretype}
-                                   onChangeText={(text) => this.setState({tyretype: text})}/></td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.tyremix}
-                                    onChangeText={(text) => this.setState({tyremix: text})}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bezeichnung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.term}
-                                  onChangeText={(text) => this.setState({term: text})}/></td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.variant}
-                                   onChangeText={(text) => this.setState({variant: text})}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestelldatum: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.orderdate}
-                                   placeholder='TT.MM.JJJJ' onChangeText={(date) => this.setState({orderdate: date})}/></td>
-                    </tr>
-                   <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.ordertime}
-                                   placeholder='SS:MM' onChangeText={(time) => this.setState({ordertime: time})}/></td>
-                    </tr>
-                </table>
-                        <Text> </Text>
-                        <Button
-                            disabled={!this.validateForm()}
-                            title="Reifenbestellung bestätigen"
-                            onPress={this.handleSubmit}
-                        />
-                        <Text> </Text>
-                        <Button
-                            title="zurück"
-                            onPress={this.changeRace}
-                            />
-                    </View>
-                <View style={{justifyContent: 'flex-start'}}>
-                    <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
-                        Reifensatz aktuell in Bearbeitung
-                    </Text>
-                     <table>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyretype1}</td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyremix1}</td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.variant1}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime1}
-                        </td>
-                    </tr>
-                     </table>
-                    <Text style={{height: '10'}}></Text>
-                    <Text style={bigStyle}>
-                        Timer
-                    </Text>
-                        <Text style={orderHeaderStyle}> Reifenbestellung abholbereit in: </Text>
-                        <TextInput
-                            style={orderTextStyle}
-                            placeholder=" SS:MM:SS"
-                            onChangeText={(time) => this.setState({timervalue: time})}
-                        />
-                        <button style={{width:300}}
+     renderTableOrderCat3(){
+       const optiondropdown1 = this.state.dropdownlist[0][2]
+       const optiondropdown2 = this.state.dropdownlist[1][2]
+       const optiondropdown3 = this.state.dropdownlist[2][2]
+       const optiondropdown4 = this.state.dropdownlist[3][2]
+       const optiondropdown5 = this.state.dropdownlist[4][2]
+       const optiondropdown6 = this.state.dropdownlist[5][2]
+       const coloumns = ['all'];
+       return coloumns.map((buttons, index) => {
+            return (
+                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                    key={'3Tabelle'}>
+                    <td>
+                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                </tr>
+            )})
+     }
 
-                            disabled={!this.validateForm1()}
-                            onClick={this.startTimer}>Start
-                        </button>
-                        <Text style={orderFeedbackStyle}>
-                            Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>
-                    </View>
-            </View>
-                    <View>
-                         <label>
-                Bearbeite ein freies Set:
-                <select value={this.state.id} onChange={this.getSetID}>
-                  {optionfree}
-                </select>
-                </label>
+     renderTableData() {
+        console.log(this.state.setData)
+        return this.state.setData.map((setData, index) => {
+            return (
+                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                    key={'renderTabelle12'}>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'Kategorie'} value={setData.cat} name={'cat'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Unterkategorie'} value={setData.subcat}
+                               name={'subcat'} onChange={this.change_state_in_tabular_set}/>
+                        <input
+                            id={setData.setid} placeholder={'Setbezeichnung'} value={setData.description}
+                            name={'description'} onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.setid} placeholder={'Bearbeitungsvariante'}
+                           value={setData.variant} name ={'variant'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        {'automatisch '}
+                        <input
+                            id={setData.setid} placeholder={'Datum und Uhrzeit'}
+                            value={setData.order_start} name={'order_start'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'Abholdauer'} value={setData.order_duration} name={'order_duration'}
+                               onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        <input
+                            id={setData.setid} placeholder={setData.status} value={setData.status}
+                            name={'status'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                </tr>
+            )
+        })
+    }
+    renderTableData2() {
+        console.log(this.state.setData)
+        return this.state.setData.map((setData, index) => {
+            return (
+                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
+                    key={'renderTabelle12'}>
 
-                    </View>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'Felgentemperatur'}
+                               value={setData.temp_air} name={'temp_air'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fl_id} placeholder={'Kaltdruck FL'} value={setData.fl_pressure}
+                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'Kaltdruck FR'} value={setData.fr_pressure}
+                               className={'pressure'} name={'fr_pressure'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'Kaltdruck BL'} value={setData.bl_pressure}
+                               className={'pressure'} name={'bl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'Kaltdruck BR'} value={setData.br_pressure}
+                               className={'pressure'} name={'br_pressure'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'bleed initial'}
+                               value={setData.bleed_initial} name={'bleed_initial'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'bleed hot'} value={setData.bleed_hot}
+                               name={'bleed_hot'} onChange={this.change_state_in_tabular_set}/></td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}
+                        onChange={this.change_state_in_tabular_set}>
+                        <input id={setData.setid} placeholder={'Heiztemperatur'} value={setData.temp_heat}
+                               name={'temp_heat'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Heizdauer'} value={setData.heat_duration}
+                               name={'heat_duration'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Heizstart'} value={setData.heat_start}
+                               name={'heat_start'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Heizende'} value={setData.heat_end}
+                               name={'heat_end'} onChange={this.change_state_in_tabular_set}/></td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'Zeit der Messung'}
+                               value={setData.heat_press_timestamp} name={'heat_press_timestamp'}
+                               onChange={this.schange_state_in_tabular_set}/>
+                        <input id={setData.fl_id} placeholder={'Warmdruck FL'}
+                               value={setData.fl_hot_air_press} name={'fl_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'Warmdruck FR'}
+                               value={setData.fr_hot_air_press} name={'fr_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'Warmdruck BL'}
+                               value={setData.bl_hot_air_press} name={'bl_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'Warmdruck BR'}
+                               value={setData.br_hot_air_press} name={'br_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'Target vorne'}
+                               value={setData.heat_press_front} name={'heat_press_front'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Target hinten'}
+                               value={setData.heat_press_back} name={'heat_press_back'}
+                               onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleedet}
+                               name={'gebleedet'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fl_id} placeholder={'Bleed FL'} value={setData.fl_bleed_press}
+                               className={'bleed_press'} name={'fl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'Bleed FR'} value={setData.fr_bleed_press}
+                               className={'bleed_press'} name={'fr_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'Bleed BL'} value={setData.bl_bleed_press}
+                               name={'bleed_press'} className={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'Bleed BR'} value={setData.br_bleed_press}
+                               className={'bleed_press'} name={'br_bleed_press'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
 
-        </View>
-            );
-        }
+                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
+                        <input id={setData.setid} placeholder={'ID FL'} value={setData.fl_id_scan}
+                               className={'id_scan'} name={'fl_id_scan'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'ID FR'} value={setData.fr_id_scan}
+                               className={'id_scan'} name={'fr_id_scan'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'ID BL'} value={setData.bl_id_scan}
+                               className={'id_scan'} name={'bl_id_scan'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'ID BR'} value={setData.br_id_scan}
+                               className={'id_scan'} name={'br_id_scan'}  onChange={this.change_state_in_tabular_set}/></td>
+                </tr>
+            )
+        })
     }
 
 
-    const
-    bigStyle = {
-        color: 'black',
-        fontSize: 30,
-        fontWeight: 'bold'
+
+        render() {
+        return (
+            <ScrollView >
+               <View>
+                   <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
+                   Reifenbestellung
+                   </Text>
+               </View>
+                <div>
+                    <h1 id='title'>Neue Reifenbestellung anlegen</h1>
+                    <table id='order'>
+                        {this.renderTableHeader(1)}
+                        {this.renderTableOrderCat1()}
+                        {this.renderTableOrderCat2()}
+                        {this.renderTableOrderCat3()}
+                    </table>
+                </div>
+
+                <div>
+                    <h1 id='title'>Ausgewähltes Reifenset bearbeiten</h1>
+                    <table id='choosen'>
+                        {this.renderTableHeader(2)}
+                        {this.renderTableData()}
+                    </table>
+                </div>
+                <div>
+                    <table id='choosen2'>
+                        {this.renderTableHeader(3)}
+                        {this.renderTableData2()}
+
+                    </table>
+                </div>
+                <Button
+                        title="Bestellung abschicken"
+                        onPress={this.save_order}
+                />
+
+
+                <Button
+                        title="zurück"
+                        onPress={this.changeRace}
+                />
+
+            </ScrollView>
+        );
     }
-
-    const
-    subStyle = {
-        fontSize: 20,
-        height: 40
-    }
-
-    const
-    emptylineStyle = {
-        height: 20,
-    }
-
-    const
-    orderHeaderStyle = {
-        height: 40,
-        width: 300,
-        margin: 3,
-        borderWidth: 1,
-        padding: 10,
-        backgroundColor: '#696969',
-        color: '#ffffff',
-        fontweight: 'bold',
-        fontSize: 16,
-        lineHeight: 16,
-        fontfamily: 'arial'
-    };
-
-    const
-    orderTextStyle = {
-        height: 30,
-        width: 300,
-        margin: 3,
-        borderWidth: 1,
-        padding: 10,
-        backgroundColor: '#d3d3d3',
-        fontSize: 14,
-        fontfamily: 'arial'
-    };
-
-    const
-    orderFeedbackStyle = {
-        height: 40,
-        width: 300,
-        margin: 3,
-        textAlign: 'center',
-        borderWidth: 1,
-        padding: 10,
-        backgroundColor: '#d3d3d3',
-        fontSize: 14
-    };
-    const container1 ={
-        padding: '50px',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    };
-    const container2={
-
-    };
-    const container3={
-
-
-    };
-    const container4={
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-
-    };
-    const container5={
-        textAlign: 'center',
-        padding: '20px',
-
-    };
+}

@@ -1,0 +1,1188 @@
+Index: ShowRace.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React from \"react\";\nimport {Button, Text, TextInput, ToastAndroid, View} from \"react-native\";\nimport {styles} from \"./styles\"\nimport AsyncStorage from '@react-native-async-storage/async-storage';\nimport {refreshToken, syncData} from \"./tools\";\nimport {\n    StyleSheet,\n    Image,\n    TouchableHighlight,\n    SectionList,\n    TouchableOpacity\n} from 'react-native';\nimport {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID} from \"./tools\"\nimport { Logs } from 'expo';\nimport image from './logo.png';\n\nLogs.enableExpoCliLogging()\n\nexport default class ShowRaceScreen extends React.Component {\n    constructor(props) {\n        super(props);\n        this.state = {\n            date: \"\",\n            place: \"\",\n            type: \"\",\n            raceList: [],\n            raceID: 1,\n            RaceDetails: [],\n            listWheelStart: [],\n            zwei: 2,\n            i_11: '',\n            i_12: '',\n            i_21: '',\n            i_22: '',\n            i_31: '',\n            i_32: '',\n            i_41: '',\n            i_42: '',\n            i_51: '',\n            i_52: '',\n            i_61: '',\n            i_62: '',\n        }\n        this.getRaceID = this.getRaceID.bind(this);\n        this.getRaceDetails = this.getRaceDetails.bind(this);\n        this.Action = this.Action.bind(this);\n        this.getWheelsStart = this.getWheelsStart.bind(this);\n    }\n\n    async getGroup(){\n         const group = await AsyncStorage.getItem(\"usergroup\");\n         console.log(group)\n        if (group===\"Helper\"){\n            this.props.navigation.push(\"HelperNavigator\")\n        }\n        if (group===\"Ingenieur\"){\n            this.props.navigation.push(\"Nav\")\n        }\n        if (group===\"Manager\"){\n            this.props.navigation.push(\"Race\")\n        }\n    }\n\n    changeRace = event => {\n        event.preventDefault();\n        this.getGroup();\n    }\n\n    changeLogout = event => {\n        event.preventDefault();\n        this.props.navigation.replace('Logout');\n    }\n\n     changeNewUser = event => {\n        event.preventDefault();\n        this.props.navigation.push('NewUser');\n    }\n\n    changeNewOrder = event => {\n        event.preventDefault();\n        this.props.navigation.push('NewOrder');\n    }\n\n    changeWeather = event => {\n        event.preventDefault();\n        this.props.navigation.push('Weather');\n    }\n\n    changeNewRace = event => {\n        event.preventDefault();\n        this.props.navigation.push('NewRace');\n    }\n\n     changeWheel = event => {\n        event.preventDefault();\n        this.props.navigation.push('Wheel');\n    }\n\n    changeNewFormel = event => {\n        event.preventDefault();\n        this.props.navigation.push('NewFormel');\n    }\n\n    changeAstrid = event => {\n        event.preventDefault();\n        this.props.navigation.push('Astrid');\n    }\n\n    changeHelper = event => {\n        event.preventDefault();\n        this.props.navigation.push('Helper')\n    }\n\n    changeMaen = event => {\n        event.preventDefault();\n        this.props.navigation.push('Maen');\n    }\n\n    async componentDidMount() {\n        const accesstoken = await AsyncStorage.getItem('accesstoken');\n        getRaceList(accesstoken).then(racelistDropdown => {\n            console.log(racelistDropdown);\n            this.setState({raceList: racelistDropdown})\n        }).catch(function (error) {\n            console.log(error);\n        })\n    }\n\n\n    async getRaceID(event) {\n        AsyncStorage.setItem('raceID', event.target.value);\n        const id = await AsyncStorage.getItem('raceID');\n        this.setState({raceID: id});\n    }\n\n    async getRaceDetails() {\n        const accesstoken = await AsyncStorage.getItem('accesstoken');\n        AsyncStorage.setItem('raceID', this.state.raceID);\n        const raceID = await AsyncStorage.getItem('raceID');\n        console.log([raceID])\n        getRaceDetails_by_ID(accesstoken, raceID).then(liste => {\n            console.log(liste);\n            console.log(liste[0][\"date\"]);\n            this.setState({date: liste[0][\"date\"]});\n            this.setState({place: liste[0][\"place\"]});\n            this.setState({type: liste[0][\"type\"]});\n            this.setState({RaceDetails: liste});\n            console.log(this.state.RaceDetails);\n        }).catch(function (error) {\n            console.log(error);\n        })\n\n    }\n\n    //get ReifenData\n    async getWheelsStart() {\n        const accesstoken = await AsyncStorage.getItem('accesstoken');\n        AsyncStorage.setItem('raceID', this.state.raceID);\n        const raceID = await AsyncStorage.getItem('raceID');\n        console.log(raceID)\n        getWheelsList(accesstoken, raceID).then(liste => {\n            console.log(liste);\n            this.setState({listWheelStart: liste});\n            let liste1 = liste.filter(entry => entry.set == 1);\n            this.setState({i_11: liste1[0][\"identifier\"]});\n            this.setState({i_12: liste1[0][\"numberOfSets\"]});\n            liste1 = liste.filter(entry => entry.set == 2);\n            this.setState({i_21: liste1[0][\"identifier\"]});\n            this.setState({i_22: liste1[0][\"numberOfSets\"]});\n            liste1 = liste.filter(entry => entry.set == 3);\n            this.setState({i_31: liste1[0][\"identifier\"]});\n            this.setState({i_32: liste1[0][\"numberOfSets\"]});\n            liste1 = liste.filter(entry => entry.set == 4);\n            this.setState({i_41: liste1[0][\"identifier\"]});\n            this.setState({i_42: liste1[0][\"numberOfSets\"]});\n            liste1 = liste.filter(entry => entry.set == 5);\n            this.setState({i_51: liste1[0][\"identifier\"]});\n            this.setState({i_52: liste1[0][\"numberOfSets\"]});\n            liste1 = liste.filter(entry => entry.set == 6);\n            this.setState({i_61: liste1[0][\"identifier\"]});\n            this.setState({i_62: liste1[0][\"numberOfSets\"]});\n        }).catch(function (error) {\n            console.log(error);\n        })\n    }\n\n    Action() {\n        this.getWheelsStart();\n        this.getRaceDetails();\n    }\n\n    render() {\n        let optionTemplate = this.state.raceList.map(v => (\n            <option value={v.id} key={v.id}>{v.name}</option>\n        ));\n        return (\n            <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>\n                <nav className=\"navbar navbar-light\" style={{backgroundColor: '#d0d7de'}}>\n                    <div className=\"container-fluid\">\n                        <a className=\"navbar-brand\" href=\"#\"> <img src={image} style={{width: '70%'}}/> </a>\n                        <button className=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\"\n                                data-bs-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\"\n                                aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n                            <span className=\"navbar-toggler-icon\"></span>\n                        </button>\n                        <div className=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n                            <ul className=\"navbar-nav me-auto mb-2 mb-lg-0\">\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeRace}>Hauptmenü\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeNewRace}> Neue Renndaten anlegen\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeNewOrder}>Reifenbestellungen\n                                        verwalten\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeAstrid}>Berechnung Reifendruck\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeWheel}>Reifendetails anzeigen\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeHelper}>Wetterdaten erfassen </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeWeather}>Wetterdaten anzeigen\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeMaen}>Statistiken anzeigen\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeNewFormel}>Formel Reifendruck anlegen\n                                    </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\"\n                                            aria-current=\"page\" onClick={this.changeNewUser}>Neues Mitglied anlegen\n                                    </button>\n                                </li>\n                                <br/>\n                                <li className=\"nav-item\">\n                                    <button className=\"btn btn-primary btn-sm\" aria-current=\"page\"\n                                            onClick={this.changeLogout}>Ausloggen\n                                    </button>\n                                </li>\n                            </ul>\n                        </div>\n                    </div>\n                </nav>\n                <div className='container' style={{marginLeft: 'auto', marginRight: 'auto'}}>\n                    <br/>\n                    <h1 className=\"display-4\" style={{color: '#d0d7de', textAlign: 'center'}}> Renndaten anzeigen</h1>\n                    <br/>\n                </div>\n                <div className='input-group'>\n                    <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Rennen auswählen: &nbsp; <select\n                        id='option' value={this.state.id} onChange={this.getRaceID}>\n                        {optionTemplate}\n                    </select>\n                    </label>\n                </div>\n                <br/>\n                <button type='button' className='btn btn-primary' onClick={this.Action}\n                        style={{marginLeft: 'auto', marginRight: 'auto'}}>\n                    RENNDATEN ANZEIGEN\n                </button>\n                <br/>\n                <div>\n                    <br/>\n                    <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Rennen</h3>\n                </div>\n                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>\n                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Renn-ID: </label>\n                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 214}}> {this.state.raceID} </label>\n                </div>\n               <br/>\n                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>\n                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennart: </label>\n                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 216}}> {this.state.type} </label>\n                </div>\n                <br/>\n                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>\n                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennstrecke: </label>\n                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 186}}> {this.state.place} </label>\n                </div>\n                <br/>\n                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>\n                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Startdatum: </label>\n                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 193}}> {this.state.date} </label>\n                </div>\n                <div>\n                    <br/>\n                    <br/>\n                    <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Verfügbares\n                        Reifenkontingent </h3>\n                </div>\n                <div>\n                    <table className=\"table table-striped table-hover table-bordered\"\n                           style={{width: 700, backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto', tableLayout: 'fixed'\n                           }}>\n                        <thead>\n                        </thead>\n                        <tbody>\n                        <tr style={{backgroundColor: '#72869d', textAlign: 'center'}}>\n                            <th style={{width: 100}}></th>\n                            <th style={{width: 200}}> Mischung</th>\n                            <th style={{width: 200}}> Bezeichnung</th>\n                            <th style={{width: 200}}> Kontingent</th>\n                        </tr>\n                        <tr>\n                            <th> Slicks</th>\n                            <td></td>\n                            <td></td>\n                            <td></td>\n                        </tr>\n                        <tr>\n                            <td></td>\n                            <td> Cold (H/E)</td>\n                            <td> {this.state.i_11} </td>\n                            <td> {this.state.i_12} </td>\n                        </tr>\n                        <tr>\n                            <td></td>\n                            <td> Medium (G/D)</td>\n                            <td> {this.state.i_21} </td>\n                            <td> {this.state.i_22} </td>\n                        </tr>\n                        <tr>\n                            <td></td>\n                            <td> Hot (I/F)</td>\n                            <td> {this.state.i_31} </td>\n                            <td> {this.state.i_32} </td>\n                        </tr>\n                        <tr style={{backgroundColor: '#72869d'}}>\n                            <th> Inters</th>\n                            <td> Intermediate (H+/E+)</td>\n                            <td> {this.state.i_41} </td>\n                            <td> {this.state.i_42} </td>\n                        </tr>\n                        <tr>\n                            <th> Rain</th>\n                            <td></td>\n                            <td></td>\n                            <td></td>\n                        </tr>\n                        <tr>\n                            <td></td>\n                            <td> Dry wet (T/T)</td>\n                            <td> {this.state.i_51} </td>\n                            <td> {this.state.i_52} </td>\n                        </tr>\n                        <tr>\n                            <td></td>\n                            <td> Heavy wet (A/A)</td>\n                            <td> {this.state.i_61} </td>\n                            <td> {this.state.i_62} </td>\n                        </tr>\n                        </tbody>\n                    </table>\n                </div>\n                <br/>\n                <br/>\n                <button type='button' className='btn btn-primary' onClick={this.changeRace}\n                        style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK\n                </button>\n                <br/>\n                <br/>\n            </View>\n        );\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ShowRace.js b/ShowRace.js
+--- a/ShowRace.js	(revision 3c2700209104775f5a871f98e788e1b7e1ed92b8)
++++ b/ShowRace.js	(date 1643843087813)
+@@ -131,6 +131,7 @@
+         AsyncStorage.setItem('raceID', event.target.value);
+         const id = await AsyncStorage.getItem('raceID');
+         this.setState({raceID: id});
++        this.Action()
+     }
+ 
+     async getRaceDetails() {
+Index: help.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React from \"react\";\nimport {Button, Text, TextInput, ToastAndroid, View} from \"react-native\";\nimport {styles} from \"./styles\"\nimport AsyncStorage from '@react-native-async-storage/async-storage';\nimport {timeoutPromise, refreshToken, getRaceList, getRaceDetails_by_ID, getWheelsList, getWeatherTab} from \"./tools\";\nimport {get_Dict_WheelOrder,getDropdown} from \"./tools_get_wheels\";\nimport Table from \"./TableWheels\";\n\nexport default class NewOrderScreen extends React.Component {\n   constructor(props) {\n        super(props);\n        this.state = {\n            raceid: 0,\n            tyretype: '',\n            tyremix: '',\n            term: '',\n            variant: '',\n            tyretype1: '',\n            tyremix1: '',\n            variant1: '',\n            number: '',\n            orderdate: '',\n            ordertime: '',\n            ordertime1: '',\n            pickuptime: '',\n            raceList: [],\n            listDropdown1:[],\n            listDropdown2:[],\n            listDropdown3:[],\n            dictButtons:[],\n            time: {},\n            seconds: 1800,\n            timervalue: \"\",\n            setID:0,\n        }\n        this.timer = 0;\n        this.startTimer = this.startTimer.bind(this);\n        this.countDown = this.countDown.bind(this);\n    }\n\n    // get Data\n    async componentDidMount(){\n        const accesstoken = await AsyncStorage.getItem('accesstoken');\n        const raceID = await AsyncStorage.getItem('raceID');\n        getDropdown(accesstoken,raceID).then(racelistDropdown => {\n            console.log(racelistDropdown);\n            this.setState({listDropdown1: racelistDropdown[0]});\n            this.setState({listDropdown2: racelistDropdown[1]});\n            this.setState({listDropdown3: racelistDropdown[2]});\n        }).catch(function (error) {\n            console.log(error);\n        })\n\n       console.log(2)\n        this.getWheelDict();\n        this.getDropdownList();\n    }\n\n    //get Wheel Data\n    async getWheelDict(){\n       const accesstoken = await AsyncStorage.getItem('accesstoken');\n       const raceID = await AsyncStorage.getItem('raceID');\n       //const raceID = await AsyncStorage.getItem('raceID');\n       console.log(raceID)\n       await get_Dict_WheelOrder(accesstoken, raceID).then(DataTabular => {\n                console.log(DataTabular);\n                this.setState({dictButtons: DataTabular});\n            }).catch(function (error) {\n                console.log(error);\n            })\n        console.log(this.state.dictButtons)\n    }\n    // get Dropdown list free,order,used\n    async getDropdownList(){\n       const accesstoken = await AsyncStorage.getItem('accesstoken');\n       const raceID = await AsyncStorage.getItem('raceID');\n       //const raceID = await AsyncStorage.getItem('raceID');\n       console.log(raceID)\n       await getDropdown(accesstoken, raceID).then(DataTabular => {\n                console.log(DataTabular);\n                this.setState({listDropdown: DataTabular});\n            }).catch(function (error) {\n                console.log(error);\n            })\n        console.log(this.state.listDropdown)\n    }\n\n    async getSetID(event){\n        AsyncStorage.setItem(\"SetID\",event.target.value);\n        const setid = await AsyncStorage.getItem(\"SetID\");\n        console.log(setid);\n    }\n\n\n\n\n    getRaceID = event => {\n        const id = event.target.value;\n        AsyncStorage.setItem(\"raceIDHelper\", event.target.value);\n        this.saveRaceIDinState();\n    }\n\n    changeRace = event => {\n        event.preventDefault();\n        this.props.navigation.replace('Race');\n    }\n     handleSubmit = event => {\n        event.preventDefault();\n        this.sendNewRaceRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,\n            this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);\n    }\n     handleSubmitButton1 = event => {\n        event.preventDefault();\n        this.setState({tyretype: \"Slicks\"});\n        this.setState({tyremix: \"Cold\"});\n    }\n    handleSubmitButton1 = event => {\n        event.preventDefault();\n        this.setState({tyretype: \"Slicks\"});\n        this.setState({tyremix: \"Cold\"});\n    }\n    handleSubmitButton2 = event => {\n        event.preventDefault();\n        this.setState({tyretype: \"Slicks\"});\n        this.setState({tyremix: \"Medium\"});\n    }\n    handleSubmitButton3 = event => {\n        event.preventDefault();\n        this.setState({tyretype: \"Slicks\"});\n        this.setState({tyremix: \"Hot\"});\n    }\n    handleSubmitButton4 = event => {\n        event.preventDefault();\n        this.setState({tyretype: \"Inters\"});\n        this.setState({tyremix: \"Intermediate\"});\n    }\n    handleSubmitButton5 = event => {\n        event.preventDefault();\n        this.setState({tyretype: \"Rain\"});\n        this.setState({tyremix: \"Dry Wet\"});\n    }\n    handleSubmitButton6 = event => {\n        event.preventDefault();\n        this.setState({tyretype: \"Rain\"});\n        this.setState({tyremix: \"Heavy Wet\"});\n    }\n\n     async sendNewRaceRequest(type,place,date) {\n       timeoutPromise(2000, fetch(\n            'https://api.race24.cloud/race/create', {\n                method: 'POST',\n                headers: {\n                    'Accept': 'application/json',\n                    'Content-Type': 'application/json',\n                },\n                body: JSON.stringify({\n                    type:type,\n                    place:place,\n                    date:date,\n                })\n            })\n            ).then(response => response.json()).then(data => {\n                if (data[1]==200) {\n                    AsyncStorage.setItem(\"raceIDNewRace\",data[0].id)\n                    console.log(\"changeNav\")\n                    this.props.navigation.replace(\"Race\");//replace('Race');\n                    return parseInt(data[0].id)\n                }\n                else {\n                    console.log(\"failed\")\n                }\n            }).catch(function (error) {\n                console.log(error);\n            })\n    }\n\n\n\n\n\n\n        secondsToTime(secs)\n        {\n            let hours = Math.floor(secs / (60 * 60));\n            let divisor_for_minutes = secs % (60 * 60);\n            let minutes = Math.floor(divisor_for_minutes / 60);\n            let divisor_for_seconds = divisor_for_minutes % 60;\n            let seconds = Math.ceil(divisor_for_seconds);\n            let obj = {\n                \"h\": hours,\n                \"m\": minutes,\n                \"s\": seconds\n            };\n            return obj;\n        }\n\n        startTimer()\n        {\n            var hour = 0;\n            var minute = 0;\n            var second = 0;\n            var atime = this.state.timervalue.split(':');\n            if (atime[0].length > 0) {\n                hour = parseInt(atime[0]);\n            }\n            if (atime[1].length > 0) {\n                minute = parseInt(atime[1]);\n            }\n            if (atime[2].length > 0) {\n                second = parseInt(atime[2]);\n            }\n            this.state.seconds = stunde * 3600 + minute * 60 + sekunde;\n\n            if (this.state.seconds > 0) {\n                this.timer = setInterval(this.countDown, this.state.seconds);\n            }\n        }\n\n        countDown()\n        {\n            let seconds = this.state.seconds - 1;\n            this.setState({\n                time: this.secondsToTime(seconds),\n                seconds: seconds,\n            });\n            // Check if  zero.\n            if (seconds == 0) {\n                clearInterval(this.timer);\n            }\n        }\n\n        getTime()\n        {\n            var today = new Date();\n            var h = today.getHours();\n            var m = today.getMinutes();\n            return h + \":\" + m;\n        }\n\n        validateForm()\n        {\n            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.number.length > 0 && this.state.orderdate.length > 0 && this.state.ordertime.length > 0 && this.state.pickuptime.length > 0;\n        }\n\n\n        validateForm1()\n        {\n            return this.state.timervalue.length > 0;\n        }\n\n        render()\n        {\n            let optionTemplate = this.state.raceList.map(v => (\n            <option value={v.id} key={v.id}>{v.name}</option>\n            ));\n            // dropdown list free\n            console.log(this.state.listDropdown1)\n            let optionfree = this.state.listDropdown1.map(v => (\n            <option value={v.id} key={v.id}>{v.name}</option>\n        ));\n            // dropdown list order\n            let optionorder = this.state.listDropdown2.map(v => (\n            <option value={v.id} key={v.id}>{v.name}</option>\n        ));\n            // dropdown list used\n            let optionused = this.state.listDropdown3.map(v => (\n            <option value={v.id} key={v.id}>{v.name}</option>\n        ));\n\n\n            return (\n                <View style={container2}>\n                    <View style={container3}>\n                        <View style={container5}>\n                        <Text style={{fontSize: 40, fontWeight: 'bold', textAlign: 'center'}}>\n                        Neue Reifenbestellung anlegen\n                    </Text>\n                        </View>\n                        <View style={container4}>\n                            <Button\n                            //disabled={!this.validateFormButton1()}\n                            title=\"Slicks Cold\"\n                            onPress={this.handleSubmitButton1}\n                        />\n                        <Button\n                            //disabled={!this.validateFormButton2()}\n                            title=\"Slicks Medium\"\n                            onPress={this.handleSubmitButton2}\n                        />\n                        <Button\n                            //disabled={!this.validateFormButton3()}\n                            title=\"Slicks Hot\"\n                            onPress={this.handleSubmitButton3}\n                        />\n                        <Button\n                            //disabled={!this.validateFormButton4()}\n                            title=\"Inters Intermediate\"\n                            onPress={this.handleSubmitButton4}\n                        />\n                        <Button\n                            //disabled={!this.validateFormButton5()}\n                            title=\"Rain Dry Wet\"\n                            onPress={this.handleSubmitButton5}\n                        />\n                        <Button\n                            //disabled={!this.validateFormButton6()}\n                            title=\"Rain Heavy Wet\"\n                            onPress={this.handleSubmitButton6}\n                        />\n\n                        </View>\n                    </View>\n                <View style={container1}>\n                <View style={{justifyContent: 'flex-start'}}>\n                    <Text style={{height: 10}}> </Text>\n                    <table >\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.tyretype}\n                                   onChangeText={(text) => this.setState({tyretype: text})}/></td>\n                    </tr>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.tyremix}\n                                    onChangeText={(text) => this.setState({tyremix: text})}/>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bezeichnung: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.term}\n                                  onChangeText={(text) => this.setState({term: text})}/></td>\n                    </tr>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.variant}\n                                   onChangeText={(text) => this.setState({variant: text})}/>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestelldatum: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.orderdate}\n                                   placeholder='TT.MM.JJJJ' onChangeText={(date) => this.setState({orderdate: date})}/></td>\n                    </tr>\n                   <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.ordertime}\n                                   placeholder='SS:MM' onChangeText={(time) => this.setState({ordertime: time})}/></td>\n                    </tr>\n                </table>\n                        <Text> </Text>\n                        <Button\n                            disabled={!this.validateForm()}\n                            title=\"Reifenbestellung bestätigen\"\n                            onPress={this.handleSubmit}\n                        />\n                        <Text> </Text>\n                        <Button\n                            title=\"zurück\"\n                            onPress={this.changeRace}\n                            />\n                    </View>\n                <View style={{justifyContent: 'flex-start'}}>\n                    <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>\n                        Reifensatz aktuell in Bearbeitung\n                    </Text>\n                     <table>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyretype1}</td>\n                    </tr>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyremix1}</td>\n                    </tr>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.variant1}\n                        </td>\n                    </tr>\n                    <tr>\n                        <td bgcolor='#696969' style={{textAlign: \"left\", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>\n                        <td style={{border: \"solid\", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime1}\n                        </td>\n                    </tr>\n                     </table>\n                    <Text style={{height: '10'}}></Text>\n                    <Text style={bigStyle}>\n                        Timer\n                    </Text>\n                        <Text style={orderHeaderStyle}> Reifenbestellung abholbereit in: </Text>\n                        <TextInput\n                            style={orderTextStyle}\n                            placeholder=\" SS:MM:SS\"\n                            onChangeText={(time) => this.setState({timervalue: time})}\n                        />\n                        <button style={{width:300}}\n\n                            disabled={!this.validateForm1()}\n                            onClick={this.startTimer}>Start\n                        </button>\n                        <Text style={orderFeedbackStyle}>\n                            Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>\n                    </View>\n            </View>\n                    <View>\n                         <label>\n                Bearbeite ein freies Set:\n                <select value={this.state.id} onChange={this.getSetID}>\n                  {optionfree}\n                </select>\n                </label>\n\n                    </View>\n\n        </View>\n            );\n        }\n    }\n\n\n    const\n    bigStyle = {\n        color: 'black',\n        fontSize: 30,\n        fontWeight: 'bold'\n    }\n\n    const\n    subStyle = {\n        fontSize: 20,\n        height: 40\n    }\n\n    const\n    emptylineStyle = {\n        height: 20,\n    }\n\n    const\n    orderHeaderStyle = {\n        height: 40,\n        width: 300,\n        margin: 3,\n        borderWidth: 1,\n        padding: 10,\n        backgroundColor: '#696969',\n        color: '#ffffff',\n        fontweight: 'bold',\n        fontSize: 16,\n        lineHeight: 16,\n        fontfamily: 'arial'\n    };\n\n    const\n    orderTextStyle = {\n        height: 30,\n        width: 300,\n        margin: 3,\n        borderWidth: 1,\n        padding: 10,\n        backgroundColor: '#d3d3d3',\n        fontSize: 14,\n        fontfamily: 'arial'\n    };\n\n    const\n    orderFeedbackStyle = {\n        height: 40,\n        width: 300,\n        margin: 3,\n        textAlign: 'center',\n        borderWidth: 1,\n        padding: 10,\n        backgroundColor: '#d3d3d3',\n        fontSize: 14\n    };\n    const container1 ={\n        padding: '50px',\n        flexDirection: 'row',\n        justifyContent: 'space-around',\n    };\n    const container2={\n\n    };\n    const container3={\n\n\n    };\n    const container4={\n        flexDirection: 'row',\n        justifyContent: 'space-evenly',\n\n    };\n    const container5={\n        textAlign: 'center',\n        padding: '20px',\n\n    };
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/help.js b/help.js
+--- a/help.js	(revision 3c2700209104775f5a871f98e788e1b7e1ed92b8)
++++ b/help.js	(date 1643835396590)
+@@ -1,498 +1,443 @@
+ import React from "react";
+-import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
++import {Button, Text, TextInput, ToastAndroid,ScrollView, View} from "react-native";
+ import {styles} from "./styles"
+ import AsyncStorage from '@react-native-async-storage/async-storage';
+-import {timeoutPromise, refreshToken, getRaceList, getRaceDetails_by_ID, getWheelsList, getWeatherTab} from "./tools";
+-import {get_Dict_WheelOrder,getDropdown} from "./tools_get_wheels";
+-import Table from "./TableWheels";
++import Dropdown from 'react-dropdown';
++import 'react-dropdown/style.css';
++import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
++import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation,getOrderDropdown,getWheelInformations} from "./tools_get_wheels";
++import {changeSetData} from "./tools_wheel"
+ 
+ export default class NewOrderScreen extends React.Component {
+    constructor(props) {
+         super(props);
+         this.state = {
+-            raceid: 0,
+-            tyretype: '',
+-            tyremix: '',
+-            term: '',
+-            variant: '',
+-            tyretype1: '',
+-            tyremix1: '',
+-            variant1: '',
+-            number: '',
+-            orderdate: '',
+-            ordertime: '',
+-            ordertime1: '',
+-            pickuptime: '',
+-            raceList: [],
+-            listDropdown1:[],
+-            listDropdown2:[],
+-            listDropdown3:[],
+-            dictButtons:[],
+-            time: {},
+-            seconds: 1800,
+-            timervalue: "",
+             setID:0,
++            setData:[],
++            list_wheels : [],
++            dropdownlist : [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
++            ButtonsList : ['Slicks Cold','Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'],
+         }
+-        this.timer = 0;
+-        this.startTimer = this.startTimer.bind(this);
+-        this.countDown = this.countDown.bind(this);
+     }
++
++     changeRace = event => {
++        this.props.navigation.goBack();
++    }
+ 
+-    // get Data
+-    async componentDidMount(){
++     async getTabularData() {
+         const accesstoken = await AsyncStorage.getItem('accesstoken');
+         const raceID = await AsyncStorage.getItem('raceID');
+-        getDropdown(accesstoken,raceID).then(racelistDropdown => {
+-            console.log(racelistDropdown);
+-            this.setState({listDropdown1: racelistDropdown[0]});
+-            this.setState({listDropdown2: racelistDropdown[1]});
+-            this.setState({listDropdown3: racelistDropdown[2]});
++        await getWheelInformations(accesstoken, raceID).then(Tab => {
++            this.setState({list_wheels: Tab});
+         }).catch(function (error) {
+             console.log(error);
+         })
+-
+-       console.log(2)
+-        this.getWheelDict();
+-        this.getDropdownList();
+     }
+ 
+-    //get Wheel Data
+-    async getWheelDict(){
+-       const accesstoken = await AsyncStorage.getItem('accesstoken');
+-       const raceID = await AsyncStorage.getItem('raceID');
+-       //const raceID = await AsyncStorage.getItem('raceID');
+-       console.log(raceID)
+-       await get_Dict_WheelOrder(accesstoken, raceID).then(DataTabular => {
+-                console.log(DataTabular);
+-                this.setState({dictButtons: DataTabular});
+-            }).catch(function (error) {
+-                console.log(error);
+-            })
+-        console.log(this.state.dictButtons)
++    async getDropdownData() {
++        const accesstoken = await AsyncStorage.getItem('accesstoken');
++        const raceID = await AsyncStorage.getItem('raceID');
++        await getOrderDropdown(accesstoken, raceID).then(Tab => {
++            this.setState({dropdownlist: Tab});
++        }).catch(function (error) {
++            console.log(error);
++        })
++    };
++
++
++    handle_choosen_order = event =>{
++        console.log(event)
++        let copyArray = []
++        this.setState({setID:event.value})
++       this.state.list_wheels.forEach( function (element,index){if(element.setid==event.value){copyArray=[element]}});
++        console.log(copyArray)
++        copyArray[0]['status']='order';
++        this.setState({setData:copyArray});
++        console.log(this.state.setData);
++    };
++
++    change_state_in_tabular_set = event =>{
++       let copyArray = this.state.setData;
++        this.state.setData.forEach( function (element,index){copyArray[index][event.target.name]=event.target.value});
++        this.setState({setData:copyArray});
++        console.log(this.state.setData);
++    };
++
++     async componentDidMount(){
++        await this.getTabularData();
++        console.log(this.state.list_wheels)
++        await this.getDropdownData();
++        console.log(this.state.dropdownlist)
+     }
+-    // get Dropdown list free,order,used
+-    async getDropdownList(){
+-       const accesstoken = await AsyncStorage.getItem('accesstoken');
+-       const raceID = await AsyncStorage.getItem('raceID');
+-       //const raceID = await AsyncStorage.getItem('raceID');
+-       console.log(raceID)
+-       await getDropdown(accesstoken, raceID).then(DataTabular => {
+-                console.log(DataTabular);
+-                this.setState({listDropdown: DataTabular});
+-            }).catch(function (error) {
+-                console.log(error);
+-            })
+-        console.log(this.state.listDropdown)
+-    }
+-
+-    async getSetID(event){
+-        AsyncStorage.setItem("SetID",event.target.value);
+-        const setid = await AsyncStorage.getItem("SetID");
+-        console.log(setid);
++
++    // save change
++    changeSingleWheel(id, liste_attribute) {
++        console.log(liste_attribute);
++        console.log(id);
++        timeoutPromise(1000, fetch(
++            'https://api.race24.cloud/wheel_cont/change_single_wheel', {
++                method: 'POST',
++                headers: {
++                    'Accept': 'application/json',
++                    'Content-Type': 'application/json',
++                },
++                body: JSON.stringify({
++                    id: id,
++                    liste_attribute: liste_attribute,
++                })
++            })
++        ).then(response => response.json()).then(data => {
++            if (data[1] == 200) {
++                console.log("Wheel Changed")
++            } else {
++                console.log("failed")
++            }
++        }).catch(function (error) {
++            console.log(error);
++        })
+     }
+ 
+-
+-
+-
+-    getRaceID = event => {
+-        const id = event.target.value;
+-        AsyncStorage.setItem("raceIDHelper", event.target.value);
+-        this.saveRaceIDinState();
+-    }
+-
+-    changeRace = event => {
+-        event.preventDefault();
+-        this.props.navigation.replace('Race');
+-    }
+-     handleSubmit = event => {
+-        event.preventDefault();
+-        this.sendNewRaceRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
+-            this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
+-    }
+-     handleSubmitButton1 = event => {
+-        event.preventDefault();
+-        this.setState({tyretype: "Slicks"});
+-        this.setState({tyremix: "Cold"});
+-    }
+-    handleSubmitButton1 = event => {
+-        event.preventDefault();
+-        this.setState({tyretype: "Slicks"});
+-        this.setState({tyremix: "Cold"});
+-    }
+-    handleSubmitButton2 = event => {
+-        event.preventDefault();
+-        this.setState({tyretype: "Slicks"});
+-        this.setState({tyremix: "Medium"});
+-    }
+-    handleSubmitButton3 = event => {
+-        event.preventDefault();
+-        this.setState({tyretype: "Slicks"});
+-        this.setState({tyremix: "Hot"});
+-    }
+-    handleSubmitButton4 = event => {
+-        event.preventDefault();
+-        this.setState({tyretype: "Inters"});
+-        this.setState({tyremix: "Intermediate"});
+-    }
+-    handleSubmitButton5 = event => {
+-        event.preventDefault();
+-        this.setState({tyretype: "Rain"});
+-        this.setState({tyremix: "Dry Wet"});
+-    }
+-    handleSubmitButton6 = event => {
+-        event.preventDefault();
+-        this.setState({tyretype: "Rain"});
+-        this.setState({tyremix: "Heavy Wet"});
+-    }
+-
+-     async sendNewRaceRequest(type,place,date) {
+-       timeoutPromise(2000, fetch(
+-            'https://api.race24.cloud/race/create', {
++    changeWheelSet(id, liste_attribute) {
++        console.log(liste_attribute);
++        console.log(id);
++        timeoutPromise(1000, fetch(
++            'https://api.race24.cloud/wheel_cont/change_wheelSet', {
+                 method: 'POST',
+                 headers: {
+                     'Accept': 'application/json',
+                     'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+-                    type:type,
+-                    place:place,
+-                    date:date,
++                    id: id,
++                    liste_attribute: liste_attribute,
+                 })
+             })
+-            ).then(response => response.json()).then(data => {
+-                if (data[1]==200) {
+-                    AsyncStorage.setItem("raceIDNewRace",data[0].id)
+-                    console.log("changeNav")
+-                    this.props.navigation.replace("Race");//replace('Race');
+-                    return parseInt(data[0].id)
+-                }
+-                else {
+-                    console.log("failed")
+-                }
+-            }).catch(function (error) {
+-                console.log(error);
+-            })
++        ).then(response => response.json()).then(data => {
++            if (data[1] == 200) {
++                console.log(data[0]);
++            } else {
++                console.log("failed")
++            }
++        }).catch(function (error) {
++            console.log(error);
++        })
+     }
+ 
+ 
+-
+-
+-
+-
+-        secondsToTime(secs)
+-        {
+-            let hours = Math.floor(secs / (60 * 60));
+-            let divisor_for_minutes = secs % (60 * 60);
+-            let minutes = Math.floor(divisor_for_minutes / 60);
+-            let divisor_for_seconds = divisor_for_minutes % 60;
+-            let seconds = Math.ceil(divisor_for_seconds);
+-            let obj = {
+-                "h": hours,
+-                "m": minutes,
+-                "s": seconds
+-            };
+-            return obj;
+-        }
++    save_order = event =>{
++         console.log(this.state.setData[0])
++         //this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
++         changeSetData(this.state.setData[0])
++    }
++      // end save change
+ 
+-        startTimer()
+-        {
+-            var hour = 0;
+-            var minute = 0;
+-            var second = 0;
+-            var atime = this.state.timervalue.split(':');
+-            if (atime[0].length > 0) {
+-                hour = parseInt(atime[0]);
+-            }
+-            if (atime[1].length > 0) {
+-                minute = parseInt(atime[1]);
+-            }
+-            if (atime[2].length > 0) {
+-                second = parseInt(atime[2]);
+-            }
+-            this.state.seconds = stunde * 3600 + minute * 60 + sekunde;
+ 
+-            if (this.state.seconds > 0) {
+-                this.timer = setInterval(this.countDown, this.state.seconds);
+-            }
+-        }
+-
+-        countDown()
+-        {
+-            let seconds = this.state.seconds - 1;
+-            this.setState({
+-                time: this.secondsToTime(seconds),
+-                seconds: seconds,
+-            });
+-            // Check if  zero.
+-            if (seconds == 0) {
+-                clearInterval(this.timer);
+-            }
+-        }
++     renderTableHeader(number) {
++         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
++         let headerOrder = ['Art', 'Bestellung','Abholdauer', 'Status'];
++         let headerOrder2 = ['Kaltdruck', 'Bleed', 'Heizdaten', 'Warmdruck', 'Target Warmdruck', 'Bleed', 'Reifen ID'];
++         if (number ==1){
++             return header.map((key, index) => {
++                 return <td bgcolor='#696969'
++                            style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                            key={index}>{key.toUpperCase()}</td>
++             })
++         }
++         if (number ==2){
++             return headerOrder.map((key, index) => {
++                 return <td bgcolor='#696969'
++                            style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                            key={index}>{key.toUpperCase()}</td>
++             })
++         }
++         if (number ==3){
++             return headerOrder2.map((key, index) => {
++                 return <td bgcolor='#696969'
++                            style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                            key={index}>{key.toUpperCase()}</td>
++             })
++         }
++     }
+ 
+-        getTime()
+-        {
+-            var today = new Date();
+-            var h = today.getHours();
+-            var m = today.getMinutes();
+-            return h + ":" + m;
+-        }
++     renderTableHeaderChoosen() {
++         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
++         return header.map((key, index) => {
++             return <th bgcolor='#696969'
++                        style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                        key={index}>{key.toUpperCase()}</th>
++         })
++     }
+ 
+-        validateForm()
+-        {
+-            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.number.length > 0 && this.state.orderdate.length > 0 && this.state.ordertime.length > 0 && this.state.pickuptime.length > 0;
+-        }
+-
+-
+-        validateForm1()
+-        {
+-            return this.state.timervalue.length > 0;
+-        }
+-
+-        render()
+-        {
+-            let optionTemplate = this.state.raceList.map(v => (
+-            <option value={v.id} key={v.id}>{v.name}</option>
+-            ));
+-            // dropdown list free
+-            console.log(this.state.listDropdown1)
+-            let optionfree = this.state.listDropdown1.map(v => (
+-            <option value={v.id} key={v.id}>{v.name}</option>
+-        ));
+-            // dropdown list order
+-            let optionorder = this.state.listDropdown2.map(v => (
+-            <option value={v.id} key={v.id}>{v.name}</option>
+-        ));
+-            // dropdown list used
+-            let optionused = this.state.listDropdown3.map(v => (
+-            <option value={v.id} key={v.id}>{v.name}</option>
+-        ));
+-
+-
++     renderTableOrderCat1(){
++       const optiondropdown1 = this.state.dropdownlist[0][0]
++       const optiondropdown2 = this.state.dropdownlist[1][0]
++       const optiondropdown3 = this.state.dropdownlist[2][0]
++       const optiondropdown4 = this.state.dropdownlist[3][0]
++       const optiondropdown5 = this.state.dropdownlist[4][0]
++       const optiondropdown6 = this.state.dropdownlist[5][0]
++       const coloumns = ['all'];
++       return coloumns.map((buttons, index) => {
+             return (
+-                <View style={container2}>
+-                    <View style={container3}>
+-                        <View style={container5}>
+-                        <Text style={{fontSize: 40, fontWeight: 'bold', textAlign: 'center'}}>
+-                        Neue Reifenbestellung anlegen
+-                    </Text>
+-                        </View>
+-                        <View style={container4}>
+-                            <Button
+-                            //disabled={!this.validateFormButton1()}
+-                            title="Slicks Cold"
+-                            onPress={this.handleSubmitButton1}
+-                        />
+-                        <Button
+-                            //disabled={!this.validateFormButton2()}
+-                            title="Slicks Medium"
+-                            onPress={this.handleSubmitButton2}
+-                        />
+-                        <Button
+-                            //disabled={!this.validateFormButton3()}
+-                            title="Slicks Hot"
+-                            onPress={this.handleSubmitButton3}
+-                        />
+-                        <Button
+-                            //disabled={!this.validateFormButton4()}
+-                            title="Inters Intermediate"
+-                            onPress={this.handleSubmitButton4}
+-                        />
+-                        <Button
+-                            //disabled={!this.validateFormButton5()}
+-                            title="Rain Dry Wet"
+-                            onPress={this.handleSubmitButton5}
+-                        />
+-                        <Button
+-                            //disabled={!this.validateFormButton6()}
+-                            title="Rain Heavy Wet"
+-                            onPress={this.handleSubmitButton6}
+-                        />
+-
+-                        </View>
+-                    </View>
+-                <View style={container1}>
+-                <View style={{justifyContent: 'flex-start'}}>
+-                    <Text style={{height: 10}}> </Text>
+-                    <table >
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.tyretype}
+-                                   onChangeText={(text) => this.setState({tyretype: text})}/></td>
+-                    </tr>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.tyremix}
+-                                    onChangeText={(text) => this.setState({tyremix: text})}/>
+-                        </td>
+-                    </tr>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bezeichnung: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.term}
+-                                  onChangeText={(text) => this.setState({term: text})}/></td>
+-                    </tr>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.variant}
+-                                   onChangeText={(text) => this.setState({variant: text})}/>
+-                        </td>
+-                    </tr>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestelldatum: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.orderdate}
+-                                   placeholder='TT.MM.JJJJ' onChangeText={(date) => this.setState({orderdate: date})}/></td>
+-                    </tr>
+-                   <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.ordertime}
+-                                   placeholder='SS:MM' onChangeText={(time) => this.setState({ordertime: time})}/></td>
+-                    </tr>
+-                </table>
+-                        <Text> </Text>
+-                        <Button
+-                            disabled={!this.validateForm()}
+-                            title="Reifenbestellung bestätigen"
+-                            onPress={this.handleSubmit}
+-                        />
+-                        <Text> </Text>
+-                        <Button
+-                            title="zurück"
+-                            onPress={this.changeRace}
+-                            />
+-                    </View>
+-                <View style={{justifyContent: 'flex-start'}}>
+-                    <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
+-                        Reifensatz aktuell in Bearbeitung
+-                    </Text>
+-                     <table>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyretype1}</td>
+-                    </tr>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyremix1}</td>
+-                    </tr>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.variant1}
+-                        </td>
+-                    </tr>
+-                    <tr>
+-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
+-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime1}
+-                        </td>
+-                    </tr>
+-                     </table>
+-                    <Text style={{height: '10'}}></Text>
+-                    <Text style={bigStyle}>
+-                        Timer
+-                    </Text>
+-                        <Text style={orderHeaderStyle}> Reifenbestellung abholbereit in: </Text>
+-                        <TextInput
+-                            style={orderTextStyle}
+-                            placeholder=" SS:MM:SS"
+-                            onChangeText={(time) => this.setState({timervalue: time})}
+-                        />
+-                        <button style={{width:300}}
+-
+-                            disabled={!this.validateForm1()}
+-                            onClick={this.startTimer}>Start
+-                        </button>
+-                        <Text style={orderFeedbackStyle}>
+-                            Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>
+-                    </View>
+-            </View>
+-                    <View>
+-                         <label>
+-                Bearbeite ein freies Set:
+-                <select value={this.state.id} onChange={this.getSetID}>
+-                  {optionfree}
+-                </select>
+-                </label>
++                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                    key={'1Tabelle'}>
++                    <td>
++                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Alle Sets" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Alle Sets" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Alle Sets" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Alle Sets" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Alle Sets" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Alle Sets" />
++                    </td>
++                </tr>
++            )})
++     }
++     renderTableOrderCat2(){
++       const optiondropdown1 = this.state.dropdownlist[0][1]
++       const optiondropdown2 = this.state.dropdownlist[1][1]
++       const optiondropdown3 = this.state.dropdownlist[2][1]
++       const optiondropdown4 = this.state.dropdownlist[3][1]
++       const optiondropdown5 = this.state.dropdownlist[4][1]
++       const optiondropdown6 = this.state.dropdownlist[5][1]
++       const coloumns = ['all'];
++       return coloumns.map((buttons, index) => {
++            return (
++                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                    key={'2Tabelle'}>
++                    <td>
++                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Wähle ein freies Set aus" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Wähle ein freies Set aus" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Wähle ein freies Set aus" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Wähle ein freies Set aus" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Wähle ein freies Set aus" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Wähle ein freies Set aus" />
++                    </td>
++                </tr>
++            )})
++     }
++
++     renderTableOrderCat3(){
++       const optiondropdown1 = this.state.dropdownlist[0][2]
++       const optiondropdown2 = this.state.dropdownlist[1][2]
++       const optiondropdown3 = this.state.dropdownlist[2][2]
++       const optiondropdown4 = this.state.dropdownlist[3][2]
++       const optiondropdown5 = this.state.dropdownlist[4][2]
++       const optiondropdown6 = this.state.dropdownlist[5][2]
++       const coloumns = ['all'];
++       return coloumns.map((buttons, index) => {
++            return (
++                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                    key={'3Tabelle'}>
++                    <td>
++                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Sets in Bearbeitung" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Sets in Bearbeitung" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Sets in Bearbeitung" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Sets in Bearbeitung" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Sets in Bearbeitung" />
++                    </td>
++                    <td>
++                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Sets in Bearbeitung" />
++                    </td>
++                </tr>
++            )})
++     }
++
++     renderTableData() {
++        console.log(this.state.setData)
++        return this.state.setData.map((setData, index) => {
++            return (
++                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                    key={'renderTabelle12'}>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'Kategorie'} value={setData.cat} name={'cat'}
++                               onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.setid} placeholder={'Unterkategorie'} value={setData.subcat}
++                               name={'subcat'} onChange={this.change_state_in_tabular_set}/>
++                        <input
++                            id={setData.setid} placeholder={'Setbezeichnung'} value={setData.description}
++                            name={'description'} onChange={this.change_state_in_tabular_set}/>
++                         <input id={setData.setid} placeholder={'Bearbeitungsvariante'}
++                           value={setData.variant} name ={'variant'} onChange={this.change_state_in_tabular_set}/>
++                    </td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        {'automatisch '}
++                        <input
++                            id={setData.setid} placeholder={'Datum und Uhrzeit'}
++                            value={setData.order_start} name={'order_start'} onChange={this.change_state_in_tabular_set}/>
++                    </td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'Abholdauer'} value={setData.order_duration} name={'order_duration'}
++                               onChange={this.change_state_in_tabular_set}/>
++                    </td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        <input
++                            id={setData.setid} placeholder={setData.status} value={setData.status}
++                            name={'status'} onChange={this.change_state_in_tabular_set}/>
++                    </td>
++                </tr>
++            )
++        })
++    }
++    renderTableData2() {
++        console.log(this.state.setData)
++        return this.state.setData.map((setData, index) => {
++            return (
++                <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
++                    key={'renderTabelle12'}>
++
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'Felgentemperatur'}
++                               value={setData.temp_air} name={'temp_air'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.fl_id} placeholder={'Kaltdruck FL'} value={setData.fl_pressure}
++                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.fr_id} placeholder={'Kaltdruck FR'} value={setData.fr_pressure}
++                               className={'pressure'} name={'fr_pressure'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.bl_id} placeholder={'Kaltdruck BL'} value={setData.bl_pressure}
++                               className={'pressure'} name={'bl_pressure'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.br_id} placeholder={'Kaltdruck BR'} value={setData.br_pressure}
++                               className={'pressure'} name={'br_pressure'} onChange={this.change_state_in_tabular_set}/>
++                    </td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'bleed initial'}
++                               value={setData.bleed_initial} name={'bleed_initial'}
++                               onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.setid} placeholder={'bleed hot'} value={setData.bleed_hot}
++                               name={'bleed_hot'} onChange={this.change_state_in_tabular_set}/></td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}
++                        onChange={this.change_state_in_tabular_set}>
++                        <input id={setData.setid} placeholder={'Heiztemperatur'} value={setData.temp_heat}
++                               name={'temp_heat'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.setid} placeholder={'Heizdauer'} value={setData.heat_duration}
++                               name={'heat_duration'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.setid} placeholder={'Heizstart'} value={setData.heat_start}
++                               name={'heat_start'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.setid} placeholder={'Heizende'} value={setData.heat_end}
++                               name={'heat_end'} onChange={this.change_state_in_tabular_set}/></td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'Zeit der Messung'}
++                               value={setData.heat_press_timestamp} name={'heat_press_timestamp'}
++                               onChange={this.schange_state_in_tabular_set}/>
++                        <input id={setData.fl_id} placeholder={'Warmdruck FL'}
++                               value={setData.fl_hot_air_press} name={'fl_hot_air_press'} className={'hot_air_press'}
++                               onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.fr_id} placeholder={'Warmdruck FR'}
++                               value={setData.fr_hot_air_press} name={'fr_hot_air_press'} className={'hot_air_press'}
++                               onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.bl_id} placeholder={'Warmdruck BL'}
++                               value={setData.bl_hot_air_press} name={'bl_hot_air_press'} className={'hot_air_press'}
++                               onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.br_id} placeholder={'Warmdruck BR'}
++                               value={setData.br_hot_air_press} name={'br_hot_air_press'} className={'hot_air_press'}
++                               onChange={this.change_state_in_tabular_set}/>
++                    </td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'Target vorne'}
++                               value={setData.heat_press_front} name={'heat_press_front'}
++                               onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.setid} placeholder={'Target hinten'}
++                               value={setData.heat_press_back} name={'heat_press_back'}
++                               onChange={this.change_state_in_tabular_set}/>
++                    </td>
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleedet}
++                               name={'gebleedet'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.fl_id} placeholder={'Bleed FL'} value={setData.fl_bleed_press}
++                               className={'bleed_press'} name={'fl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.fr_id} placeholder={'Bleed FR'} value={setData.fr_bleed_press}
++                               className={'bleed_press'} name={'fr_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.bl_id} placeholder={'Bleed BL'} value={setData.bl_bleed_press}
++                               name={'bleed_press'} className={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.br_id} placeholder={'Bleed BR'} value={setData.br_bleed_press}
++                               className={'bleed_press'} name={'br_bleed_press'} onChange={this.change_state_in_tabular_set}/>
++                    </td>
++
++                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
++                        <input id={setData.setid} placeholder={'ID FL'} value={setData.fl_id_scan}
++                               className={'id_scan'} name={'fl_id_scan'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.fr_id} placeholder={'ID FR'} value={setData.fr_id_scan}
++                               className={'id_scan'} name={'fr_id_scan'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.bl_id} placeholder={'ID BL'} value={setData.bl_id_scan}
++                               className={'id_scan'} name={'bl_id_scan'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.br_id} placeholder={'ID BR'} value={setData.br_id_scan}
++                               className={'id_scan'} name={'br_id_scan'}  onChange={this.change_state_in_tabular_set}/></td>
++                </tr>
++            )
++        })
++    }
++
++
++
++        render() {
++        return (
++            <ScrollView >
++               <View>
++                   <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
++                   Reifenbestellung
++                   </Text>
++               </View>
++                <div>
++                    <h1 id='title'>Neue Reifenbestellung anlegen</h1>
++                    <table id='order'>
++                        {this.renderTableHeader(1)}
++                        {this.renderTableOrderCat1()}
++                        {this.renderTableOrderCat2()}
++                        {this.renderTableOrderCat3()}
++                    </table>
++                </div>
++
++                <div>
++                    <h1 id='title'>Ausgewähltes Reifenset bearbeiten</h1>
++                    <table id='choosen'>
++                        {this.renderTableHeader(2)}
++                        {this.renderTableData()}
++                    </table>
++                </div>
++                <div>
++                    <table id='choosen2'>
++                        {this.renderTableHeader(3)}
++                        {this.renderTableData2()}
++
++                    </table>
++                </div>
++                <Button
++                        title="Bestellung abschicken"
++                        onPress={this.save_order}
++                />
++
++
++                <Button
++                        title="zurück"
++                        onPress={this.changeRace}
++                />
+ 
+-                    </View>
+-
+-        </View>
+-            );
+-        }
+-    }
+-
+-
+-    const
+-    bigStyle = {
+-        color: 'black',
+-        fontSize: 30,
+-        fontWeight: 'bold'
+-    }
+-
+-    const
+-    subStyle = {
+-        fontSize: 20,
+-        height: 40
+-    }
+-
+-    const
+-    emptylineStyle = {
+-        height: 20,
++            </ScrollView>
++        );
+     }
+-
+-    const
+-    orderHeaderStyle = {
+-        height: 40,
+-        width: 300,
+-        margin: 3,
+-        borderWidth: 1,
+-        padding: 10,
+-        backgroundColor: '#696969',
+-        color: '#ffffff',
+-        fontweight: 'bold',
+-        fontSize: 16,
+-        lineHeight: 16,
+-        fontfamily: 'arial'
+-    };
+-
+-    const
+-    orderTextStyle = {
+-        height: 30,
+-        width: 300,
+-        margin: 3,
+-        borderWidth: 1,
+-        padding: 10,
+-        backgroundColor: '#d3d3d3',
+-        fontSize: 14,
+-        fontfamily: 'arial'
+-    };
+-
+-    const
+-    orderFeedbackStyle = {
+-        height: 40,
+-        width: 300,
+-        margin: 3,
+-        textAlign: 'center',
+-        borderWidth: 1,
+-        padding: 10,
+-        backgroundColor: '#d3d3d3',
+-        fontSize: 14
+-    };
+-    const container1 ={
+-        padding: '50px',
+-        flexDirection: 'row',
+-        justifyContent: 'space-around',
+-    };
+-    const container2={
+-
+-    };
+-    const container3={
+-
+-
+-    };
+-    const container4={
+-        flexDirection: 'row',
+-        justifyContent: 'space-evenly',
+-
+-    };
+-    const container5={
+-        textAlign: 'center',
+-        padding: '20px',
+-
+-    };
+\ No newline at end of file
++}
+\ No newline at end of file
+Index: web-build/asset-manifest.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"files\": {\n    \"app.js\": \"/static/js/app.d83f2586.chunk.js\",\n    \"app.js.map\": \"/static/js/app.d83f2586.chunk.js.map\",\n    \"runtime~app.js\": \"/static/js/runtime~app.2e9f1821.js\",\n    \"runtime~app.js.map\": \"/static/js/runtime~app.2e9f1821.js.map\",\n    \"static/js/2.8a490d8f.chunk.js\": \"/static/js/2.8a490d8f.chunk.js\",\n    \"static/js/2.8a490d8f.chunk.js.map\": \"/static/js/2.8a490d8f.chunk.js.map\",\n    \"fonts/FontAwesome.ttf\": \"/./fonts/FontAwesome.ttf\",\n    \"favicon-16.png\": \"/favicon-16.png\",\n    \"favicon-32.png\": \"/favicon-32.png\",\n    \"favicon.ico\": \"/favicon.ico\",\n    \"index.html\": \"/index.html\",\n    \"manifest.json\": \"/manifest.json\",\n    \"serve.json\": \"/serve.json\",\n    \"static/js/2.8a490d8f.chunk.js.LICENSE.txt\": \"/static/js/2.8a490d8f.chunk.js.LICENSE.txt\",\n    \"static/media/autoblau.jpg\": \"/static/media/autoblau.6923d6ee.jpg\",\n    \"static/media/autoblau2.jpg\": \"/static/media/autoblau2.6ee6527c.jpg\",\n    \"static/media/autogelb.jpg\": \"/static/media/autogelb.135ce061.jpg\",\n    \"static/media/autogelb2.jpg\": \"/static/media/autogelb2.f2a6c963.jpg\",\n    \"static/media/autoweiß.jpg\": \"/static/media/autoweiß.a2e601d3.jpg\",\n    \"static/media/autoweiß2.jpg\": \"/static/media/autoweiß2.ddb4d27c.jpg\",\n    \"static/media/happy.jpg\": \"/static/media/happy.4505685f.jpg\",\n    \"static/media/logo.png\": \"/static/media/logo.110b38a8.png\",\n    \"static/media/race.jpg\": \"/static/media/race.1d7928f7.jpg\",\n    \"static/media/race2.jpg\": \"/static/media/race2.6d0fee72.jpg\",\n    \"static/media/sieg.jpg\": \"/static/media/sieg.e31de9b8.jpg\",\n    \"static/media/team.jpg\": \"/static/media/team.5204e40f.jpg\",\n    \"static/media/team2.jpg\": \"/static/media/team2.45659d43.jpg\",\n    \"static/media/team3.jpg\": \"/static/media/team3.10fd0332.jpg\"\n  },\n  \"entrypoints\": [\n    \"static/js/runtime~app.2e9f1821.js\",\n    \"static/js/2.8a490d8f.chunk.js\",\n    \"static/js/app.d83f2586.chunk.js\"\n  ]\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web-build/asset-manifest.json b/web-build/asset-manifest.json
+--- a/web-build/asset-manifest.json	(revision 3c2700209104775f5a871f98e788e1b7e1ed92b8)
++++ b/web-build/asset-manifest.json	(date 1643843424710)
+@@ -1,7 +1,7 @@
+ {
+   "files": {
+-    "app.js": "/static/js/app.d83f2586.chunk.js",
+-    "app.js.map": "/static/js/app.d83f2586.chunk.js.map",
++    "app.js": "/static/js/app.8e6085e8.chunk.js",
++    "app.js.map": "/static/js/app.8e6085e8.chunk.js.map",
+     "runtime~app.js": "/static/js/runtime~app.2e9f1821.js",
+     "runtime~app.js.map": "/static/js/runtime~app.2e9f1821.js.map",
+     "static/js/2.8a490d8f.chunk.js": "/static/js/2.8a490d8f.chunk.js",
+@@ -32,6 +32,6 @@
+   "entrypoints": [
+     "static/js/runtime~app.2e9f1821.js",
+     "static/js/2.8a490d8f.chunk.js",
+-    "static/js/app.d83f2586.chunk.js"
++    "static/js/app.8e6085e8.chunk.js"
+   ]
+ }
+\ No newline at end of file
+Index: NewOrder.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React from \"react\";\nimport {Button, Text, TextInput, ToastAndroid,ScrollView, View} from \"react-native\";\nimport {styles} from \"./styles\"\nimport AsyncStorage from '@react-native-async-storage/async-storage';\nimport Dropdown from 'react-dropdown';\nimport 'react-dropdown/style.css';\nimport {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from \"./tools\";\nimport {get_Dict_WheelOrder, getDropdown,getWheelSetInformation,getOrderDropdown,getWheelInformations} from \"./tools_get_wheels\";\nimport {changeSetData} from \"./tools_wheel\"\nimport image from \"./logo.png\";\n\nexport default class NewOrderScreen extends React.Component {\n   constructor(props) {\n        super(props);\n        this.state = {\n            setID:0,\n            setData:[],\n            list_wheels : [],\n            dropdownlist : [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],\n            ButtonsList : ['Slicks Cold','Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'],\n        }\n        this.timer = 0;\n        this.startTimer = this.startTimer.bind(this);\n        this.countDown = this.countDown.bind(this);\n        this.fillList= this.fillList.bind(this);\n    }\n\n\n    async getGroup(){\n         const group = await AsyncStorage.getItem(\"usergroup\");\n         console.log(group)\n        if (group===\"Helper\"){\n            this.props.navigation.push(\"HelperNavigator\")\n        }\n        if (group===\"Ingenieur\"){\n            this.props.navigation.push(\"Nav\")\n        }\n        if (group===\"Manager\"){\n            this.props.navigation.push(\"Race\")\n        }\n    }\n\n    changeRace = event => {\n        event.preventDefault();\n        this.getGroup();\n    }\n\n        changeLogout = event => {\n        event.preventDefault();\n        this.props.navigation.replace('Logout');\n    }\n\n     changeNewUser = event => {\n        event.preventDefault();\n        this.props.navigation.push('NewUser');\n    }\n\n    changeWheel = event => {\n        event.preventDefault();\n        this.props.navigation.push('Wheel');\n    }\n\n    changeWeather = event => {\n        event.preventDefault();\n        this.props.navigation.push('Weather');\n    }\n\n    changeShowRace = event => {\n        event.preventDefault();\n        this.props.navigation.push('ShowRace');\n    }\n\n     changeNewRace = event => {\n        event.preventDefault();\n        this.props.navigation.push('NewRace');\n    }\n\n    changeNewFormel = event => {\n        event.preventDefault();\n        this.props.navigation.push('NewFormel');\n    }\n\n    changeAstrid = event => {\n        event.preventDefault();\n        this.props.navigation.push('Astrid');\n    }\n\n    changeMaen = event => {\n        event.preventDefault();\n        this.props.navigation.push('Maen');\n    }\n\n    changeHelper = event => {\n        event.preventDefault();\n        this.props.navigation.push('Helper')\n    }\n\n\n   //  changeRace = event => {\n   //  this.props.navigation.goBack();\n   //  }\n\n     async getTabularData() {\n        const accesstoken = await AsyncStorage.getItem('accesstoken');\n        const raceID = await AsyncStorage.getItem('raceID');\n        await getWheelInformations(accesstoken, raceID).then(Tab => {\n            this.setState({list_wheels: Tab});\n        }).catch(function (error) {\n            console.log(error);\n        })\n    }\n\n    async getDropdownData() {\n        const accesstoken = await AsyncStorage.getItem('accesstoken');\n        const raceID = await AsyncStorage.getItem('raceID');\n        await getOrderDropdown(accesstoken, raceID).then(Tab => {\n            this.setState({dropdownlist: Tab});\n        }).catch(function (error) {\n            console.log(error);\n        })\n    };\n\n\n    handle_choosen_order = event =>{\n        console.log(event)\n        let copyArray = []\n        this.setState({setID:event.value})\n       this.state.list_wheels.forEach( function (element,index){if(element.setid==event.value){copyArray=[element]}});\n        console.log(copyArray)\n        copyArray[0]['status']='order';\n        this.setState({setData:copyArray});\n        console.log(this.state.setData);\n    };\n\n    change_state_in_tabular_set = event =>{\n       let copyArray = this.state.setData;\n        this.state.setData.forEach( function (element,index){copyArray[index][event.target.name]=event.target.value});\n        this.setState({setData:copyArray});\n        console.log(this.state.setData);\n    };\n\n     async componentDidMount(){\n        await this.getTabularData();\n        console.log(this.state.list_wheels)\n        await this.getDropdownData();\n        console.log(this.state.dropdownlist)\n    }\n\n        handleWheelIDChange = event => {\n            timeoutPromise(2000, fetch(\n            'https://api.race24.cloud/wheel/set_id_tag', {\n                method: 'POST',\n                headers: {\n                    'Accept': 'application/json',\n                    'Content-Type': 'application/json',\n                },\n                body: JSON.stringify({\n                    wheel_id: event.target.id,\n                    wheel_id_tag: event.target.value,\n                })\n            })\n            ).then(response => response.json()).then(data => {\n                if (data[1]==200) {\n                    console.log(\"ID Changed\")\n                    this.getWheelData().then(() => {return})\n                }\n                else {\n                    console.log(\"failed\")\n                }\n            }).catch(function (error) {\n                console.log(error);\n            })\n        }\n\n\n        handleTemp = event => {\n            timeoutPromise(2000, fetch(\n            'https://api.race24.cloud/wheel/set_temp', {\n                method: 'POST',\n                headers: {\n                    'Accept': 'application/json',\n                    'Content-Type': 'application/json',\n                },\n                body: JSON.stringify({\n                    set_id: event.target.id,\n                    temp: event.target.value,\n                })\n            })\n            ).then(response => response.json()).then(data => {\n                if (data[1]==200) {\n                    console.log(\"temp Changed\")\n                    this.getWheelData().then(() => {return})\n                }\n                else {\n                    console.log(\"failed\")\n                }\n            }).catch(function (error) {\n                console.log(error);\n            })\n        }\n\n\n    save_order = event =>{\n         console.log(this.state.setData)\n         this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});\n         changeSetData(this.state.setID)\n\n\n    }\n      // end save change\n\n\n     renderTableHeader(number) {\n         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];\n         let headerOrder = ['Art', 'Bestellung', 'Dauer', 'Status'];\n         let headerOrder2 = ['Kaltdruck', 'Bleed', 'Heizdaten', 'Warmdruck', 'Target Warmdruck', 'Bleed', 'Reifen ID'];\n         if (number ==1){\n             return header.map((key, index) => {\n                 return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}\n                            key={index}>{key.toUpperCase()}</th>\n             })\n         }\n         if (number ==2){\n             return headerOrder.map((key, index) => {\n                 return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}\n                            key={index}>{key.toUpperCase()}</th>\n             })\n         }\n         if (number ==3){\n             return headerOrder2.map((key, index) => {\n                 return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}\n                            key={index}>{key.toUpperCase()}</th>\n             })\n         }\n     }\n\n     renderTableHeaderChoosen() {\n         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];\n         return header.map((key, index) => {\n             return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}\n                        key={index}>{key.toUpperCase()}</th>\n         })\n     }\n\n     renderTableOrderCat1(){\n       const optiondropdown1 = this.state.dropdownlist[0][0]\n       const optiondropdown2 = this.state.dropdownlist[1][0]\n       const optiondropdown3 = this.state.dropdownlist[2][0]\n       const optiondropdown4 = this.state.dropdownlist[3][0]\n       const optiondropdown5 = this.state.dropdownlist[4][0]\n       const optiondropdown6 = this.state.dropdownlist[5][0]\n       const coloumns = ['all'];\n       return coloumns.map((buttons, index) => {\n            return (\n                <tr key={'1Tabelle'}>\n                    <td>\n                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder=\"Alle Sets\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder=\"Alle Sets\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder=\"Alle Sets\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder=\"Alle Sets\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder=\"Alle Sets\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder=\"Alle Sets\" />\n                    </td>\n                </tr>\n            )})\n     }\n     renderTableOrderCat2(){\n       const optiondropdown1 = this.state.dropdownlist[0][1]\n       const optiondropdown2 = this.state.dropdownlist[1][1]\n       const optiondropdown3 = this.state.dropdownlist[2][1]\n       const optiondropdown4 = this.state.dropdownlist[3][1]\n       const optiondropdown5 = this.state.dropdownlist[4][1]\n       const optiondropdown6 = this.state.dropdownlist[5][1]\n       const coloumns = ['all'];\n       return coloumns.map((buttons, index) => {\n            return (\n                <tr key={'2Tabelle'}>\n                    <td>\n                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder=\"Wähle ein freies Set aus\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder=\"Wähle ein freies Set aus\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder=\"Wähle ein freies Set aus\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder=\"Wähle ein freies Set aus\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder=\"Wähle ein freies Set aus\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder=\"Wähle ein freies Set aus\" />\n                    </td>\n                </tr>\n            )})\n     }\n\n     renderTableOrderCat3(){\n       const optiondropdown1 = this.state.dropdownlist[0][2]\n       const optiondropdown2 = this.state.dropdownlist[1][2]\n       const optiondropdown3 = this.state.dropdownlist[2][2]\n       const optiondropdown4 = this.state.dropdownlist[3][2]\n       const optiondropdown5 = this.state.dropdownlist[4][2]\n       const optiondropdown6 = this.state.dropdownlist[5][2]\n       const coloumns = ['all'];\n       return coloumns.map((buttons, index) => {\n            return (\n                <tr key={'3Tabelle'}>\n                    <td>\n                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder=\"Sets in Bearbeitung\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder=\"Sets in Bearbeitung\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder=\"Sets in Bearbeitung\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder=\"Sets in Bearbeitung\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder=\"Sets in Bearbeitung\" />\n                    </td>\n                    <td>\n                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder=\"Sets in Bearbeitung\" />\n                    </td>\n                </tr>\n            )})\n     }\n\n     renderTableData() {\n        console.log(this.state.setData)\n        return this.state.setData.map((setData, index) => {\n            return (\n                <tr key={'renderTabelle12'}>\n                    <td>\n                        <input id={setData.setid} placeholder={'Kategorie'} value={setData.cat} name={'cat'}\n                               onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.setid} placeholder={'Unterkategorie'} value={setData.subcat}\n                               name={'subcat'} onChange={this.change_state_in_tabular_set}/>\n                        <input\n                            id={setData.setid} placeholder={'Setbezeichnung'} value={setData.description}\n                            name={'description'} onChange={this.change_state_in_tabular_set}/>\n                         <input id={setData.setid} placeholder={'Bearbeitungsvariante'}\n                           value={setData.variant} name ={'variant'} onChange={this.change_state_in_tabular_set}/>\n                    </td>\n                    <td>\n                        <input\n                            id={setData.setid} placeholder={'Datum und Uhrzeit'}\n                            value={setData.order_start} name={'order_start'} onChange={this.change_state_in_tabular_set}/>\n                    </td>\n                    <td>\n                        <input id={setData.setid} placeholder={'Abholdauer'} value={setData.order_duration} name={'order_duration'}\n                               onChange={this.change_state_in_tabular_set}/>\n                    </td>\n                    <td>\n                        <input\n                            id={setData.setid} placeholder={setData.status} value={setData.status}\n                            name={'status'} onChange={this.change_state_in_tabular_set}/>\n                    </td>\n                </tr>\n            )\n        })\n    }\n    renderTableData2() {\n        console.log(this.state.setData)\n        return this.state.setData.map((setData, index) => {\n            return (\n                <tr key={'renderTabelle12'}>\n                    <td>\n                        <input id={setData.setid} placeholder={'Felgentemperatur'}\n                               value={setData.temp_air} name={'temp_air'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.fl_id} placeholder={'Kaltdruck FL'} value={setData.fl_pressure}\n                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.fr_id} placeholder={'Kaltdruck FR'} value={setData.fr_pressure}\n                               className={'pressure'} name={'fr_pressure'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.bl_id} placeholder={'Kaltdruck BL'} value={setData.bl_pressure}\n                               className={'pressure'} name={'bl_pressure'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.br_id} placeholder={'Kaltdruck BR'} value={setData.br_pressure}\n                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>\n                    </td>\n                    <td>\n                        <input id={setData.setid} placeholder={'bleed initial'}\n                               value={setData.bleed_initial} name={'bleed_initial'}\n                               onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.setid} placeholder={'bleed hot'} value={setData.bleed_hot}\n                               name={'bleed_hot'} onChange={this.change_state_in_tabular_set}/></td>\n                    <td onChange={this.change_state_in_tabular_set}>\n                        <input id={setData.setid} placeholder={'Heiztemperatur'} value={setData.temp_heat}\n                               name={'temp_heat'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.setid} placeholder={'Heizdauer'} value={setData.heat_duration}\n                               name={'heat_duration'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.setid} placeholder={'Heizstart'} value={setData.heat_start}\n                               name={'heat_start'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.setid} placeholder={'Heizende'} value={setData.heat_end}\n                               name={'heat_end'} onChange={this.change_state_in_tabular_set}/></td>\n                    <td>\n                        <input id={setData.setid} placeholder={'Zeit der Messung'}\n                               value={setData.heat_press_timestamp} name={'heat_press_timestamp'}\n                               onChange={this.schange_state_in_tabular_set}/>\n                        <input id={setData.fl_id} placeholder={'Warmdruck FL'}\n                               value={setData.fl_hot_air_press} name={'fl_hot_air_press'} className={'hot_air_press'}\n                               onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.fr_id} placeholder={'Warmdruck FR'}\n                               value={setData.fr_hot_air_press} name={'fr_hot_air_press'} className={'hot_air_press'}\n                               onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.bl_id} placeholder={'Warmdruck BL'}\n                               value={setData.bl_hot_air_press} name={'bl_hot_air_press'} className={'hot_air_press'}\n                               onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.br_id} placeholder={'Warmdruck BR'}\n                               value={setData.br_hot_air_press} name={'br_hot_air_press'} className={'hot_air_press'}\n                               onChange={this.change_state_in_tabular_set}/>\n                    </td>\n                    <td>\n                        <input id={setData.setid} placeholder={'Target vorne'}\n                               value={setData.heat_press_front} name={'heat_press_front'}\n                               onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.setid} placeholder={'Target hinten'}\n                               value={setData.heat_press_back} name={'heat_press_back'}\n                               onChange={this.change_state_in_tabular_set}/>\n                    </td>\n                    <td>\n                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleedet}\n                               name={'gebleedet'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.fl_id} placeholder={'Bleed FL'} value={setData.fl_bleed_press}\n                               className={'bleed_press'} name={'fl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.fr_id} placeholder={'Bleed FR'} value={setData.fr_bleed_press}\n                               className={'bleed_press'} name={'fr_bleed_press'}  onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.bl_id} placeholder={'Bleed BL'} value={setData.bl_bleed_press}\n                               name={'bleed_press'} className={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.br_id} placeholder={'Bleed BR'} value={setData.br_bleed_press}\n                               className={'bleed_press'} name={'br_bleed_press'} onChange={this.change_state_in_tabular_set}/>\n                    </td>\n\n                    <td>\n                        <input id={setData.setid} placeholder={'ID FL'} value={setData.fl_id_scan}\n                               className={'id_scan'} name={'fl_id_scan'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.fr_id} placeholder={'ID FR'} value={setData.fr_id_scan}\n                               className={'id_scan'} name={'fr_id_scan'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.bl_id} placeholder={'ID BL'} value={setData.bl_id_scan}\n                               className={'id_scan'} name={'bl_id_scan'} onChange={this.change_state_in_tabular_set}/>\n                        <input id={setData.br_id} placeholder={'ID BR'} value={setData.br_id_scan}\n                               className={'id_scan'} name={'br_id_scan'}  onChange={this.change_state_in_tabular_set}/></td>\n                </tr>\n            )\n        })\n    }\n\n\n\n        render() {\n        return (\n              <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>\n         <nav className=\"navbar navbar-light\" style={{backgroundColor: '#d0d7de'}}>\n                    <div className=\"container-fluid\">\n                        <a className=\"navbar-brand\" href=\"#\">  <img src={image} style={{width: '70%'}}/> </a>\n                        <button className=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\"\n                                data-bs-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\"\n                                aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n                            <span className=\"navbar-toggler-icon\"></span>\n                        </button>\n                        <div className=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n                            <ul className=\"navbar-nav me-auto mb-2 mb-lg-0\">\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeRace}>Hauptmenü </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeNewRace}>Neue Renndaten anlegen </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeShowRace}>Renndaten anzeigen </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeAstrid}>Berechnung Reifendruck </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeWheel}>Reifendetails anzeigen</button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeHelper}>Wetterdaten erfassen </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeWeather}>Wetterdaten anzeigen </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeMaen}>Statistiken anzeigen </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeNewFormel}>Formel Reifendruck anlegen </button>\n                                </li>\n                                <li className=\"nav-item\">\n                                    <button style={{backgroundColor: '#d0d7de'}} className=\"btn btn-sm\" aria-current=\"page\" onClick={this.changeNewUser}>Neues Mitglied anlegen </button>\n                                </li>\n                                <br/>\n                                <li className=\"nav-item\">\n                                    <button className=\"btn btn-primary btn-sm\" aria-current=\"page\" onClick={this.changeLogout}>Ausloggen </button>\n                                </li>\n                            </ul>\n                        </div>\n                    </div>\n                </nav>\n               <div style={{marginLeft: 'auto', marginRight: 'auto'}}>\n               <br/>\n               <h1 className=\"display-4\" style={{color: '#d0d7de', textAlign: 'center'}} >Reifenbestellungen verwalten</h1>\n               <br/>\n                <br/>\n                <div>\n                    <h3 className=\"display-6\" id='title' style={{color: '#d0d7de', textAlign: 'center'}} >Neue Reifenbestellung anlegen</h3>\n                    <table id='order' className=\"table table-striped table-hover table-bordered\"\n                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle'}}>\n                        <tbody>\n                        {this.renderTableHeader(1)}\n                        {this.renderTableOrderCat1()}\n                        {this.renderTableOrderCat2()}\n                        {this.renderTableOrderCat3()}\n                        </tbody>\n                    </table>\n                </div>\n                <div>\n                <br/>\n                <br/>\n                    <h3 className=\"display-6\" id='title' style={{color: '#d0d7de', textAlign: 'center'}} >Ausgewähltes Reifenset bearbeiten</h3>\n                    <table id='choosen' className=\"table table-striped table-hover table-bordered\"\n                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle', width: 500}}>\n                        <tbody>\n                        {this.renderTableHeader(2)}\n                        {this.renderTableData()}\n                        </tbody>\n                    </table>\n                    <table id='choosen2' className=\"table table-striped table-hover table-bordered\"\n                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle', width: 500}}>\n                    <tbody>\n                      {this.renderTableHeader(3)}\n                      {this.renderTableData2()}\n                    </tbody>\n                    </table>\n                </div>\n               </div>\n                <br/>\n                <button type='button' className='btn btn-primary' onClick={this.changeRace}\n                        style={{marginLeft: 'auto', marginRight: 'auto'}}> BESTELLUNG ABSCHICKEN\n                </button>\n                <br/>\n                <button type='button' className='btn btn-primary' onClick={this.changeRace}\n                        style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK\n                </button>\n                <br/>\n                <br/>\n              </View>\n        );\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/NewOrder.js b/NewOrder.js
+--- a/NewOrder.js	(revision 3c2700209104775f5a871f98e788e1b7e1ed92b8)
++++ b/NewOrder.js	(date 1643836805486)
+@@ -19,10 +19,6 @@
+             dropdownlist : [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
+             ButtonsList : ['Slicks Cold','Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'],
+         }
+-        this.timer = 0;
+-        this.startTimer = this.startTimer.bind(this);
+-        this.countDown = this.countDown.bind(this);
+-        this.fillList= this.fillList.bind(this);
+     }
+ 
+ 
+@@ -95,11 +91,6 @@
+         this.props.navigation.push('Helper')
+     }
+ 
+-
+-   //  changeRace = event => {
+-   //  this.props.navigation.goBack();
+-   //  }
+-
+      async getTabularData() {
+         const accesstoken = await AsyncStorage.getItem('accesstoken');
+         const raceID = await AsyncStorage.getItem('raceID');
+@@ -202,10 +193,7 @@
+ 
+     save_order = event =>{
+          console.log(this.state.setData)
+-         this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
+-         changeSetData(this.state.setID)
+-
+-
++         changeSetData(this.state.setData[0])
+     }
+       // end save change
+ 
+@@ -317,7 +305,7 @@
+        const coloumns = ['all'];
+        return coloumns.map((buttons, index) => {
+             return (
+-                <tr key={'3Tabelle'}>
++                <tr key={'3Tabelle32'}>
+                     <td>
+                     <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Sets in Bearbeitung" />
+                     </td>
+@@ -344,7 +332,7 @@
+         console.log(this.state.setData)
+         return this.state.setData.map((setData, index) => {
+             return (
+-                <tr key={'renderTabelle12'}>
++                <tr key={'renderTabelle22'}>
+                     <td>
+                         <input id={setData.setid} placeholder={'Kategorie'} value={setData.cat} name={'cat'}
+                                onChange={this.change_state_in_tabular_set}/>
+@@ -357,6 +345,7 @@
+                            value={setData.variant} name ={'variant'} onChange={this.change_state_in_tabular_set}/>
+                     </td>
+                     <td>
++                        {'automatisch erzeugt'}
+                         <input
+                             id={setData.setid} placeholder={'Datum und Uhrzeit'}
+                             value={setData.order_start} name={'order_start'} onChange={this.change_state_in_tabular_set}/>
+@@ -389,7 +378,7 @@
+                         <input id={setData.bl_id} placeholder={'Kaltdruck BL'} value={setData.bl_pressure}
+                                className={'pressure'} name={'bl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.br_id} placeholder={'Kaltdruck BR'} value={setData.br_pressure}
+-                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>
++                               className={'pressure'} name={'br_pressure'} onChange={this.change_state_in_tabular_set}/>
+                     </td>
+                     <td>
+                         <input id={setData.setid} placeholder={'bleed initial'}
+@@ -432,20 +421,20 @@
+                                onChange={this.change_state_in_tabular_set}/>
+                     </td>
+                     <td>
+-                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleedet}
+-                               name={'gebleedet'} onChange={this.change_state_in_tabular_set}/>
++                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleeded}
++                               name={'gebleeded'} onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.fl_id} placeholder={'Bleed FL'} value={setData.fl_bleed_press}
+                                className={'bleed_press'} name={'fl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.fr_id} placeholder={'Bleed FR'} value={setData.fr_bleed_press}
+                                className={'bleed_press'} name={'fr_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.bl_id} placeholder={'Bleed BL'} value={setData.bl_bleed_press}
+-                               name={'bleed_press'} className={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
++                               className={'bleed_press'} name={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.br_id} placeholder={'Bleed BR'} value={setData.br_bleed_press}
+                                className={'bleed_press'} name={'br_bleed_press'} onChange={this.change_state_in_tabular_set}/>
+                     </td>
+ 
+                     <td>
+-                        <input id={setData.setid} placeholder={'ID FL'} value={setData.fl_id_scan}
++                        <input id={setData.fl_id} placeholder={'ID FL'} value={setData.fl_id_scan}
+                                className={'id_scan'} name={'fl_id_scan'} onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.fr_id} placeholder={'ID FR'} value={setData.fr_id_scan}
+                                className={'id_scan'} name={'fr_id_scan'} onChange={this.change_state_in_tabular_set}/>
+@@ -549,7 +538,7 @@
+                 </div>
+                </div>
+                 <br/>
+-                <button type='button' className='btn btn-primary' onClick={this.changeRace}
++                <button type='button' className='btn btn-primary' onClick={this.save_order}
+                         style={{marginLeft: 'auto', marginRight: 'auto'}}> BESTELLUNG ABSCHICKEN
+                 </button>
+                 <br/>
+Index: tools.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import AsyncStorage from '@react-native-async-storage/async-storage';\n\n// create new race and return raceID\n//wheel_cont/changeSet\nasync function changeWheelSet(id,variant,order_duration,description){\n    timeoutPromise(2000, fetch(\n            'https://api.race24.cloud/wheel_cont/changeSet', {\n                method: 'POST',\n                headers: {\n                    'Accept': 'application/json',\n                    'Content-Type': 'application/json',\n                },\n                body: JSON.stringify({\n                    id:id,\n                    variant:variant,\n                    order_duration:order_duration,\n                    description:description,\n                })\n            })\n            ).then(response => response.json()).then(\n                data => {\n                if (data[1]==200) {\n                    console.log(data[0])\n                }\n                else {\n                    console.log(\"failed\")\n                }\n            }\n            ).catch(function (error) {\n            console.log(error);\n        })\n}\n\n\n\nasync function createNewRaceRequest(accesstoken,type,place,date) {\n    console.log([accesstoken,type,place,date]);\n    return await timeoutPromise(2000, fetch(\n            'https://api.race24.cloud/race/create', {\n                method: 'POST',\n                headers: {\n                    'Accept': 'application/json',\n                    'Content-Type': 'application/json',\n                },\n                body: JSON.stringify({\n                    access_token:accesstoken,\n                    type:type,\n                    place:place,\n                    date:date,\n                })\n            })\n            ).then(response => response.json()).then(data => {\n                console.log(data)\n                if (\"msg\" in data){\n                            if (data[\"msg\"] === \"Token has expired\"){\n                                refreshToken().then( token => {\n                                    createNewRaceRequest(token,type,place,date);\n                                    }\n                                ).catch( function (error) {\n                                        console.log(\"Refresh failed\");\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  return data[0].id;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n\nasync function sendNewWeatherRequest(id,temp_air,temp_ground,weather_des) {\n   timeoutPromise(2000, fetch(\n        'https://api.race24.cloud/user/weather/create', {\n            method: 'POST',\n            headers: {\n                'Accept': 'application/json',\n                'Content-Type': 'application/json',\n            },\n            body: JSON.stringify({\n                raceID: AsyncStorage.getItem(\"raceID\"),\n                temp_air:temp_air,\n                temp_ground:temp_ground,\n                weather_des:weather_des,\n            })\n        })\n        ).then(response => response.json()).then(\n            //timer von 30 min neu startem\n            ).catch(function (error) {\n            console.log(error);\n        })\n}\n\n\n\nfunction timeoutPromise(ms, promise) {\n  return new Promise((resolve, reject) => {\n    const timeoutId = setTimeout(() => {\n      reject(new Error(\"promise timeout\"))\n    }, ms);\n    promise.then(\n      (res) => {\n        clearTimeout(timeoutId);\n        resolve(res);\n      },\n      (err) => {\n        clearTimeout(timeoutId);\n        reject(err);\n      }\n    );\n  })\n}\n\n//get Race List\nfunction getRaceList(token) {\n  return timeoutPromise(2000, fetch(\"https://api.race24.cloud/user/race/get\", {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: token\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if (\"msg\" in data){\n                            if (data[\"msg\"]=== \"Token has expired\" || data[\"msg\"]===\"Not enough segments\" ){\n                                refreshToken().then( token => {\n                                    console.log(token)\n                                    getRaceList(token);\n                                    }\n                                ).catch( function (error) {\n                                        console.log(\"Refresh failed\");\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log(\"Return Data\");\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n// get RaceDetails od RaceID\nfunction getRaceDetails_by_ID(accesstoken,raceid) {\n  //const accesstoken = AsyncStorage.getItem('accesstoken');\n  return timeoutPromise(2000, fetch(\"https://api.race24.cloud/user/raceDetails/get\", {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceid,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if (\"msg\" in data){\n                            if (data[\"msg\"] === \"Token has expired\"){\n                                refreshToken().then( token => {\n                                        getRaceDetails_by_ID(token,raceid);\n                                        console.log([token,raceid])\n                                    }\n                                ).catch( function (error) {\n                                        console.log(\"Refresh failed\");\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log(\"Return Data\");\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n\n\n///user/weather/getlast10\n//get Weather Tab\nfunction getWeatherTab(accesstoken,raceID) {\n    console.log(raceID)\n  return timeoutPromise(2000, fetch(\"https://api.race24.cloud/user/weather/getlast10\", {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID : raceID,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if (\"msg\" in data){\n                            if (data[\"msg\"] === \"Token has expired\"){\n                                refreshToken().then( token => {\n                                        getWeatherTab(token,raceID);\n                                    }\n                                ).catch( function (error) {\n                                        console.log(\"Refresh failed\");\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log(\"Return Data\");\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n//get Wheels\nfunction getWheelsList(accesstoken,raceID) {\n  //const accesstoken = AsyncStorage.getItem('accesstoken');\n    console.log([raceID])\n  return timeoutPromise(2000, fetch(\"https://api.race24.cloud/wheels_start/get\", {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID: parseInt(raceID)\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if (\"msg\" in data){\n                            if (data[\"msg\"] === \"Token has expired\"){\n                                refreshToken().then( token => {\n                                        getWheelsList(token,raceID);\n                                    }\n                                ).catch( function (error) {\n                                        console.log(\"Refresh failed\");\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log(\"Return Data\");\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n\n\n\nfunction getFormelList(accesstoken) {\n  //const accesstoken = AsyncStorage.getItem('accesstoken');\n  return timeoutPromise(2000, fetch(\"https://api.race24.cloud/formel/get\", {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if (\"msg\" in data){\n                            if (data[\"msg\"] === \"Token has expired\"){\n                                refreshToken().then( token => {\n                                        getFormelList(token);\n                                    }\n                                ).catch( function (error) {\n                                        console.log(\"Refresh failed\");\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log(\"Return Data\");\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n\nasync function refreshToken() {\n  let accesstoken = await AsyncStorage.getItem('accesstoken');\n  let refreshtoken = await AsyncStorage.getItem('refreshtoken');\n  await timeoutPromise(2000, fetch(\n      'https://api.race24.cloud/user/auth/refresh', {\n        method: 'POST',\n        headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n          access_token: accesstoken,\n          refresh_token: refreshtoken,\n        })\n      }\n  )).then(\n      response => response.json()\n  ).then(\n      data => {\n        AsyncStorage.setItem('accesstoken', String(data.access_token));\n      }\n  )\n}\n\nfunction TableNiklas(list) {\n    const colNames = ['Zeitstempel', 'Lufttemperatur', 'Streckentemperatur', 'Streckenverhältnis' ];\n    const number = 920 ;\n    return (\n        <div>\n          {list.length > 0 && (\n            <table\n              cellSpacing='0'\n              style={{\n              \twidth: width,\n              \theight: \"auto\",\n              \tmargin: 15,\n              \tborderWidth: 1,\n\n              }}>\n\n                <thead >\n                  <tr>\n                    {colNames.map((headerItem, index) => (\n                      <th style={{borderStyle: 'solid',  borderWidth: 1}} key={index}>{headerItem}</th>\n                    ))}\n                  </tr>\n                </thead>\n\n                <tbody>\n                  {Object.values(list).map((obj, index) => (\n                    <tr key={index}>\n                      {Object.values(obj).map((value, index2) => (\n                        <td style={{borderStyle: 'solid',  borderWidth: 1}} key={index2}>{value}</td>\n                      ))}\n                    </tr>\n                  ))}\n                </tbody>\n            </table>\n          )}\n        </div>\n        )\n    }\n\n\n\n\nexport {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID,changeWheelSet}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tools.js b/tools.js
+--- a/tools.js	(revision 3c2700209104775f5a871f98e788e1b7e1ed92b8)
++++ b/tools.js	(date 1643837881856)
+@@ -76,6 +76,49 @@
+ 
+ 
+ 
++async function saveChangesOrderSet(accesstoken,type,place,date) {
++    console.log([accesstoken,type,place,date]);
++    return await timeoutPromise(2000, fetch(
++            'https://api.race24.cloud/race/create', {
++                method: 'POST',
++                headers: {
++                    'Accept': 'application/json',
++                    'Content-Type': 'application/json',
++                },
++                body: JSON.stringify({
++                    access_token:accesstoken,
++                    type:type,
++                    place:place,
++                    date:date,
++                })
++            })
++            ).then(response => response.json()).then(data => {
++                console.log(data)
++                if ("msg" in data){
++                            if (data["msg"] === "Token has expired"){
++                                refreshToken().then( token => {
++                                    createNewRaceRequest(token,type,place,date);
++                                    }
++                                ).catch( function (error) {
++                                        console.log("Refresh failed");
++                                        console.log(error);
++                                    }
++                                );
++                                return [];
++                            }
++                        }
++              else{
++                  return data[0].id;
++              }
++              return [];
++      }).catch(function (error) {
++            console.log(error);
++            return [];
++        })
++}
++
++
++
+ async function sendNewWeatherRequest(id,temp_air,temp_ground,weather_des) {
+    timeoutPromise(2000, fetch(
+         'https://api.race24.cloud/user/weather/create', {
+Index: tools_get_wheels.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import AsyncStorage from '@react-native-async-storage/async-storage';\nimport {createKeyboardAwareNavigator} from 'react-navigation';\n\n//get one Wheel by id\nfunction getWheel_by_id(accesstoken,id) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getWheel', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          id:id,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        getWheel_by_id(token,id);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n// get Wheels by id\nfunction getWheels_by_id(accesstoken,id) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getWheels', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          id:id,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        getWheels_by_id(token,id);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n//getDropdown\n// get Wheels by id\nfunction getDropdown(accesstoken,raceID) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/dropdown', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceID,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        getDropdown(token,raceID);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\nfunction getOrderDropdown(accesstoken,raceID) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/OrderWheelDropdown', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceID,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        getOrderDropdown(token,raceID);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n//get all info\n///wheel_cont/getWheels_withWheel\n// geht set informarion\nfunction getWheelInformations(accesstoken,raceID) {\n    return timeoutPromise(2000, fetch('https:/api.race24.cloud/wheel_cont/getgreatList', {\n        method: 'POST',\n        headers: {\n            'Accept': 'application/json',\n            'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n            access_token: accesstoken,\n            raceID:parseInt(raceID),\n        })\n    })).then(response => response.json()).then(data => {\n        console.log(data);\n        if ('msg' in data){\n            if (data['msg'] === 'Token has expired'){\n                refreshToken().then( token => {\n                    getWheelInformations(token,raceID);\n                    }\n                ).catch( function (error) {\n                        console.log('Refresh failed');\n                        console.log(error);\n                    }\n                );\n                return [];\n            }\n        }\n        else{\n            console.log('Return Data');\n            return data[0].data;\n        }\n        return [];\n    }).catch(function (error) {\n        return [];\n    })\n}\n\n\n///wheel_cont/getWheels_withWheel\n// get set information\nfunction getWheelSetInformation(accesstoken,id) {\n    return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getIdsWheelSet', {\n        method: 'POST',\n        headers: {\n            'Accept': 'application/json',\n            'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n            access_token: accesstoken,\n            id:parseInt(id),\n        })\n    })).then(response => response.json()).then(data => {\n        console.log(data);\n        if ('msg' in data){\n            if (data['msg'] === 'Token has expired'){\n                refreshToken().then( token => {\n                    getWheelSetInformation(token,id);\n                    }\n                ).catch( function (error) {\n                        console.log('Refresh failed');\n                        console.log(error);\n                    }\n                );\n                return [];\n            }\n        }\n        else{\n            console.log('Return Data');\n            console.log(data[0].data);\n            return data[0].data;\n        }\n        return [];\n    }).catch(function (error) {\n        console.log(error);\n        return [];\n    })\n}\n\n// create Reifendruck\nasync function createReifendruckRequest(accesstoken,raceID) {\n    return await timeoutPromise(2000, fetch(\n            'https://api.race24.cloud/wheel_cont/createReifencontigent', {\n                method: 'POST',\n                headers: {\n                    'Accept': 'application/json',\n                    'Content-Type': 'application/json',\n                },\n                body: JSON.stringify({\n                    access_token:accesstoken,\n                    raceID:raceID,\n                })\n            })\n            ).then(response => response.json()).then(data => {\n                console.log(data)\n                if (\"msg\" in data){\n                            if (data[\"msg\"] === \"Token has expired\"){\n                                refreshToken().then( token => {\n                                    createReifendruckRequest(token,raceID);\n                                    }\n                                ).catch( function (error) {\n                                        console.log(\"Refresh failed\");\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  return data[0].id;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n// get Reifendruck Formel\nfunction getReifendruckDetails(accesstoken,raceID) {\n    return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getReifendruck', {\n        method: 'POST',\n        headers: {\n            'Accept': 'application/json',\n            'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n            access_token: accesstoken,\n            raceID:raceID\n        })\n    })).then(response => response.json()).then(data => {\n        console.log(data);\n        if ('msg' in data){\n            if (data['msg'] === 'Token has expired'){\n                refreshToken().then( token => {\n                    getReifendruckDetails(token,raceID);\n                    }\n                ).catch( function (error) {\n                        console.log('Refresh failed');\n                        console.log(error);\n                    }\n                );\n                return [];\n            }\n        }\n        else{\n            console.log('Return Data');\n            console.log(data[0].data);\n            return data[0].data;\n        }\n        return [];\n    }).catch(function (error) {\n        console.log(error);\n        return [];\n    })\n}\n\n// get timer\nfunction getTimerInformation(accesstoken,raceID) {\n    return timeoutPromise(2000, fetch('https://api.race24.cloud/timer/get', {\n        method: 'POST',\n        headers: {\n            'Accept': 'application/json',\n            'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n            access_token: accesstoken,\n            raceID:parseInt(raceID),\n        })\n    })).then(response => response.json()).then(data => {\n        console.log(data);\n        if ('msg' in data){\n            if (data['msg'] === 'Token has expired'){\n                refreshToken().then( token => {\n                    getWheelSetInformation(token,raceID);\n                    }\n                ).catch( function (error) {\n                        console.log(error);\n                    }\n                );\n                return [];\n            }\n        }\n        else{\n            return data[0].data;\n        }\n        return [];\n    }).catch(function (error) {\n        console.log(error);\n        return [];\n    })\n}\n\n\n\n// get Wheels _with Wheel\nfunction getWheel_with_Wheel(accesstoken,id) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getWheels_withWheel', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          id:id,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        getWheel_with_Wheel(token,id);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n// get raceID_cat_subcat_status\nfunction get_raceID_cat_subcat_status(accesstoken,raceID,cat,subcat,status) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/raceID_cat_subcat_status', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceID,\n          cat:cat,\n          subcat:subcat,\n          status:status,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        get_raceID_cat_subcat_status(token,raceID,cat,subcat,status);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n///wheel_cont/Set/raceID_cat_setNr  check\nfunction get_raceID_cat_setNr(accesstoken,raceID,cat,setNR) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/raceID_cat_setNr', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceID,\n          cat:cat,\n          setNR:setNR,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        get_raceID_cat_setNr(token,raceID,cat,setNR);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n//wheel_Set by id\nfunction get_WheelSet_id(accesstoken,id) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/id', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          id:id,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        get_WheelSet_id(token,id);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n//wheel_Set by id\nfunction get_WheelSet_raceID_status(accesstoken,raceID) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/status_raceID', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceID,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        get_WheelSet_raceID_status(token,raceID);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n// start Order Wheel\n//wheel_Set by id\nfunction get_Dict_WheelOrder(accesstoken,raceID) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/OrderWheelDict', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceID,\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        get_Dict_WheelOrder(token,raceID);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n\n\n//wheel_Set by raceID_cat_subcat\nfunction get_raceID_cat_subcat(accesstoken,raceID,cat,subcat) {\n  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/raceID_cat_subcat', {\n      method: 'POST',\n      headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n          access_token: accesstoken,\n          raceID:raceID,\n          cat:cat,\n          subcat:subcat\n      })\n      })).then(response => response.json()).then(data => {\n              console.log(data);\n              if ('msg' in data){\n                            if (data['msg'] === 'Token has expired'){\n                                refreshToken().then( token => {\n                                        get_raceID_cat_subcat(token,raceID,cat,subcat);\n                                    }\n                                ).catch( function (error) {\n                                        console.log('Refresh failed');\n                                        console.log(error);\n                                    }\n                                );\n                                return [];\n                            }\n                        }\n              else{\n                  console.log('Return Data');\n                  console.log(data[0].data);\n                  return data[0].data;\n              }\n              return [];\n      }).catch(function (error) {\n            console.log(error);\n            return [];\n        })\n}\n\n\n//  ----------------------------------------------------------------------------------------------\n\nfunction timeoutPromise(ms, promise) {\n  return new Promise((resolve, reject) => {\n    const timeoutId = setTimeout(() => {\n      reject(new Error('promise timeout'))\n    }, ms);\n    promise.then(\n      (res) => {\n        clearTimeout(timeoutId);\n        resolve(res);\n      },\n      (err) => {\n        clearTimeout(timeoutId);\n        reject(err);\n      }\n    );\n  })\n}\n\n\n\nasync function refreshToken() {\n  let accesstoken = await AsyncStorage.getItem('accesstoken');\n  let refreshtoken = await AsyncStorage.getItem('refreshtoken');\n  await timeoutPromise(2000, fetch(\n      'https://api.race24.cloud/user/auth/refresh', {\n        method: 'POST',\n        headers: {\n          'Accept': 'application/json',\n          'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n          access_token: accesstoken,\n          refresh_token: refreshtoken,\n        })\n      }\n  )).then(\n      response => response.json()\n  ).then(\n      data => {\n        AsyncStorage.setItem('accesstoken', String(data.access_token));\n      }\n  )\n}\n\nexport {getDropdown,getOrderDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations,createReifendruckRequest,getReifendruckDetails }
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tools_get_wheels.js b/tools_get_wheels.js
+--- a/tools_get_wheels.js	(revision 3c2700209104775f5a871f98e788e1b7e1ed92b8)
++++ b/tools_get_wheels.js	(date 1643843371386)
+@@ -161,9 +161,8 @@
+ 
+ //get all info
+ ///wheel_cont/getWheels_withWheel
+-// geht set informarion
+ function getWheelInformations(accesstoken,raceID) {
+-    return timeoutPromise(2000, fetch('https:/api.race24.cloud/wheel_cont/getgreatList', {
++    return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getgreatList', {
+         method: 'POST',
+         headers: {
+             'Accept': 'application/json',
+@@ -171,7 +170,7 @@
+         },
+         body: JSON.stringify({
+             access_token: accesstoken,
+-            raceID:parseInt(raceID),
++            raceID:raceID,
+         })
+     })).then(response => response.json()).then(data => {
+         console.log(data);
+@@ -190,6 +189,7 @@
+         }
+         else{
+             console.log('Return Data');
++            console.log(data[0].data);
+             return data[0].data;
+         }
+         return [];
+Index: web-build/index.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><meta httpequiv=\"X-UA-Compatible\" content=\"IE=edge\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1.00001,viewport-fit=cover\"/><title>propra</title><style>#root,body,html{width:100%;-webkit-overflow-scrolling:touch;margin:0;padding:0;min-height:100%}#root{flex-shrink:0;flex-basis:auto;flex-grow:1;display:flex;flex:1}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;height:calc(100% + env(safe-area-inset-top))}body{display:flex;overflow-y:auto;overscroll-behavior-y:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-ms-overflow-style:scrollbar}</style><link rel=\"manifest\" href=\"/manifest.json\"><link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/favicon-16.png\"><link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon-32.png\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><meta name=\"mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-touch-fullscreen\" content=\"yes\"><meta name=\"apple-mobile-web-app-title\" content=\"propra\"><meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/pwa/apple-touch-icon/apple-touch-icon-180.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-640x1136.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-1242x2688.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-828x1792.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-1125x2436.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-1242x2208.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-750x1334.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-2048x2732.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-1668x2388.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-1668x2224.png\"><link rel=\"apple-touch-startup-image\" media=\"screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)\" href=\"/pwa/apple-touch-startup-image/apple-touch-startup-image-1536x2048.png\"></head><body><noscript><form action=\"\" style=\"background-color:#fff;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999\"><div style=\"font-size:18px;font-family:Helvetica,sans-serif;line-height:24px;margin:10%;width:80%\"><p>Oh no! It looks like JavaScript is not enabled in your browser.</p><p style=\"margin:20px 0\"><button type=\"submit\" style=\"background-color:#4630eb;border-radius:100px;border:none;box-shadow:none;color:#fff;cursor:pointer;font-weight:700;line-height:20px;padding:6px 16px\">Reload</button></p></div></form></noscript><div id=\"root\"></div><script src=\"/static/js/runtime~app.2e9f1821.js\"></script><script src=\"/static/js/2.8a490d8f.chunk.js\"></script><script src=\"/static/js/app.d83f2586.chunk.js\"></script></body></html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web-build/index.html b/web-build/index.html
+--- a/web-build/index.html	(revision 3c2700209104775f5a871f98e788e1b7e1ed92b8)
++++ b/web-build/index.html	(date 1643843424686)
+@@ -1,1 +1,1 @@
+-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta httpequiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1.00001,viewport-fit=cover"/><title>propra</title><style>#root,body,html{width:100%;-webkit-overflow-scrolling:touch;margin:0;padding:0;min-height:100%}#root{flex-shrink:0;flex-basis:auto;flex-grow:1;display:flex;flex:1}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;height:calc(100% + env(safe-area-inset-top))}body{display:flex;overflow-y:auto;overscroll-behavior-y:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-ms-overflow-style:scrollbar}</style><link rel="manifest" href="/manifest.json"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="shortcut icon" href="/favicon.ico"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="propra"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" sizes="180x180" href="/pwa/apple-touch-icon/apple-touch-icon-180.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-640x1136.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1242x2688.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-828x1792.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1125x2436.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1242x2208.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-750x1334.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-2048x2732.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1668x2388.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1668x2224.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1536x2048.png"></head><body><noscript><form action="" style="background-color:#fff;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999"><div style="font-size:18px;font-family:Helvetica,sans-serif;line-height:24px;margin:10%;width:80%"><p>Oh no! It looks like JavaScript is not enabled in your browser.</p><p style="margin:20px 0"><button type="submit" style="background-color:#4630eb;border-radius:100px;border:none;box-shadow:none;color:#fff;cursor:pointer;font-weight:700;line-height:20px;padding:6px 16px">Reload</button></p></div></form></noscript><div id="root"></div><script src="/static/js/runtime~app.2e9f1821.js"></script><script src="/static/js/2.8a490d8f.chunk.js"></script><script src="/static/js/app.d83f2586.chunk.js"></script></body></html>
+\ No newline at end of file
++<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta httpequiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1.00001,viewport-fit=cover"/><title>propra</title><style>#root,body,html{width:100%;-webkit-overflow-scrolling:touch;margin:0;padding:0;min-height:100%}#root{flex-shrink:0;flex-basis:auto;flex-grow:1;display:flex;flex:1}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;height:calc(100% + env(safe-area-inset-top))}body{display:flex;overflow-y:auto;overscroll-behavior-y:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-ms-overflow-style:scrollbar}</style><link rel="manifest" href="/manifest.json"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="shortcut icon" href="/favicon.ico"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="propra"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" sizes="180x180" href="/pwa/apple-touch-icon/apple-touch-icon-180.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-640x1136.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1242x2688.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-828x1792.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1125x2436.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1242x2208.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-750x1334.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-2048x2732.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1668x2388.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1668x2224.png"><link rel="apple-touch-startup-image" media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pwa/apple-touch-startup-image/apple-touch-startup-image-1536x2048.png"></head><body><noscript><form action="" style="background-color:#fff;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999"><div style="font-size:18px;font-family:Helvetica,sans-serif;line-height:24px;margin:10%;width:80%"><p>Oh no! It looks like JavaScript is not enabled in your browser.</p><p style="margin:20px 0"><button type="submit" style="background-color:#4630eb;border-radius:100px;border:none;box-shadow:none;color:#fff;cursor:pointer;font-weight:700;line-height:20px;padding:6px 16px">Reload</button></p></div></form></noscript><div id="root"></div><script src="/static/js/runtime~app.2e9f1821.js"></script><script src="/static/js/2.8a490d8f.chunk.js"></script><script src="/static/js/app.8e6085e8.chunk.js"></script></body></html>
+\ No newline at end of file

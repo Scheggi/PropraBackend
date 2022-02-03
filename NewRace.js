@@ -103,6 +103,11 @@ export default class NewRaceScreen extends React.Component {
         this.props.navigation.push('Maen');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
+
     validateForm() {
         return (this.state.date.length > 0 && this.state.place.length > 0 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
     }
@@ -127,7 +132,7 @@ export default class NewRaceScreen extends React.Component {
 
         let cols = [];
         for (let i = 0; i < 4; i++) {
-            const accesstoken = await AsyncStorage.getItem('acesstoken');
+            const accesstoken = await AsyncStorage.getItem('accesstoken');
             await sendWheelRequest(accesstoken, 0, '', '').then(Data => {
                 console.log(Data);
                 cols.push(Data);
@@ -138,7 +143,7 @@ export default class NewRaceScreen extends React.Component {
 
         }
         console.log(cols)
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         await sendWheelsRequest(accesstoken, parseInt(cols[0]), parseInt(cols[1]), parseInt(cols[2]), parseInt(cols[3]), '').then(Data => {
             console.log(Data);
             cols.push(Data);
@@ -155,7 +160,7 @@ export default class NewRaceScreen extends React.Component {
 
     async generateNewRace(type, place, date) {
         let id = '';
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         await createNewRaceRequest(accesstoken, type, place, date).then(Data => {
             console.log(Data);
             id = Data;
@@ -165,9 +170,10 @@ export default class NewRaceScreen extends React.Component {
         console.log(id)
         this.setState({raceID: id});
         console.log(this.state.raceID);
-        this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, this.state.contingentSlicksCold);
+        this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, parseInt(this.state.contingentSlicksCold));
         // raceID,set,cat,subcat,numberOfSets
-        this.generateAllSets(this.state.raceID, "Slicks", "Cold", this.state.contingentSlicksCold)
+        console.log(parseInt(this.state.contingentSlicksCold))
+        this.generateAllSets(this.state.raceID, 1,"Slicks", "Cold", this.state.contingentSlicksCold)
         this.sendNewContigentRequest(this.state.raceID, 2, "Slicks", "Medium", this.state.identifierSlicksMedium, parseInt(this.state.contingentSlicksMedium));
         this.generateAllSets(this.state.raceID, 2, "Slicks", "Medium", parseInt(this.state.contingentSlicksMedium));
         this.sendNewContigentRequest(this.state.raceID, 3, "Slicks", "Hot", this.state.identifierSlicksHot, parseInt(this.state.contingentSlicksHot));
@@ -242,6 +248,9 @@ export default class NewRaceScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>

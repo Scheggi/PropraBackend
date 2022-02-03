@@ -1,11 +1,11 @@
 {
   "files": {
-    "app.js": "/static/js/app.2ee23461.chunk.js",
-    "app.js.map": "/static/js/app.2ee23461.chunk.js.map",
+    "app.js": "/static/js/app.8e6085e8.chunk.js",
+    "app.js.map": "/static/js/app.8e6085e8.chunk.js.map",
     "runtime~app.js": "/static/js/runtime~app.2e9f1821.js",
     "runtime~app.js.map": "/static/js/runtime~app.2e9f1821.js.map",
-    "static/js/2.49b7dfdc.chunk.js": "/static/js/2.49b7dfdc.chunk.js",
-    "static/js/2.49b7dfdc.chunk.js.map": "/static/js/2.49b7dfdc.chunk.js.map",
+    "static/js/2.8a490d8f.chunk.js": "/static/js/2.8a490d8f.chunk.js",
+    "static/js/2.8a490d8f.chunk.js.map": "/static/js/2.8a490d8f.chunk.js.map",
     "fonts/FontAwesome.ttf": "/./fonts/FontAwesome.ttf",
     "favicon-16.png": "/favicon-16.png",
     "favicon-32.png": "/favicon-32.png",
@@ -13,11 +13,25 @@
     "index.html": "/index.html",
     "manifest.json": "/manifest.json",
     "serve.json": "/serve.json",
-    "static/js/2.49b7dfdc.chunk.js.LICENSE.txt": "/static/js/2.49b7dfdc.chunk.js.LICENSE.txt"
+    "static/js/2.8a490d8f.chunk.js.LICENSE.txt": "/static/js/2.8a490d8f.chunk.js.LICENSE.txt",
+    "static/media/autoblau.jpg": "/static/media/autoblau.6923d6ee.jpg",
+    "static/media/autoblau2.jpg": "/static/media/autoblau2.6ee6527c.jpg",
+    "static/media/autogelb.jpg": "/static/media/autogelb.135ce061.jpg",
+    "static/media/autogelb2.jpg": "/static/media/autogelb2.f2a6c963.jpg",
+    "static/media/autoweiß.jpg": "/static/media/autoweiß.a2e601d3.jpg",
+    "static/media/autoweiß2.jpg": "/static/media/autoweiß2.ddb4d27c.jpg",
+    "static/media/happy.jpg": "/static/media/happy.4505685f.jpg",
+    "static/media/logo.png": "/static/media/logo.110b38a8.png",
+    "static/media/race.jpg": "/static/media/race.1d7928f7.jpg",
+    "static/media/race2.jpg": "/static/media/race2.6d0fee72.jpg",
+    "static/media/sieg.jpg": "/static/media/sieg.e31de9b8.jpg",
+    "static/media/team.jpg": "/static/media/team.5204e40f.jpg",
+    "static/media/team2.jpg": "/static/media/team2.45659d43.jpg",
+    "static/media/team3.jpg": "/static/media/team3.10fd0332.jpg"
   },
   "entrypoints": [
     "static/js/runtime~app.2e9f1821.js",
-    "static/js/2.49b7dfdc.chunk.js",
-    "static/js/app.2ee23461.chunk.js"
+    "static/js/2.8a490d8f.chunk.js",
+    "static/js/app.8e6085e8.chunk.js"
   ]
 }

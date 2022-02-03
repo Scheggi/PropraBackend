@@ -81,10 +81,7 @@ def wheels_start_astrid_create():
     new_data.save_to_db()
     new_id = new_data.id
     # create Timer
-    newTimer = Timer(
-        raceID = new_id
-        )
-    newTimer.save_to_db() 
+    
     resp = {'status': 'success',
             'message': 'wheel start created',
             'id': "{}".format(new_id),

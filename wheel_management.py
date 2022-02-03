@@ -436,6 +436,10 @@ def save_single_wheel():
 def save_timer_changes():
     json_data = request.json
     object = Timer.query.filter_by(raceID=json_data['raceID']).first()
+    if isinstance(object,None):
+        object = Timer(
+            raceID=json_data['raceID'])
+        object.save_to_db()
     for entry in json_data['liste']:
         if entry[0].find('heat') != -1:
             object.heat_start = datetime.datetime.now()
@@ -443,10 +447,10 @@ def save_timer_changes():
         if entry[0].find('order') != -1:
             object.order_start = datetime.datetime.now()
             object.order_duration = entry[1]
-    object.save_to_db()
-    resp = {'status': 'success',
-            'message': 'Timer saved',
-            }
+        object.save_to_db()
+        resp = {'status': 'success',
+                'message': 'Timer saved',
+                }
     return jsonify(resp, 200)
 
 # save formel details

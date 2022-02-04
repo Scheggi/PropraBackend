@@ -500,6 +500,7 @@ def get_wheel1():
 def get_timer():
     json_data = request.json
     resp = {'status': 'success',
+            'id':json_data['raceID'],
             'data': Timer.get_all(json_data['raceID'])
             }
     return jsonify(resp, 200)

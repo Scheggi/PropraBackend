@@ -107,8 +107,8 @@ class Timer(db.Model):
     @classmethod
     def get_all(cls,raceID):
         return [{'heat_start': x.heat_start, 'heat_duration':x.heat_duration,
-               'order_start': x.order_start,'order_duration':x.order_duration, 'raceID':x.raceID } for x in
-                cls.query.all() if x.raceID ==raceID]
+               'order_start': x.order_start,'order_duration':x.order_duration, 'raceID':x.raceID }
+                for x in cls.query.filter_by(raceID=raceID).all()]
 
     def save_to_db(self):
         db.session.add(self)

@@ -177,7 +177,7 @@ class Race_Details(db.Model):
 
     @classmethod
     def get_all_races(cls):
-        return [{'name': 'Rennen_{}'.format(x.date), 'id': x.id} for x in cls.query.all()]
+        return [{'name': 'Rennen_{}'.format(x.date), 'id': x.id} for x in cls.query]
 
     @classmethod
     def find_by_date(cls, date):

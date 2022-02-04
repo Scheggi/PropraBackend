@@ -340,7 +340,7 @@ class WheelSet(db.Model):
                 for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold').order_by(cls.status,cls.setNr).all()],
             [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
             for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold', status='free').order_by(cls.status, cls.setNr).all()],
-            [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status), 'value': x.id}
+            [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
              for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold', status='order').order_by(cls.status, cls.setNr).all() ],
             [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
              for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Cold', status='used').order_by(cls.status,cls.setNr).all()]
@@ -349,7 +349,7 @@ class WheelSet(db.Model):
                 for x in cls.query.filter_by(raceID=raceID,  cat='Slicks', subcat='Medium').order_by(cls.status,cls.setNr).all()],
                 [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Medium', status ='free').order_by(cls.status,cls.setNr).all()],
-                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.order_start), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Medium',status='order').order_by(cls.status,
                                                                                                      cls.setNr).all()],
                 [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
@@ -361,7 +361,7 @@ class WheelSet(db.Model):
                 [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot',status='free').order_by(cls.status,cls.setNr).order_by(
                     cls.status, cls.setNr).all()],
-                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.order_start), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Slicks', subcat='Hot', status='order').order_by(cls.status,cls.setNr).order_by(
                     cls.status, cls.setNr).all()],
                 [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
@@ -372,7 +372,7 @@ class WheelSet(db.Model):
                 for x in cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate').order_by(cls.status,cls.setNr).all()],
                 [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate',status='free').order_by(cls.status,cls.setNr).all()],
-                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.order_start), 'value': x.id}
                  for x in
                  cls.query.filter_by(raceID=raceID, cat='Inters', subcat='Intermediate', status='order').order_by(
                      cls.status, cls.setNr).all()],
@@ -386,7 +386,7 @@ class WheelSet(db.Model):
                 for x in cls.query.filter_by(raceID=raceID,cat='Rain', subcat='DryWet').order_by(cls.status,cls.setNr).all()],
                 [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='DryWet',status='free').order_by(cls.status, cls.setNr).all()],
-                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.order_start), 'value': x.id}
                  for x in
                  cls.query.filter_by(raceID=raceID, cat='Rain', subcat='DryWet', status='order').order_by(cls.status,
                                                                                                           cls.setNr).all()],
@@ -400,7 +400,7 @@ class WheelSet(db.Model):
                 [{'label': 'SetNr.{}_{}'.format(x.setNr, x.status), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet',status='free').order_by(cls.status,
                                                                                                      cls.setNr).all()],
-                [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}
+                [{'label': 'SetNr.{}_{}'.format(x.setNr, x.order_start), 'value': x.id}
                  for x in cls.query.filter_by(raceID=raceID, cat='Rain', subcat='HeavyWet',status='order').order_by(cls.status,
                                                                                                      cls.setNr).all()],
                 [{'label': 'SetNr.{}_{}_{}'.format(x.setNr, x.status, x.order_start), 'value': x.id}

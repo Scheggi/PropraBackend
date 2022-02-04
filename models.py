@@ -106,7 +106,7 @@ class Timer(db.Model):
 
     @classmethod
     def get_all(cls,raceID):
-        return [{'heat_duration': x.heat_duration, 'heat_duration':x.heat_duration,
+        return [{'heat_start': x.heat_start, 'heat_duration':x.heat_duration,
                'order_start': x.order_start,'order_duration':x.order_duration, 'raceID':x.raceID } for x in
                 cls.query if x.raceID ==raceID]
 
